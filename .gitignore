@@ -1,0 +1,6 @@
+*.pyc
+*.swp
+.coverage
+cover/*
+results/*
+jobs.db

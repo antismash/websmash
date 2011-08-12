@@ -1,0 +1,179 @@
+body {
+    font-family: Tahoma, Sans-Serif;
+    color: #810e15;
+    /*background-color: #fdfdfd;*/
+    background-color: white;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+a:link {color: #1D1414}
+#menu a:link { color: #810E15 }
+a:visited { color: #1D1414 }
+a {text-decoration: none }
+a:hover {text-decoration: underline}
+a:active { color: #810E15 }
+
+.page {
+    width: 80%;
+    margin: 0px auto;
+    border-left: 2px solid;
+    border-right: 2px solid;
+    display: block;
+}
+
+.header {
+    margin: 0px auto;
+    display: block;
+    border-bottom: 2px solid #810e15;
+}
+
+.header img {
+    border: 0px;
+    padding-left: 0.5em;
+}
+
+#menu {
+    padding-right: 2em;
+    margin-top: 2em;
+    float: right;
+    font-size: 0.9em;
+}
+
+.content {
+}
+
+.content h1 {
+    margin-bottom: 0px;
+    color: #fff;
+    background-image:url('/static/bar.png');
+    background-repeat: no-repeat;
+    font-size: 0.9em;
+    padding: 0.3em 0.3em 0.7em 2em;
+}
+
+#navmenu {
+    float: left;
+}
+
+#navmenu ul {
+    list-style: none;
+    padding-left: 0.5em;
+}
+
+#navmenu li {
+    padding-bottom: 1em;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+#help {
+    padding: 1em;
+    margin-left: auto;
+    width: 80%;
+    border-left: 2px solid;
+}
+
+#help h2 {
+    font-size: 1.2em;
+}
+
+.error {
+    background-color: red;
+    color: black;
+}
+
+.optional {
+    border: 2px dotted #810e15;
+}
+
+#status img {
+    border: 0px;
+    padding-left: 2em;
+}
+
+.spacer {
+    padding-left: 5em;
+    padding-right: 5em;
+}
+
+.footer {
+    margin: 0 auto;
+    padding-bottom: 4.5em;
+    border-top: 2px solid #810e15;
+}
+
+.logos {
+    padding-top: 1em;
+}
+
+.logos img {
+    border: 0px;
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    float: left;
+}
+
+.copyright {
+    font-size: 60%;
+    float: right;
+    width: 40%;
+    margin-right: 1.5em;
+    padding: 0.5em;
+}
+
+#new {
+    padding: 1em 5em 1em 7.5em;
+}
+
+#new div {
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+}
+
+.dna_related {
+    display: none;
+}
+
+#help {
+    padding: 1em;
+    margin-left: auto;
+    width: 80%;
+    border-left: 2px solid;
+}
+
+#help h2 {
+    font-size: 1.2em;
+}
+
+#help .image {
+    margin: 0px auto;
+    text-align: center;
+}
+
+.faq li {
+    padding-bottom: 1em;
+}
+
+.faq .question {
+    padding-bottom: 0.5em;
+    font-style: italic;
+}
+
+#about {
+    padding: 1em;
+}
+
+#contact {
+    padding: 1em;
+}
+
+#about h2 {
+    font-size: 1.2em;
+}
+

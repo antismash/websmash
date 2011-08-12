@@ -1,0 +1,8 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    $.getJSON("{{ url_for('.server_status') }}", function(json) {
+        $("#server_status").html(json.status);
+        $("#queue_length").html(json.queue_length);
+    });
+});
+</script>

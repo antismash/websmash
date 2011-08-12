@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>antiSMASH: antibiotics & Secondary Metabolite Analysis SHell</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}" > </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.timer.js') }}" > </script>
+    {% block extra_headers %}{% endblock %}
+</head>
+<body>
+    <div class="page">
+    <div class="header">
+            <a href="{{ url_for('new') }}"><img src="{{ url_for('static', filename='antismash.gif') }}" alt="antiSMASH"></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{{ url_for('new') }}"><img src="{{ url_for('static', filename='antismash2.png') }}" alt="antibiotics &amp; Secondary Metabolite Analysis Shell"></a>
+        <span id="menu">
+            <a href="{{ url_for('new') }}">HOME</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('download') }}">DOWNLOAD</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('help') }}">HELP</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('about') }}">ABOUT</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="{{ url_for('contact') }}">CONTACT</a>
+        </span>
+    </div>
+    <div class="content">{% block body %}{% endblock %}</div>
+    <div class="footer">
+        <div class="logos">
+            <img src="{{ url_for('static', filename='ruglogo.gif') }}">
+            <img src="{{ url_for('static', filename='gbblogo.gif') }}">
+            <img src="{{ url_for('static', filename='tueblogo.gif') }}">
+            <img src="{{ url_for('static', filename='ucsflogo.gif') }}">
+        </div>
+
+        <div class="copyright">antiSMASH: Rapid identification, annotation and analysis of secondary metabolite biosynthesis gene clusters.
+            <br>Marnix H. Medema, Kai Blin, Peter Cimermancic, Victor de Jager, Piotr Zakrzewski, Michael A. Fischbach, Tilmann Weber, Rainer Breitling &amp; Eriko Takano
+            <br><i>Nucleic Acids Research</i> (2011), <a href="http://dx.doi.org/10.1093/nar/gkr466">doi: 10.1093/nar/gkr466</a>.
+        </div>
+    </div>
+    </div>
+</body>
+</html>

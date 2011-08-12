@@ -1,0 +1,238 @@
+{% extends 'layout.html' %}
+{% block extra_headers %}
+<script type="text/javascript">
+
+    function toggle_clusters() {
+        var id = 2;
+        var value_to_set = $('#cluster_1').attr('checked');
+        while($('#cluster_' + id).length) {
+            $('#cluster_' + id).attr('checked', value_to_set);
+            id++;
+        }
+    }
+
+    function show_glimmer() {
+        $('.dna_related').each(function(){
+            $(this).show("fast");
+        });
+    }
+
+    function hide_glimmer() {
+        $('.dna_related').each(function(){
+            $(this).hide("fast");
+        });
+    }
+
+    function get_ext(file) {
+        return file.split('.').pop();
+    }
+
+    function is_annotated(file) {
+        var ext = get_ext(file.toLowerCase());
+        var valid_exts = ['gb', 'gbk', 'genbank', 'emb', 'embl'];
+        var res = false;
+        for (i in valid_exts) {
+            if (ext == valid_exts[i]) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    function is_fasta(file) {
+        var ext = get_ext(file.toLowerCase());
+        var valid_exts = ['fasta', 'fas', 'fa', 'fna'];
+        var res = false;
+        for (i in valid_exts) {
+            if (ext == valid_exts[i]) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    function verify_form() {
+        var file = $('#seq').val();
+        var ncbi = $('#ncbi').val();
+
+        if( (file == '' || file == null) && (ncbi == '' || ncbi == null)){
+            alert('No input file provided. Please enter NCBI number or upload your own file');
+            return false;
+        }
+
+        if( !(is_annotated(file) || is_fasta(file)) && ncbi == '' ) {
+            alert('Please provide EMBL/GenBank or nucleotide FASTA file');
+            return false;
+        }
+
+        return true;
+    }
+
+    function show_glimmer_if_needed() {
+        var file = $('#seq').val();
+        var euc  = $('#eukaryotic').attr('checked');
+
+        // No need to show glimmer settings for eukaryotic fasta files
+        if( is_fasta(file) && !euc ) {
+            show_glimmer();
+        } else {
+            hide_glimmer();
+        }
+    }
+
+    $(document).ready(function () {
+        // Need at least MSIE 9.0 to correctly work with the pipeline, or
+        // some other sane browser.
+        if( $.browser.msie && parseInt($.browser.version) < 9 ) {
+            msg =  "You are trying to access antiSMASH using Internet Explorer 8 or lower.\n";
+            msg += "The antiSMASH results file format contains features beyond the capacities of this browser.\n";
+            msg += "Please use Mozilla Firefox, Apple Safari, Google Chrome, Opera, or Internet Explorer 9 beta instead.";
+            alert(msg);
+        }
+
+        // Set up button actions
+        $('#sample_input').click(function(){
+            $('#ncbi').val('Y16952');
+        });
+        $('#sample_output').click(function(){
+            window.open('/results/sco_example/display.xhtml', '_self');
+        });
+
+        // Allow the 'all' checkbox to toggle all other clusters
+        $('#cluster_1').change(toggle_clusters);
+        $('#cluster_1').attr('checked', 'checked');
+        toggle_clusters();
+
+        // Set up the input sanity checks
+        $('#main_form').submit(verify_form);
+
+        // Show glimmer options if user is trying to upload a fasta file
+        $('#seq').change(show_glimmer_if_needed);
+        $('#eukaryotic').change(show_glimmer_if_needed);
+    });
+</script>
+{% include 'server_status_js.html' %}
+{% endblock %}
+{% block body %}
+<h1>Nucleotide sequence input</h1>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <div id="new">
+    <div><input type="button" id="sample_input" value="Load sample input" /></div>
+    <div><input type="button" id="sample_output" value="Open example output" /></div>
+    <form name="seq_upload" id="main_form" action="" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="text" name="email" id="email" />
+            <label for="email">Email address (optional)</label>
+        </div>
+        <div><input type="file" name="seq" id="seq" />
+           <label for="seq">Load a file (GenBank / EMBL / FASTA formats accepted)</label>
+        </div>
+        <div>
+            <input type="text" name="ncbi" id="ncbi" />
+            <label for="ncbi">Or input an NCBI accession number of the desired file</label>
+        </div>
+
+        <hr />
+
+        <div>
+            <input type="checkbox" name="eukaryotic" id="eukaryotic" />
+            <label for="eukaryotic">DNA of Eukaryotic origin</label>
+        </div>
+
+        <hr />
+
+        <div class="cluster_selector">
+            <table>
+            {% for met in sec_met_types %}
+            {% if loop.first or loop.index % 3 == 2 %}
+                <tr>
+            {% endif %}
+                    <td>
+                        <input type="checkbox" name="cluster_{{loop.index}}" id="cluster_{{loop.index}}" />
+                        <label for="cluster_{{loop.index}}">{{ met }}</label>
+                    </td>
+            {% if loop.first or loop.index % 3 == 1 %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+            </table>
+        </div>
+
+        <hr />
+
+        <div class="dna_related">
+            <label for="trans_table">GenBank translation table used for Glimmer:</label><br />
+            <select id="trans_table" name="trans_table">
+                <option value="1"> The Standard Code</option>
+                <option value="none"> Without Glimmer</option>
+                <option value="11"> The Bacterial, Archaeal and Plant Plastid Code</option>
+                <option value="10"> The Euplotid Nuclear Code</option>
+                <option value="13"> The Ascidian Mitochondrial Code</option>
+                <option value="12"> The Alternative Yeast Nuclear Code</option>
+                <option value="15"> Blepharisma Nuclear Code</option>
+                <option value="14"> The Alternative Flatworm Mitochondrial Code</option>
+                <option value="22"> Scenedesmus Obliquus Mitochondrial Code</option>
+                <option value="16"> Chlorophycean Mitochondrial Code</option>
+                <option value="23"> Thraustochytrium Mitochondrial Code</option>
+                <option value="3"> The Yeast Mitochondrial Code</option>
+                <option value="2"> The Vertebrate Mitochondrial Code</option>
+                <option value="5"> The Invertebrate Mitochondrial Code</option>
+                <option value="4"> The Mold, Protozoan, and Coelenterate Mitochondrial Code and the Mycoplasma/Spiroplasma Code</option>
+                <option value="6"> The Ciliate, Dasycladacean and Hexamita Nuclear Code</option>
+                <option value="9"> The Echinoderm and Flatworm Mitochondrial Code</option>
+                <option value="21"> Trematode Mitochondrial Code</option>
+            </select>
+        </div>
+        <hr class="dna_related" />
+        <div class="dna_related">
+            <input type="text" name="gene_length" id="gene_length" value="50" />
+            <label for="gene_length">Glimmer minimal gene length</label>
+        </div>
+        <hr class="dna_related" />
+        <div class="dna_related">
+            <label for="genome_conf">Genome configuration used for Glimmer: </label>
+            <select id="genome_conf" name="genome_conf">
+                <option value="linear">linear</option>
+                <option value="circular">circular</option>
+            </select>
+        </div>
+        <hr class="dna_related" />
+
+        <div>
+            <input type="checkbox" name="smcogs" id="smcogs" checked="checked" />
+            <label for="smcogs">smCOG analysis for functional prediction and phylogenetic analysis of genes</label>
+        </div>
+
+        <hr />
+
+        <div>
+            <input type="checkbox" name="clusterblast" id="clusterblast" checked="checked" />
+            <label for="clusterblast">Gene Cluster Blast Analysis</label>
+        </div>
+        <hr />
+
+        <div>
+            <input type="checkbox" name="fullblast" id="fullblast" />
+            <label for="fullblast">Whole-genome BLAST results in EMBL output</label>
+        </div>
+        <hr />
+
+        <div>
+            <input type="checkbox" name="fullhmmer" id="fullhmmer" checked="checked" />
+            <label for="fullhmmer">Whole-genome PFAM results in EMBL output</label>
+        </div>
+
+        <hr />
+
+        <div>
+            <input type="submit" id="submit" value="Submit Query" />
+        </div>
+    </form>
+    <div><br />
+         Currently, the server is <span id="server_status">in an unknown status</span>
+         with <span id="queue_length">-1</span> job(s) in the work queue.
+    </div>
+    </div>
+{% endblock %}
