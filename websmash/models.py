@@ -3,6 +3,7 @@ from datetime import datetime
 from websmash import db
 
 class Job(db.Model):
+    __tablename__ = 'jobs'
     uid = db.Column(db.String(128), primary_key=True)
     jobtype = db.Column(db.String(20))
     email = db.Column(db.String(500))
