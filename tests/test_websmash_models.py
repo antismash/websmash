@@ -48,3 +48,13 @@ class JobTestCase(TestCase):
         """Test that Job.get_short_status() is sane"""
         job = Job(status='pending: Waiting for Godot')
         assert job.get_short_status() == 'pending'
+
+    def test_job_email(self):
+        """Test that Job.email returns the correct value"""
+        job = Job(email="ex@mp.le")
+        assert job.email == "ex@mp.le"
+
+    def test_job_jobtype_default(self):
+        """Test that Job.jobtype is 'antismash' if not specified"""
+        job = Job()
+        assert job.jobtype == "antismash"

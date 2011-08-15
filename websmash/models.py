@@ -25,7 +25,7 @@ class Job(db.Model):
     def __init__(self, **kwargs):
         self.uid = unicode(uuid.uuid4())
         self.jobtype = kwargs.get('jobtype', 'antismash')
-        self.jobtype = kwargs.get('email', '')
+        self.email = kwargs.get('email', '')
         self.filename = kwargs.get('filename', '')
         self.added = kwargs.get('added', datetime.utcnow())
         self.last_changed = self.added
