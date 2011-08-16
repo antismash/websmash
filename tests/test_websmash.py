@@ -137,7 +137,7 @@ class WebsmashTestCase(TestCase):
     def test_geneclustertypes_none(self):
         """Check if specifying no gene clusters will give an error"""
         rv = self.client.post('/', data={}, follow_redirects=True)
-        expected = "No gene clusters types specified. Please select the type "
+        expected = "No gene cluster types specified. Please select the type "
         expected += "of secondary metabolites to look for."
         assert expected in rv.data
 
