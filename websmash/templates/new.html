@@ -82,6 +82,19 @@
         }
     }
 
+    function clear_upload() {
+        $('#seq').val('');
+    }
+
+    function clear_ncbi() {
+        $('#ncbi').val('');
+    }
+
+    function seq_callback() {
+        clear_ncbi();
+        show_glimmer_if_needed();
+    }
+
     $(document).ready(function () {
         // Need at least MSIE 9.0 to correctly work with the pipeline, or
         // some other sane browser.
@@ -95,6 +108,7 @@
         // Set up button actions
         $('#sample_input').click(function(){
             $('#ncbi').val('Y16952');
+            clear_upload();
         });
         $('#sample_output').click(function(){
             window.open('/results/sco_example/display.xhtml', '_self');
@@ -109,8 +123,11 @@
         $('#main_form').submit(verify_form);
 
         // Show glimmer options if user is trying to upload a fasta file
-        $('#seq').change(show_glimmer_if_needed);
+        $('#seq').change(seq_callback);
         $('#eukaryotic').change(show_glimmer_if_needed);
+
+        // Make sure that only NCBI accession# or uploadable file is present.
+        $('#ncbi').change(clear_upload);
     });
 </script>
 {% include 'server_status_js.html' %}
