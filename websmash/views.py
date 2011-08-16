@@ -41,6 +41,11 @@ def new():
                     if i == 1:
                         break
                 i += 1
+            if len(clusters) == 0:
+                error_message  = "No gene clusters types specified. "
+                error_message += "Please select the type of secondary "
+                error_message += "metabolites to look for."
+                raise Exception(error_message)
             kwargs['geneclustertypes'] = ",".join(clusters)
 
             # Use boolean values instead of "on/off" strings

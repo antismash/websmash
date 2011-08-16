@@ -101,7 +101,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_upload(self):
         """Test if submitting a job with an uploaded sequence works"""
-        data = dict(seq=self.tmp_file)
+        data = dict(seq=self.tmp_file, cluster_1=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
 
@@ -134,9 +134,16 @@ class WebsmashTestCase(TestCase):
         assert j is not None
         self.assertEquals(j.geneclustertypes, u'%d' % last)
 
+    def test_geneclustertypes_none(self):
+        """Check if specifying no gene clusters will give an error"""
+        rv = self.client.post('/', data={}, follow_redirects=True)
+        expected = "No gene clusters types specified. Please select the type "
+        expected += "of secondary metabolites to look for."
+        assert expected in rv.data
+
     def test_submit_job_download_url_raises(self):
         """Test if a job with accession# errors out when download fails"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -144,7 +151,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download_url_correct(self):
         """Test if a job with accession# uses right download URL"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -159,7 +166,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download_url_correct_email(self):
         """Test if a job with accession# adds user email to download URL"""
-        data = dict(ncbi='TESTING', email="ex@mp.le")
+        data = dict(ncbi='TESTING', email="ex@mp.le", cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -174,7 +181,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download(self):
         """Test if submitting a job with a downloaded sequence works"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tmp_file = open(os.path.join(self.tmpdir, 'test.fa'), 'w')
         tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
         tmp_file.close()
