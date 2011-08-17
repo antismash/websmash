@@ -9,6 +9,7 @@ from os import path
 DEBUG = True
 SECRET_KEY = "development_key"
 RESULTS_PATH = path.join(path.dirname(path.dirname(__file__)), 'results')
+RESULTS_URL = '/upload'
 NCBI_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
 NCBI_URL += '?db=protein&email="%s"&tool="antiSMASH"&val="%s"&dopt=gbwithparts'
 
@@ -27,7 +28,7 @@ DEFAULT_DOWNLOAD_DIR = RESULTS_PATH
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app,
-                                    {'/results': RESULTS_PATH,
+                                    {RESULTS_URL: RESULTS_PATH,
                                      '/robots.txt': path.join(path.join(app.root_path, 'static'), 'robots.txt'),
                                      '/favicon.ico': path.join(path.join(app.root_path, 'static'), 'favicon.ico')})
 mail = Mail(app)

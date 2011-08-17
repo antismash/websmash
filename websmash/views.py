@@ -21,6 +21,7 @@ sec_met_types = ["all", "polyketides (type I)", "polyketides (type II)",
 @app.route('/', methods=['GET', 'POST'])
 def new():
     error = None
+    results_path = app.config['RESULTS_URL']
     try:
         if request.method == 'POST':
             kwargs = {}
@@ -86,7 +87,9 @@ def new():
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
-    return render_template('new.html', error=error, sec_met_types=sec_met_types)
+    return render_template('new.html', error=error,
+                           sec_met_types=sec_met_types,
+                           results_path=results_path)
 
 @app.route('/about')
 def about():
@@ -130,8 +133,9 @@ def contact():
 
 @app.route('/display/<task_id>')
 def display(task_id):
+    results_path = app.config['RESULTS_URL']
     res = Job.query.filter_by(uid=task_id).first_or_404()
-    return render_template('display.html', job=res)
+    return render_template('display.html', job=res, results_path=results_path)
 
 @app.route('/server_status')
 def server_status():

@@ -2,7 +2,7 @@
 
 {% block extra_headers %}
 {% if job.get_short_status() == "done" %}
-    <meta http-equiv="refresh" content="10; url=/results/{{ job.uid }}/display.xhtml">
+    <meta http-equiv="refresh" content="10; url={{ results_path }}/{{ job.uid }}/display.xhtml">
 {% elif job.get_short_status() == "failed" %}
     <!-- Job failed -->
 {% else %}
@@ -18,7 +18,7 @@
      <img src="{{ url_for('static', filename=job.get_short_status()+'.gif')}}"></span><br />
    Last status change at: {{ job.last_changed.strftime('%Y-%m-%d %H:%M:%S') }}<br />
 </p>
-{% if job.get_short_status() == "done" %}<p>See the <a href="/results/{{ job.uid }}/display.xhtml">results</a>{% endif -%}
+{% if job.get_short_status() == "done" %}<p>See the <a href="{{ results_path }}/{{ job.uid }}/display.xhtml">results</a>{% endif -%}
 <p><b>Important:</b> If you did not provide an email address, please bookmark this page so you can access your antiSMASH results later.
 <p>If you specified an email address on the job submission page, you will be notified by email once the job is complete.</p>
 <p>Running antiSMASH on a complete genome will take a couple of hours, and depending on the server load it will
