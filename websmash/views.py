@@ -131,6 +131,12 @@ def contact():
         error = unicode(e)
     return render_template('contact_form.html', error=error, email=email, message=message)
 
+@app.route('/status.php')
+def compat_status():
+    """Allow to resolve old-style job status URLs"""
+    task_id = request.args.get('user', '')
+    return display(task_id)
+
 @app.route('/display/<task_id>')
 def display(task_id):
     results_path = app.config['RESULTS_URL']

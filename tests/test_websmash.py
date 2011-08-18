@@ -201,3 +201,13 @@ class WebsmashTestCase(TestCase):
         self.db.session.commit()
         rv = self.client.get('/display/%s' % j.uid)
         assert "Status of job" in rv.data
+
+    def test_compat_status(self):
+        """Test if old-style status urls display the correct results"""
+        rv = self.client.get('/status.php?user=invalid')
+        self.assert404(rv)
+        j = Job()
+        self.db.session.add(j)
+        self.db.session.commit()
+        rv = self.client.get('/status.php?user=%s' % j.uid)
+        assert "Status of job" in rv.data
