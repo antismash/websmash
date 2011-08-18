@@ -54,7 +54,7 @@ def new():
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')
             kwargs['fullblast'] = (fullblast == u'on')
-            kwargs['fullhmmer'] = (fullhmmer == u'on')
+            kwargs['fullhmm'] = (fullhmmer == u'on')
 
             job = Job(**kwargs)
             dirname = path.join(app.config['RESULTS_PATH'], job.uid)

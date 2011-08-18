@@ -192,6 +192,15 @@ class WebsmashTestCase(TestCase):
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
 
+    def test_submit_job_fullhmm(self):
+        """Test if switching on the full genome hmmer works"""
+        data = dict(seq=self.tmp_file, cluster_1=u'on', fullhmmer=u'on')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        j = Job.query.filter(Job.status=='pending').first()
+        assert j is not None
+        assert j.fullhmm
+
     def test_display(self):
         """Test if displaying jobs works as expected"""
         rv = self.client.get('/display/invalid')
