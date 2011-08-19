@@ -240,3 +240,18 @@ class WebsmashTestCase(TestCase):
         """Test if old contact form link works"""
         rv = self.client.get('/contact.html')
         assert "you can contact us with this form" in rv.data
+
+    def test_compat_contactpage_sent_mail(self):
+        """Test if contact page reports that it sent a message"""
+        data = dict(email="ex@mp.le", body="Test body")
+        with websmash.mail.record_messages() as outbox:
+            rv = self.client.post('/contact.html', data=data, follow_redirects=True)
+            assert "Your message was successfully sent." in rv.data
+            assert data['body'] in rv.data
+            assert len(outbox) == 2
+            contact_msg = outbox[0]
+            confirm_msg = outbox[1]
+            assert contact_msg.subject == 'antiSMASH feedback'
+            assert data['body'] in contact_msg.body
+            assert confirm_msg.subject == 'antiSMASH feedback received'
+            assert data['body'] in confirm_msg.body

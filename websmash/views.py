@@ -107,7 +107,7 @@ def download():
     return render_template('download.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
-@app.route('/contact.html')
+@app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
     error = None
     email = ''
