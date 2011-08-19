@@ -92,18 +92,22 @@ def new():
                            results_path=results_path)
 
 @app.route('/about')
+@app.route('/about.html')
 def about():
     return render_template('about.html')
 
 @app.route('/help')
+@app.route('/help.html')
 def help():
     return render_template('help.html')
 
 @app.route('/download')
+@app.route('/download.html')
 def download():
     return render_template('download.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
+@app.route('/contact.html')
 def contact():
     error = None
     email = ''

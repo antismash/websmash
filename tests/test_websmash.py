@@ -220,3 +220,23 @@ class WebsmashTestCase(TestCase):
         self.db.session.commit()
         rv = self.client.get('/status.php?user=%s' % j.uid)
         assert "Status of job" in rv.data
+
+    def test_compat_downloadpage(self):
+        """Test if old download page link works"""
+        rv = self.client.get('/download.html')
+        assert "The current version of antiSMASH is 1.1" in rv.data
+
+    def test_compat_helppage(self):
+        """Test if old help page link works"""
+        rv = self.client.get('/help.html')
+        assert "antiSMASH Help" in rv.data
+
+    def test_compat_aboutpage(self):
+        """Test if old about page link works"""
+        rv = self.client.get('/about.html')
+        assert "About antiSMASH" in rv.data
+
+    def test_compat_contactpage(self):
+        """Test if old contact form link works"""
+        rv = self.client.get('/contact.html')
+        assert "you can contact us with this form" in rv.data
