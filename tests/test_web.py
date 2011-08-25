@@ -1,38 +1,13 @@
 # -*- coding: utf-8 -*-
-from flaskext.testing import TestCase
 from minimock import Mock, TraceTracker, assert_same_trace
 import websmash
-import tempfile
-import shutil
 import os
 from werkzeug import FileStorage
 from websmash.models import Job
 from websmash.views import sec_met_types
+from tests.test_shared import WebsmashTestCase
 
-class WebsmashTestCase(TestCase):
-    def create_app(self):
-        self.app = websmash.app
-        self.dl = websmash.dl
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-        websmash.mail.suppress = True
-        return self.app
-
-    def setUp(self):
-        self.db = websmash.db
-        self.db.create_all()
-        self.tmpdir = tempfile.mkdtemp()
-        (fd, self.tmp_name) = tempfile.mkstemp(dir=self.tmpdir, suffix='.fa')
-        self.tmp_file = os.fdopen(fd, 'w+b')
-        self.tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
-        self.app.config['RESULTS_PATH'] = self.tmpdir
-
-    def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
-        self.tmp_file.close()
-        shutil.rmtree(self.tmpdir)
-
+class WebTestCase(WebsmashTestCase):
     def test_startpage(self):
         """Test if startpage has a "Submit Query" button"""
         rv = self.client.get('/')

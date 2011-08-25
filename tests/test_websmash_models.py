@@ -1,24 +1,9 @@
 from flaskext.testing import TestCase
 import websmash
 from websmash.models import Job
+from tests.test_shared import ModelTestCase
 
-class JobTestCase(TestCase):
-
-    def create_app(self):
-        app = websmash.app
-        app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-        websmash.mail.suppress = True
-        return app
-
-    def setUp(self):
-        self.db = websmash.db
-        self.db.create_all()
-
-    def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
-
+class JobTestCase(ModelTestCase):
     def test_job_instantiate(self):
         """Test if job can be instantiated"""
         job = Job()
