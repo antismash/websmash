@@ -64,16 +64,6 @@ class WebTestCase(WebsmashTestCase):
             assert confirm_msg.subject == 'antiSMASH feedback received'
             assert data['body'] in confirm_msg.body
 
-    def test_server_status(self):
-        """Test if server status returns the correct values"""
-        rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='idle', queue_length=0))
-        j = Job()
-        self.db.session.add(j)
-        self.db.session.commit()
-        rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='working', queue_length=1))
-
     def test_submit_job_upload(self):
         """Test if submitting a job with an uploaded sequence works"""
         data = dict(seq=self.tmp_file, cluster_1=u'on')
