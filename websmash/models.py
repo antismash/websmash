@@ -59,7 +59,7 @@ class Notice(db.Model):
     show_until = db.Column(db.DateTime)
     category   = db.Column(db.String(100))
     teaser     = db.Column(db.String(500))
-    text       = db.Column(db.String)
+    text       = db.Column(db.String(2000))
 
     def __init__(self,
                  teaser,
