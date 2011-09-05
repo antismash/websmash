@@ -4,10 +4,11 @@ from flaskext.mail import Message
 import os
 from os import path
 from sqlalchemy import or_
+from datetime import datetime
 from werkzeug import secure_filename
 from websmash import app, db, mail, dl
 from websmash.utils import generate_confirmation_mail
-from websmash.models import Job
+from websmash.models import Job, Notice
 
 # Supported sec met cluster types. List of descriptions, the clusters
 # are specified by a number in antismash.py
@@ -158,3 +159,10 @@ def server_status():
         status = 'idle'
     return jsonify(status=status, queue_length=jobcount)
 
+@app.route('/current_notices')
+def current_notices():
+    "Display current notices"
+    now = datetime.utcnow()
+    notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
+    ret = [i.json for i in notices]
+    return jsonify(notices=ret)

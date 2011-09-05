@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block body %}
+<div id="display">
 <h2>Status of job {{ job.filename }} analysis</h2>
 <p>Submitted: {{ job.added.strftime('%Y-%m-%d %H:%M:%S') }}<br />
    Status: <span id="status">{{ job.get_status() }}
@@ -26,4 +27,5 @@
    Currently, the server is <span id="server_status">in an unknown status</span>
    with <span id="queue_length">-1</span> job(s) in the work queue.
 </p>
+</div>
 {% endblock %}

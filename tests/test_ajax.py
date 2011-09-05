@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from websmash.models import Job
+from websmash.models import Job, Notice
 from tests.test_shared import WebsmashTestCase
 
 class AjaxTestCase(WebsmashTestCase):
@@ -13,5 +13,12 @@ class AjaxTestCase(WebsmashTestCase):
         rv = self.client.get('/server_status')
         self.assertEquals(rv.json, dict(status='working', queue_length=1))
 
-
-
+    def test_current_notices(self):
+        "Test if current notices are displayed"
+        rv = self.client.get('/current_notices')
+        self.assertEquals(rv.json, dict(notices=[]))
+        n = Notice(u'Teaser', u'Text')
+        self.db.session.add(n)
+        self.db.session.commit()
+        rv = self.client.get('/current_notices')
+        self.assertEquals(rv.json, dict(notices=[n.json]))

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from websmash import db
 
 class Job(db.Model):
@@ -51,4 +51,45 @@ class Job(db.Model):
     def __repr__(self):
         return '<Job %r (%s)>' % (self.uid, self.status)
 
+class Notice(db.Model):
+    __tablename__ = 'notices'
+    id         = db.Column(db.String(36), primary_key=True)
+    added      = db.Column(db.DateTime)
+    show_from  = db.Column(db.DateTime)
+    show_until = db.Column(db.DateTime)
+    category   = db.Column(db.String(100))
+    teaser     = db.Column(db.String(500))
+    text       = db.Column(db.String)
 
+    def __init__(self,
+                 teaser,
+                 text,
+                 added=None,
+                 show_from=None,
+                 show_until=None,
+                 category=u'notice'
+                ):
+        self.id = unicode(uuid.uuid4())
+        self.added = added and added or datetime.utcnow()
+        self.show_from = show_from and show_from or datetime.utcnow()
+        self.show_until = show_until and show_until or \
+                            datetime.utcnow() + timedelta(weeks=1)
+        self.category = category
+        self.teaser = teaser
+        self.text = text
+
+    def __repr__(self):
+        return '<Notice (%s): %r>' % (self.category, self.teaser)
+
+    @property
+    def json(self):
+        # first get rid of all internal attributes
+        d = self.__dict__
+        ret = dict((key, d[key]) for key in d.keys() if not key.startswith('_'))
+
+        # replace datetime objects by a timestring
+        for key in ret.keys():
+            if hasattr(ret[key], 'strftime'):
+                ret[key] = ret[key].strftime('%Y-%m-%d %H:%M:%S')
+
+        return ret
