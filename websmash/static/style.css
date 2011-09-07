@@ -53,7 +53,7 @@ a:active { color: #810E15 }
     color: #fff;
     background-image:url('/static/bar.png');
     background-repeat: no-repeat;
-    font-size: 0.9em;
+    font-size: 1em;
     padding: 0.3em 0.3em 0.7em 2em;
 }
 
@@ -70,6 +70,30 @@ a:active { color: #810E15 }
     padding-bottom: 1em;
     font-weight: bold;
     font-size: 0.9em;
+}
+
+#service_notices {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+#notices_list {
+    list-style: none;
+    padding: 0px;
+}
+
+#notices_list li {
+    border: 1px solid;
+    margin-bottom: 0.5em;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.teaser {
+    background-color:#983b41;
+    color: white;
+    padding-left: 0.25em;
+    font-weight: bold;
 }
 
 #help {
@@ -177,3 +201,6 @@ a:active { color: #810E15 }
     font-size: 1.2em;
 }
 
+#display {
+    padding: 1em;
+}

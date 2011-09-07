@@ -1,38 +1,13 @@
 # -*- coding: utf-8 -*-
-from flaskext.testing import TestCase
 from minimock import Mock, TraceTracker, assert_same_trace
 import websmash
-import tempfile
-import shutil
 import os
 from werkzeug import FileStorage
 from websmash.models import Job
 from websmash.views import sec_met_types
+from tests.test_shared import WebsmashTestCase
 
-class WebsmashTestCase(TestCase):
-    def create_app(self):
-        self.app = websmash.app
-        self.dl = websmash.dl
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-        websmash.mail.suppress = True
-        return self.app
-
-    def setUp(self):
-        self.db = websmash.db
-        self.db.create_all()
-        self.tmpdir = tempfile.mkdtemp()
-        (fd, self.tmp_name) = tempfile.mkstemp(dir=self.tmpdir, suffix='.fa')
-        self.tmp_file = os.fdopen(fd, 'w+b')
-        self.tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
-        self.app.config['RESULTS_PATH'] = self.tmpdir
-
-    def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
-        self.tmp_file.close()
-        shutil.rmtree(self.tmpdir)
-
+class WebTestCase(WebsmashTestCase):
     def test_startpage(self):
         """Test if startpage has a "Submit Query" button"""
         rv = self.client.get('/')
@@ -89,19 +64,9 @@ class WebsmashTestCase(TestCase):
             assert confirm_msg.subject == 'antiSMASH feedback received'
             assert data['body'] in confirm_msg.body
 
-    def test_server_status(self):
-        """Test if server status returns the correct values"""
-        rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='idle', queue_length=0))
-        j = Job()
-        self.db.session.add(j)
-        self.db.session.commit()
-        rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='working', queue_length=1))
-
     def test_submit_job_upload(self):
         """Test if submitting a job with an uploaded sequence works"""
-        data = dict(seq=self.tmp_file)
+        data = dict(seq=self.tmp_file, cluster_1=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
 
@@ -134,9 +99,16 @@ class WebsmashTestCase(TestCase):
         assert j is not None
         self.assertEquals(j.geneclustertypes, u'%d' % last)
 
+    def test_geneclustertypes_none(self):
+        """Check if specifying no gene clusters will give an error"""
+        rv = self.client.post('/', data={}, follow_redirects=True)
+        expected = "No gene cluster types specified. Please select the type "
+        expected += "of secondary metabolites to look for."
+        assert expected in rv.data
+
     def test_submit_job_download_url_raises(self):
         """Test if a job with accession# errors out when download fails"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -144,7 +116,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download_url_correct(self):
         """Test if a job with accession# uses right download URL"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -159,7 +131,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download_url_correct_email(self):
         """Test if a job with accession# adds user email to download URL"""
-        data = dict(ncbi='TESTING', email="ex@mp.le")
+        data = dict(ncbi='TESTING', email="ex@mp.le", cluster_1=u'on')
         tt = TraceTracker()
         self.dl.download = Mock('dl.download', tracker=tt)
         rv = self.client.post('/', data=data)
@@ -174,7 +146,7 @@ class WebsmashTestCase(TestCase):
 
     def test_submit_job_download(self):
         """Test if submitting a job with a downloaded sequence works"""
-        data = dict(ncbi='TESTING')
+        data = dict(ncbi='TESTING', cluster_1=u'on')
         tmp_file = open(os.path.join(self.tmpdir, 'test.fa'), 'w')
         tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
         tmp_file.close()
@@ -185,6 +157,15 @@ class WebsmashTestCase(TestCase):
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
 
+    def test_submit_job_fullhmm(self):
+        """Test if switching on the full genome hmmer works"""
+        data = dict(seq=self.tmp_file, cluster_1=u'on', fullhmmer=u'on')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        j = Job.query.filter(Job.status=='pending').first()
+        assert j is not None
+        assert j.fullhmm
+
     def test_display(self):
         """Test if displaying jobs works as expected"""
         rv = self.client.get('/display/invalid')
@@ -194,3 +175,48 @@ class WebsmashTestCase(TestCase):
         self.db.session.commit()
         rv = self.client.get('/display/%s' % j.uid)
         assert "Status of job" in rv.data
+
+    def test_compat_status(self):
+        """Test if old-style status urls display the correct results"""
+        rv = self.client.get('/status.php?user=invalid')
+        self.assert404(rv)
+        j = Job()
+        self.db.session.add(j)
+        self.db.session.commit()
+        rv = self.client.get('/status.php?user=%s' % j.uid)
+        assert "Status of job" in rv.data
+
+    def test_compat_downloadpage(self):
+        """Test if old download page link works"""
+        rv = self.client.get('/download.html')
+        assert "The current version of antiSMASH is 1.1" in rv.data
+
+    def test_compat_helppage(self):
+        """Test if old help page link works"""
+        rv = self.client.get('/help.html')
+        assert "antiSMASH Help" in rv.data
+
+    def test_compat_aboutpage(self):
+        """Test if old about page link works"""
+        rv = self.client.get('/about.html')
+        assert "About antiSMASH" in rv.data
+
+    def test_compat_contactpage(self):
+        """Test if old contact form link works"""
+        rv = self.client.get('/contact.html')
+        assert "you can contact us with this form" in rv.data
+
+    def test_compat_contactpage_sent_mail(self):
+        """Test if contact page reports that it sent a message"""
+        data = dict(email="ex@mp.le", body="Test body")
+        with websmash.mail.record_messages() as outbox:
+            rv = self.client.post('/contact.html', data=data, follow_redirects=True)
+            assert "Your message was successfully sent." in rv.data
+            assert data['body'] in rv.data
+            assert len(outbox) == 2
+            contact_msg = outbox[0]
+            confirm_msg = outbox[1]
+            assert contact_msg.subject == 'antiSMASH feedback'
+            assert data['body'] in contact_msg.body
+            assert confirm_msg.subject == 'antiSMASH feedback received'
+            assert data['body'] in confirm_msg.body

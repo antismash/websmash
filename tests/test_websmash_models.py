@@ -1,24 +1,9 @@
 from flaskext.testing import TestCase
 import websmash
-from websmash.models import Job
+from websmash.models import Job, Notice
+from tests.test_shared import ModelTestCase
 
-class JobTestCase(TestCase):
-
-    def create_app(self):
-        app = websmash.app
-        app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-        websmash.mail.suppress = True
-        return app
-
-    def setUp(self):
-        self.db = websmash.db
-        self.db.create_all()
-
-    def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
-
+class JobTestCase(ModelTestCase):
     def test_job_instantiate(self):
         """Test if job can be instantiated"""
         job = Job()
@@ -58,3 +43,27 @@ class JobTestCase(TestCase):
         """Test that Job.jobtype is 'antismash' if not specified"""
         job = Job()
         assert job.jobtype == "antismash"
+
+class NoticeTestCase(ModelTestCase):
+    def test_notice_instantiate(self):
+        "Test if Notice can be instantiated"
+        notice = Notice(u'test teaser', u'test text')
+        assert notice
+
+    def test_notice_repr(self):
+        "Test if Notice repr matches the data"
+        notice = Notice(u'test teaser', u'test text')
+        assert notice.teaser in str(notice)
+        assert notice.category in str(notice)
+
+    def test_json(self):
+        "Test if Notice json property matches the data"
+        notice = Notice(u'test teaser', u'test text')
+        d = notice.json
+        fmt = "%Y-%m-%d %H:%M:%S"
+        self.assertEquals(d['category'], notice.category)
+        self.assertEquals(d['teaser'], notice.teaser)
+        self.assertEquals(d['text'], notice.text)
+        self.assertEquals(d['added'], notice.added.strftime(fmt))
+        self.assertEquals(d['show_from'], notice.show_from.strftime(fmt))
+        self.assertEquals(d['show_until'], notice.show_until.strftime(fmt))

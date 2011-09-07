@@ -4,10 +4,11 @@ from flaskext.mail import Message
 import os
 from os import path
 from sqlalchemy import or_
+from datetime import datetime
 from werkzeug import secure_filename
 from websmash import app, db, mail, dl
 from websmash.utils import generate_confirmation_mail
-from websmash.models import Job
+from websmash.models import Job, Notice
 
 # Supported sec met cluster types. List of descriptions, the clusters
 # are specified by a number in antismash.py
@@ -15,12 +16,13 @@ sec_met_types = ["all", "polyketides (type I)", "polyketides (type II)",
                  "polyketides (type III)", "nonribosomal peptides", "terpenes",
                  "lantibiotics", "bacteriocins", "beta-lactams",
                  "aminoglycosides / aminocyclitols", "aminocoumarins",
-                 "siderophores", "ecotines", "butyrolactones", "indoles",
+                 "siderophores", "ectoines", "butyrolactones", "indoles",
                  "nucleosides", "phosphoglycolipids", "melanins", "others"]
 
 @app.route('/', methods=['GET', 'POST'])
 def new():
     error = None
+    results_path = app.config['RESULTS_URL']
     try:
         if request.method == 'POST':
             kwargs = {}
@@ -41,6 +43,11 @@ def new():
                     if i == 1:
                         break
                 i += 1
+            if len(clusters) == 0:
+                error_message  = "No gene cluster types specified. "
+                error_message += "Please select the type of secondary "
+                error_message += "metabolites to look for."
+                raise Exception(error_message)
             kwargs['geneclustertypes'] = ",".join(clusters)
 
             # Use boolean values instead of "on/off" strings
@@ -48,7 +55,7 @@ def new():
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')
             kwargs['fullblast'] = (fullblast == u'on')
-            kwargs['fullhmmer'] = (fullhmmer == u'on')
+            kwargs['fullhmm'] = (fullhmmer == u'on')
 
             job = Job(**kwargs)
             dirname = path.join(app.config['RESULTS_PATH'], job.uid)
@@ -81,21 +88,27 @@ def new():
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
-    return render_template('new.html', error=error, sec_met_types=sec_met_types)
+    return render_template('new.html', error=error,
+                           sec_met_types=sec_met_types,
+                           results_path=results_path)
 
 @app.route('/about')
+@app.route('/about.html')
 def about():
     return render_template('about.html')
 
 @app.route('/help')
+@app.route('/help.html')
 def help():
     return render_template('help.html')
 
 @app.route('/download')
+@app.route('/download.html')
 def download():
     return render_template('download.html')
 
 @app.route('/contact', methods=['GET', 'POST'])
+@app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
     error = None
     email = ''
@@ -123,10 +136,17 @@ def contact():
         error = unicode(e)
     return render_template('contact_form.html', error=error, email=email, message=message)
 
+@app.route('/status.php')
+def compat_status():
+    """Allow to resolve old-style job status URLs"""
+    task_id = request.args.get('user', '')
+    return display(task_id)
+
 @app.route('/display/<task_id>')
 def display(task_id):
+    results_path = app.config['RESULTS_URL']
     res = Job.query.filter_by(uid=task_id).first_or_404()
-    return render_template('display.html', job=res)
+    return render_template('display.html', job=res, results_path=results_path)
 
 @app.route('/server_status')
 def server_status():
@@ -139,3 +159,10 @@ def server_status():
         status = 'idle'
     return jsonify(status=status, queue_length=jobcount)
 
+@app.route('/current_notices')
+def current_notices():
+    "Display current notices"
+    now = datetime.utcnow()
+    notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
+    ret = [i.json for i in notices]
+    return jsonify(notices=ret)
