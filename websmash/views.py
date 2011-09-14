@@ -28,6 +28,8 @@ def new():
             kwargs = {}
             kwargs['ncbi'] = request.form.get('ncbi', '').strip()
             kwargs['email'] = request.form.get('email', '').strip()
+            kwargs['from'] = request.form.get('from', '').strip()
+            kwargs['to'] = request.form.get('to', '').strip()
             eukaryotic = request.form.get('eukaryotic', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')

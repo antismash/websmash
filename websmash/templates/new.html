@@ -53,9 +53,28 @@
         return res;
     }
 
+	function isDigit(aChar) {
+	   myCharCode = aChar.charCodeAt(0);
+	   if((myCharCode > 47) && (myCharCode <  58)) {
+		  return true;
+	   }
+	   return false;
+	}
+
+	function digitvalidate(str) {
+		for (n = 0; n < str.length; n++)
+			if ( ! isDigit(str.charAt(n))) {
+				return false;
+			}
+		return true;
+	}
+
+
     function verify_form() {
         var file = $('#seq').val();
         var ncbi = $('#ncbi').val();
+        var from = $('#from').val();
+        var to = $('#to').val();
 
         if( (file == '' || file == null) && (ncbi == '' || ncbi == null)){
             alert('No input file provided. Please enter NCBI number or upload your own file');
@@ -66,6 +85,18 @@
             alert('Please provide EMBL/GenBank or nucleotide FASTA file');
             return false;
         }
+
+		if(! digitvalidate(from)){
+			alert("Please insert an integer number into the 'from' field.");
+		}
+
+		if(! digitvalidate(to)){
+			alert("Please insert an integer number into the 'to' field.");
+		}
+
+		if(parseInt(from) > parseInt(to)){
+			alert("Value in 'to' field should be higher than value in 'from' field.");
+		}
 
         return true;
     }
@@ -149,9 +180,15 @@
         </div>
         <div>
             <input type="text" name="ncbi" id="ncbi" />
-            <label for="ncbi">Or input an NCBI accession number of the desired file</label>
+            <label for="ncbi">Or input NCBI accession number of the desired file</label>
         </div>
-
+        <div>
+            <label for="from">Analyse region from</label>
+            <input type="text" name="from" id="from" />
+            <label for="to">to</label>
+            <input type="text" name="to" id="to" />
+            <label for="nt">nt</label>
+        </div>
         <hr />
 
         <div>
