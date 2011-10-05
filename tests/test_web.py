@@ -16,7 +16,7 @@ class WebTestCase(WebsmashTestCase):
     def test_downloadpage(self):
         """Test if download page works"""
         rv = self.client.get('/download')
-        assert "The current version of antiSMASH is 1.1" in rv.data
+        assert "The current version of antiSMASH is 1.2" in rv.data
 
     def test_helppage(self):
         """Test if help page works"""
@@ -189,7 +189,7 @@ class WebTestCase(WebsmashTestCase):
     def test_compat_downloadpage(self):
         """Test if old download page link works"""
         rv = self.client.get('/download.html')
-        assert "The current version of antiSMASH is 1.1" in rv.data
+        assert "The current version of antiSMASH is 1.2" in rv.data
 
     def test_compat_helppage(self):
         """Test if old help page link works"""
