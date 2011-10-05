@@ -106,6 +106,15 @@ class WebTestCase(WebsmashTestCase):
         expected += "of secondary metabolites to look for."
         assert expected in rv.data
 
+    def test_taxon_default(self):
+        """Test if taxon default is "prokaryote" for DNA uploads"""
+        data = dict(seq=self.tmp_file, cluster_1=u'on')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        j = Job.query.filter(Job.status=='pending').first()
+        assert j is not None
+        self.assertEquals(j.taxon, 'p')
+
     def test_submit_job_download_url_raises(self):
         """Test if a job with accession# errors out when download fails"""
         data = dict(ncbi='TESTING', cluster_1=u'on')
