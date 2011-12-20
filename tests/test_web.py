@@ -16,7 +16,7 @@ class WebTestCase(WebsmashTestCase):
     def test_downloadpage(self):
         """Test if download page works"""
         rv = self.client.get('/download')
-        assert "The current version of antiSMASH is 1.1" in rv.data
+        assert "The current version of antiSMASH is 1.2" in rv.data
 
     def test_helppage(self):
         """Test if help page works"""
@@ -106,6 +106,15 @@ class WebTestCase(WebsmashTestCase):
         expected += "of secondary metabolites to look for."
         assert expected in rv.data
 
+    def test_taxon_default(self):
+        """Test if taxon default is "prokaryote" for DNA uploads"""
+        data = dict(seq=self.tmp_file, cluster_1=u'on')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        j = Job.query.filter(Job.status=='pending').first()
+        assert j is not None
+        self.assertEquals(j.taxon, 'p')
+
     def test_submit_job_download_url_raises(self):
         """Test if a job with accession# errors out when download fails"""
         data = dict(ncbi='TESTING', cluster_1=u'on')
@@ -189,7 +198,7 @@ class WebTestCase(WebsmashTestCase):
     def test_compat_downloadpage(self):
         """Test if old download page link works"""
         rv = self.client.get('/download.html')
-        assert "The current version of antiSMASH is 1.1" in rv.data
+        assert "The current version of antiSMASH is 1.2" in rv.data
 
     def test_compat_helppage(self):
         """Test if old help page link works"""
