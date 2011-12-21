@@ -175,6 +175,18 @@ class WebTestCase(WebsmashTestCase):
         assert j is not None
         assert j.fullhmm
 
+    def test_submit_job_from_to(self):
+        """Test if submitting a job with an uploaded sequence works"""
+        data = dict(seq=self.tmp_file, cluster_1=u'on')
+        # Can't pass a python keyword in dict()
+        data['from'] = '23'
+        data['to'] = '42'
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        j = Job.query.filter(Job.status=='pending').first()
+        self.assertEqual(j.from_pos, 23)
+        self.assertEqual(j.to_pos, 42)
+
     def test_display(self):
         """Test if displaying jobs works as expected"""
         rv = self.client.get('/display/invalid')
