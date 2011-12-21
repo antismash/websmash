@@ -37,6 +37,8 @@ def new():
             fullhmmer = request.form.get('fullhmmer', u'off')
             kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
             kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
+            kwargs['from'] = request.form.get('from', 0, type=int)
+            kwargs['to'] = request.form.get('to', 0, type=int)
             i = 1
             clusters = []
             while(i < len(sec_met_types) + 1):
