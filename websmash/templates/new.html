@@ -53,23 +53,6 @@
         return res;
     }
 
-	function isDigit(aChar) {
-	   myCharCode = aChar.charCodeAt(0);
-	   if((myCharCode > 47) && (myCharCode <  58)) {
-		  return true;
-	   }
-	   return false;
-	}
-
-	function digitvalidate(str) {
-		for (n = 0; n < str.length; n++)
-			if ( ! isDigit(str.charAt(n))) {
-				return false;
-			}
-		return true;
-	}
-
-
     function verify_form() {
         var file = $('#seq').val();
         var ncbi = $('#ncbi').val();
@@ -86,11 +69,11 @@
             return false;
         }
 
-		if(! digitvalidate(from)){
+		if(! $.isNumeric(from)){
 			alert("Please insert an integer number into the 'from' field.");
 		}
 
-		if(! digitvalidate(to)){
+		if(! $.isNumeric(to)){
 			alert("Please insert an integer number into the 'to' field.");
 		}
 
