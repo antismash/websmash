@@ -69,12 +69,14 @@
             return false;
         }
 
-		if(! $.isNumeric(from)){
+		if((! $.isNumeric(from)) && (! from == '' && to == '')){
 			alert("Please insert an integer number into the 'from' field.");
+			return false;
 		}
 
-		if(! $.isNumeric(to)){
+		if((! $.isNumeric(to)) && (! to == '' && to == '')){
 			alert("Please insert an integer number into the 'to' field.");
+			return false;
 		}
 
 		if(parseInt(from) > parseInt(to)){
