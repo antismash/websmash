@@ -53,6 +53,32 @@
         return res;
     }
 
+	function getFileSize() {
+		var input, file;
+
+		if (typeof window.FileReader !== 'function') {
+			return 0;
+		}
+
+		input = document.getElementById('file');
+		if (!input) {
+			return 0;
+		}
+		else if (!input.files) {
+			return 0;
+		}
+		else {
+			file = input.files[0];
+			return file.size;
+		}
+	}
+
+	function BoolFullBlast(){
+		var fullblast;
+		fullblast = document.getElementByID('fullblast');
+		return fullblast;
+	}
+
     function verify_form() {
         var file = $('#seq').val();
         var ncbi = $('#ncbi').val();
@@ -81,6 +107,12 @@
 
 		if(parseInt(from) > parseInt(to)){
 			alert("Value in 'to' field should be higher than value in 'from' field.");
+			return false;
+		}
+
+		if(getFileSize() > 10000000 && BoolFullBlast()){
+			alert("The server cannot run whole-genome Blast on a file if this size. Please use the stand-alone version or contact the antiSMASH team using the Contact form");
+			return false;
 		}
 
         return true;
