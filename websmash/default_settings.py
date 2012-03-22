@@ -5,7 +5,8 @@ SECRET_KEY = "development_key"
 RESULTS_PATH = path.join(path.dirname(path.dirname(__file__)), 'results')
 RESULTS_URL = '/upload'
 NCBI_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-NCBI_URL += '?db=protein&email="%s"&tool="antiSMASH"&val="%s"&dopt=gbwithparts'
+NCBI_URL += '?db=protein&email="%s"&tool="antiSMASH"&id=%s&rettype=gbwithparts'
+NCBI_URL += '&retmode=text'
 
 # Flask-Mail settings
 MAIL_SERVER = "smtpserv.uni-tuebingen.de"
