@@ -132,9 +132,9 @@ class WebTestCase(WebsmashTestCase):
 
         expected =  'Called dl.download(\n    \''
         expected += 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-        expected += '?db=protein&email="%s"&tool="antiSMASH"&' % \
+        expected += '?db=nucleotide&email="%s"&tool="antiSMASH"&' % \
                     self.app.config['DEFAULT_MAIL_SENDER']
-        expected += 'val="TESTING"&dopt=gbwithparts\')\n'
+        expected += 'id=TESTING&rettype=gbwithparts&retmode=text\')\n'
 
         assert_same_trace(tt, expected)
 
@@ -147,8 +147,8 @@ class WebTestCase(WebsmashTestCase):
 
         expected =  'Called dl.download(\n    \''
         expected += 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-        expected += '?db=protein&email="ex@mp.le"&tool="antiSMASH"&'
-        expected += 'val="TESTING"&dopt=gbwithparts\')\n'
+        expected += '?db=nucleotide&email="ex@mp.le"&tool="antiSMASH"&'
+        expected += 'id=TESTING&rettype=gbwithparts&retmode=text\')\n'
 
         assert_same_trace(tt, expected)
 
