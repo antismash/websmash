@@ -15,11 +15,11 @@
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a href="{{ url_for('new') }}"><img src="{{ url_for('static', filename='antismash2.png') }}" alt="antibiotics &amp; Secondary Metabolite Analysis Shell"></a>
         <span id="menu">
-            <a href="{{ url_for('new') }}">HOME</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{{ url_for('download') }}">DOWNLOAD</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{{ url_for('help') }}">HELP</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{{ url_for('about') }}">ABOUT</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-            <a href="{{ url_for('contact') }}">CONTACT</a>
+            <a href="{{ url_for('new') }}"><img src="{{ url_for('static', filename='home.png') }}" alt="home" title="Go to start page"></a>
+            <a href="{{ url_for('download') }}"><img src="{{ url_for('static', filename='download.png') }}" alt="download" title="Download antiSMASH"></a>
+            <a href="{{ url_for('help') }}"><img src="{{ url_for('static', filename='help-red.png') }}" alt="help" title="Get help using antiSMASH"></a>
+            <a href="{{ url_for('about') }}"><img src="{{ url_for('static', filename='about.png') }}" alt="about" title="About antiSMASH"></a>
+            <a href="{{ url_for('contact') }}"><img src="{{ url_for('static', filename='mail.png') }}" alt="contact" title="Contact the antiSMASH team"></a>
         </span>
     </div>
     <div class="content">{% block body %}{% endblock %}</div>
