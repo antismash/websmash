@@ -1,14 +1,16 @@
 from flask import redirect, url_for, request, session, g, abort, \
-                  render_template, flash, jsonify
+                  render_template, flash, jsonify, json, Response
 from flaskext.mail import Message
 import os
+import time
 from os import path
-from sqlalchemy import or_
+from sqlalchemy import or_, desc, func
+from sqlalchemy.sql.expression import extract
 from datetime import datetime
 from werkzeug import secure_filename
 from websmash import app, db, mail, dl
 from websmash.utils import generate_confirmation_mail
-from websmash.models import Job, Notice
+from websmash.models import Job, Notice, Stat
 
 # Supported sec met cluster types. List of descriptions, the clusters
 # are specified by a number in antismash.py
@@ -170,3 +172,34 @@ def current_notices():
     notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
     ret = [i.json for i in notices]
     return jsonify(notices=ret)
+
+@app.route('/usage')
+def usage():
+    return render_template('usage.html')
+
+@app.route('/weekly_data')
+def weekly_data():
+    stats = db.session.query(Stat.added, func.count(Stat.added)).group_by(extract('year', Stat.added),
+                                extract('month', Stat.added),
+                                extract('day', Stat.added)).order_by(desc(Stat.added)).limit(7).all()
+
+    data = map(lambda x: {'x': time.mktime(x[0].date().timetuple()), 'y': x[1] }, stats)
+
+    data.reverse()
+
+    series = [{"name":"Weekly Usage","data": data }]
+    return Response(json.dumps(series), mimetype='application/json')
+
+
+@app.route('/monthly_data')
+def monthly_data():
+    stats = db.session.query(Stat.added, func.count(Stat.added)).group_by(extract('year', Stat.added),
+                                extract('month', Stat.added),
+                                extract('day', Stat.added)).order_by(desc(Stat.added)).limit(30).all()
+
+    data = map(lambda x: {'x': int(time.mktime(x[0].timetuple())), 'y': x[1] }, stats)
+
+    data.reverse()
+
+    series = [{"name":"Monthly Usage","data": data}]
+    return Response(json.dumps(series), mimetype='application/json')

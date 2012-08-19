@@ -204,3 +204,26 @@ a:active { color: #810E15 }
 #display {
     padding: 1em;
 }
+
+#week_chart_container, #month_chart_container {
+        position: relative;
+        font-family: Arial, Helvetica, sans-serif;
+}
+#chart_week, #chart_month {
+        position: relative;
+        left: 40px;
+}
+#y_axis_week, #y_axis_month {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+}
+#header_week, #header_month {
+        position: relative;
+        padding: 2em 0;
+}
+
+.title {
+    color: #111;
+}

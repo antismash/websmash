@@ -97,3 +97,23 @@ class Notice(db.Model):
                 ret[key] = ret[key].strftime('%Y-%m-%d %H:%M:%S')
 
         return ret
+
+class Stat(db.Model):
+    __tablename__ = 'stats'
+    uid      = db.Column('uid', db.String(128), primary_key=True)
+    jobtype  = db.Column('jobtype', db.String(20))
+    added    = db.Column('added', db.DateTime)
+    finished = db.Column('finished', db.DateTime)
+
+    def __init__(self,
+                 uid,
+                 jobtype="antismash",
+                 added=None,
+                 finished=None,
+                ):
+        self.uid = uid
+        self.added = added if added else datetime.utcnow()
+        self.finished = finished if finished else datetime.utcnow()
+
+    def __repr__(self):
+        return '<Stat (%s): %s - %s>' % (self.uid, self.added, self.finished)
