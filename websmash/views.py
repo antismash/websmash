@@ -183,7 +183,7 @@ def weekly_data():
                                 extract('month', Stat.added),
                                 extract('day', Stat.added)).order_by(desc(Stat.added)).limit(7).all()
 
-    data = map(lambda x: {'x': time.mktime(x[0].date().timetuple()), 'y': x[1] }, stats)
+    data = map(lambda x: {'x': int(time.mktime(x[0].date().timetuple())), 'y': x[1] }, stats)
 
     data.reverse()
 
@@ -197,7 +197,7 @@ def monthly_data():
                                 extract('month', Stat.added),
                                 extract('day', Stat.added)).order_by(desc(Stat.added)).limit(30).all()
 
-    data = map(lambda x: {'x': int(time.mktime(x[0].timetuple())), 'y': x[1] }, stats)
+    data = map(lambda x: {'x': int(time.mktime(x[0].date().timetuple())), 'y': x[1] }, stats)
 
     data.reverse()
 
