@@ -1,7 +1,7 @@
 from flask import Flask
-from flaskext.mail import Mail
-from flaskext.sqlalchemy import SQLAlchemy
-from flaskext.downloader import Downloader
+from flask.ext.mail import Mail
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.downloader import Downloader
 from werkzeug import SharedDataMiddleware
 from os import path
 

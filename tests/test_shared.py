@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flaskext.testing import TestCase
+from flask.ext.testing import TestCase
 import os
 import tempfile
 import shutil

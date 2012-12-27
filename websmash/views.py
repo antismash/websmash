@@ -1,6 +1,6 @@
 from flask import redirect, url_for, request, session, g, abort, \
                   render_template, flash, jsonify, json, Response
-from flaskext.mail import Message
+from flask.ext.mail import Message
 import os
 import time
 from os import path

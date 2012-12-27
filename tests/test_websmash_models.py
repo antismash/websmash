@@ -1,4 +1,4 @@
-from flaskext.testing import TestCase
+from flask.ext.testing import TestCase
 import websmash
 from websmash.models import Job, Notice
 from tests.test_shared import ModelTestCase
