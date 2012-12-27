@@ -32,8 +32,11 @@ class WebsmashTestCase(ModelTestCase):
         super(WebsmashTestCase, self).setUp()
         self.tmpdir = tempfile.mkdtemp()
         (fd, self.tmp_name) = tempfile.mkstemp(dir=self.tmpdir, suffix='.fa')
-        self.tmp_file = os.fdopen(fd, 'w+b')
-        self.tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
+        tmp_file = os.fdopen(fd, 'w+b')
+        tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
+        tmp_file.close()
+        self.tmp_file = open(self.tmp_name, 'r')
+
         self.app.config['RESULTS_PATH'] = self.tmpdir
 
     def tearDown(self):
