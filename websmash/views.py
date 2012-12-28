@@ -56,6 +56,7 @@ def new():
             eukaryotic = request.form.get('eukaryotic', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')
+            subclusterblast = request.form.get('subclusterblast', u'off')
             fullblast = request.form.get('fullblast', u'off')
             fullhmmer = request.form.get('fullhmmer', u'off')
             kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
@@ -81,6 +82,7 @@ def new():
             kwargs['eukaryotic'] = (eukaryotic == u'on')
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')
+            kwargs['subclusterblast'] = (subclusterblast == u'on')
             kwargs['fullblast'] = (fullblast == u'on')
             kwargs['fullhmm'] = (fullhmmer == u'on')
 
