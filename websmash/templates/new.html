@@ -5,6 +5,9 @@
     function toggle_clusters() {
         var id = 2;
         var value_to_set = $('#cluster_1').attr('checked');
+        if (value_to_set === undefined) {
+            value_to_set = false;
+        }
         while($('#cluster_' + id).length) {
             $('#cluster_' + id).attr('checked', value_to_set);
             id++;
