@@ -53,6 +53,7 @@ def new():
             kwargs['email'] = request.form.get('email', '').strip()
             kwargs['from'] = request.form.get('from', '').strip()
             kwargs['to'] = request.form.get('to', '').strip()
+            legacy = request.form.get('legacy', u'off')
             eukaryotic = request.form.get('eukaryotic', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')
@@ -79,6 +80,7 @@ def new():
             kwargs['geneclustertypes'] = ",".join(clusters)
 
             # Use boolean values instead of "on/off" strings
+            kwargs['jobtype'] = (legacy != u'on') and 'antismash2' or 'antismash'
             kwargs['eukaryotic'] = (eukaryotic == u'on')
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')

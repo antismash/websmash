@@ -35,6 +35,28 @@
         }
     }
 
+    function toggle_legacy() {
+        var hide_clusters = $('#legacy').attr('checked');
+        if (hide_clusters == "checked") {
+            $('#cluster_1').attr("checked", true);
+            var id = 2;
+            while($('#cluster_' + id).length) {
+                $('#cluster_' + id).attr("disabled", true);
+                id++;
+            }
+            $('#subclusterblast').attr("checked", false);
+            $('#subclusterblast').attr("disabled", true);
+        } else {
+            var id = 2;
+            while($('#cluster_' + id).length) {
+                $('#cluster_' + id).attr("disabled", false);
+                id++;
+            }
+            $('#subclusterblast').attr("checked", true);
+            $('#subclusterblast').attr("disabled", false);
+        }
+    }
+
     function get_ext(file) {
         return file.split('.').pop();
     }
@@ -183,6 +205,11 @@
         $('#region').change(toggle_region);
         toggle_region();
 
+        // disable new options for legacy antismash1 jobs
+
+        $('#legacy').change(toggle_legacy);
+        toggle_legacy();
+
         // Set up the input sanity checks
         $('#main_form').submit(verify_form);
 
@@ -204,6 +231,10 @@
     <div><input type="button" id="sample_input" value="Load sample input" /></div>
     <div><input type="button" id="sample_output" value="Open example output" /></div>
     <form name="seq_upload" id="main_form" action="" method="post" enctype="multipart/form-data">
+        <hr />
+        <div><input type="checkbox" name="legacy" id="legacy" />
+          <label for="legacy">Run legacy antiSMASH 1 instead of up-to-date version</label></div>
+        <hr />
         <div>
             <input type="text" name="email" id="email" />
             <label for="email">Email address (optional)</label>
