@@ -26,6 +26,15 @@
         });
     }
 
+    function toggle_region() {
+        var show_region = $('#region').attr('checked');
+        if (show_region == "checked") {
+            $('#region-input').show("fast");
+        } else {
+            $('#region-input').hide("fast");
+        }
+    }
+
     function get_ext(file) {
         return file.split('.').pop();
     }
@@ -170,6 +179,10 @@
         $('#cluster_1').attr('checked', 'checked');
         toggle_clusters();
 
+        // Hide the input region limit
+        $('#region').change(toggle_region);
+        toggle_region();
+
         // Set up the input sanity checks
         $('#main_form').submit(verify_form);
 
@@ -203,11 +216,15 @@
             <label for="ncbi">Or input NCBI accession number of the desired file</label>
         </div>
         <div>
-            <label for="from">Analyse region from</label>
+          <input type="checkbox" name="region" id="region" />
+          <label for="region">Only run prediction on a region</label>
+          <div id="region-input">
+            <label for="from">from</label>
             <input type="text" name="from" id="from" />
             <label for="to">to</label>
             <input type="text" name="to" id="to" />
             <label for="nt">nt</label>
+          </div>
         </div>
         <hr />
 
