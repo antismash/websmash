@@ -14,12 +14,33 @@ from websmash.models import Job, Notice, Stat
 
 # Supported sec met cluster types. List of descriptions, the clusters
 # are specified by a number in antismash.py
-sec_met_types = ["all", "polyketides (type I)", "polyketides (type II)",
-                 "polyketides (type III)", "nonribosomal peptides", "terpenes",
-                 "lantibiotics", "bacteriocins", "beta-lactams",
-                 "aminoglycosides / aminocyclitols", "aminocoumarins",
-                 "siderophores", "ectoines", "butyrolactones", "indoles",
-                 "nucleosides", "phosphoglycolipids", "melanins", "others"]
+sec_met_types = [
+    "all",
+    "polyketides (type I)",
+    "polyketides (type II)",
+    "polyketides (type III)",
+    "polyketides (type IV)",
+    "nonribosomal peptides",
+    "terpenes",
+    "lantibiotics",
+    "bacteriocins",
+    "beta-lactams",
+    "aminoglycosides / aminocyclitols",
+    "aminocoumarins",
+    "siderophores",
+    "ectoines",
+    "butyrolactones",
+    "indoles",
+    "nucleosides",
+    "phosphoglycolipids",
+    "melanins",
+    "oligosaccharides",
+    "furans",
+    "homoserine lactones",
+    "thiopeptides",
+    "phenazines",
+    "others"
+]
 
 @app.route('/', methods=['GET', 'POST'])
 def new():
