@@ -55,6 +55,7 @@ def new():
             kwargs['to'] = request.form.get('to', '').strip()
             legacy = request.form.get('legacy', u'off')
             eukaryotic = request.form.get('eukaryotic', u'off')
+            inclusive = request.form.get('inclusive', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')
             subclusterblast = request.form.get('subclusterblast', u'off')
@@ -82,6 +83,7 @@ def new():
             # Use boolean values instead of "on/off" strings
             kwargs['jobtype'] = (legacy != u'on') and 'antismash2' or 'antismash'
             kwargs['eukaryotic'] = (eukaryotic == u'on')
+            kwargs['inclusive'] = (inclusive == u'on')
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')
             kwargs['subclusterblast'] = (subclusterblast == u'on')
