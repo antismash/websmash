@@ -46,6 +46,8 @@
             }
             $('#subclusterblast').attr("checked", false);
             $('#subclusterblast').attr("disabled", true);
+            $('#inclusive').attr("checked", false);
+            $('#inclusive').attr("disabled", true);
         } else {
             var id = 2;
             while($('#cluster_' + id).length) {
@@ -54,6 +56,7 @@
             }
             $('#subclusterblast').attr("checked", true);
             $('#subclusterblast').attr("disabled", false);
+            $('#inclusive').attr("disabled", false);
         }
     }
 
