@@ -19,7 +19,10 @@
 <div id="display">
 <h2>Status of job {{ job.filename }} analysis</h2>
 <p>Submitted: {{ job.added.strftime('%Y-%m-%d %H:%M:%S') }}<br />
-   Status: <span id="status">{{ job.get_status() }}
+Status: <span id="status">
+  {% autoescape false %}
+    {{ job.get_status()|e|replace('\n', '<br>') }}
+  {% endautoescape %}
      <img src="{{ url_for('static', filename=job.get_short_status()+'.gif')}}"></span><br />
    Last status change at: {{ job.last_changed.strftime('%Y-%m-%d %H:%M:%S') }}<br />
 </p>
