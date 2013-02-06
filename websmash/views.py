@@ -163,7 +163,7 @@ def protein():
             with open(filename, 'w') as handle:
                 handle.write(sequence)
 
-            job.filename = filename
+            job.filename = 'protein_input.fa'
             db.session.add(job)
             db.session.commit()
             return redirect(url_for('.display', task_id=job.uid))
