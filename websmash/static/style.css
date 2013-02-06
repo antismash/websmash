@@ -57,6 +57,21 @@ a:active { color: #810E15 }
     padding: 0.3em 0.3em 0.7em 2em;
 }
 
+#other-link {
+    background-color: #f1f1f1;
+    float: right;
+    display: block;
+    overflow: hidden;
+    margin-right: 5%;
+    padding: 4px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#other-link:hover {
+    background-color: #fcfcfc;
+}
+
 #navmenu {
     float: left;
 }

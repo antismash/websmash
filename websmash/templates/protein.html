@@ -18,6 +18,10 @@
         $('#sample_output').click(function(){
             window.open('{{ results_path }}/prot_example/index.html', '_self');
         });
+
+       $('#other-link').click(function(){
+           window.open($(this).children().first().attr('href'), '_self');
+       });
 });
 
 </script>
@@ -25,6 +29,7 @@
 {% endblock %}
 {% block body %}
 <div id="service_notices" class="hidden">test</div>
+<div id="other-link"><a href="{{url_for('new')}}">Enter nucleotide sequence</a></div>
 <h1>Protein sequence input</h1>
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
     <div id="new">
