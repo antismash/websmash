@@ -125,6 +125,56 @@ def new():
                            sec_met_types=sec_met_types,
                            results_path=results_path)
 
+@app.route('/protein', methods=['GET', 'POST'])
+def protein():
+    error = None
+    results_path = app.config['RESULTS_URL']
+    old_sequence = ''
+    old_email = ''
+    try:
+        if request.method == 'POST':
+            kwargs = {}
+            kwargs['email'] = request.form.get('email', '').strip()
+            old_email = kwargs['email']
+            # We always run all sec met types for the protein search
+            kwargs['geneclustertypes'] = "1"
+            # And we always run antiSMASH2 jobs for this
+            kwargs['jobtype'] = 'antismash2'
+            # And of course this is protein input
+            kwargs['molecule'] = 'prot'
+
+            sequence = request.form.get('sequence', '').strip()
+            old_sequence = sequence
+
+            if len(sequence) == 0:
+                raise Exception("No sequence specified")
+
+            if sequence.count('>') < 1:
+                raise Exception("No FASTA headers found")
+
+            if sequence.count('\n') < 1:
+                raise Exception("No newline between FASTA header and sequence")
+
+            job = Job(**kwargs)
+            dirname = path.join(app.config['RESULTS_PATH'], job.uid)
+            os.mkdir(dirname)
+
+            filename = path.join(dirname, 'protein_input.fa')
+            with open(filename, 'w') as handle:
+                handle.write(sequence)
+
+            job.filename = filename
+            db.session.add(job)
+            db.session.commit()
+            return redirect(url_for('.display', task_id=job.uid))
+
+    except Exception, e:
+        error = unicode(e)
+    return render_template('protein.html', error=error,
+                           old_email=old_email,
+                           old_sequence = old_sequence,
+                           results_path=results_path)
+
 @app.route('/about')
 @app.route('/about.html')
 def about():
