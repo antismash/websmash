@@ -12,7 +12,7 @@ app.config.from_envvar('WEBSMASH_CONFIG', silent=True)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app,
                                     {app.config['RESULTS_URL']: app.config['RESULTS_PATH'],
                                      '/robots.txt': path.join(path.join(app.root_path, 'static'), 'robots.txt'),
-                                     '/favicon.ico': path.join(path.join(app.root_path, 'static'), 'favicon.ico')})
+                                     '/favicon.ico': path.join(app.root_path, 'static', 'images', 'favicon.ico')})
 mail = Mail(app)
 db = SQLAlchemy(app)
 dl = Downloader(app)

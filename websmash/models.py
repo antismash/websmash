@@ -58,6 +58,17 @@ class Job(db.Model):
     def get_status(self):
         return self.status
 
+    def get_dict(self):
+        ret = {}
+        ret['uid'] = self.uid
+        ret['jobtype'] = self.jobtype
+        ret['filename'] = self.filename
+        ret['added'] = self.added.strftime('%Y-%m-%d %H:%M:%S')
+        ret['last_changed'] = self.last_changed.strftime('%Y-%m-%d %H:%M:%S')
+        ret['status'] = self.get_status()
+        ret['short_status'] = self.get_short_status()
+        return ret
+
     def __repr__(self):
         return '<Job %r (%s)>' % (self.uid, self.status)
 

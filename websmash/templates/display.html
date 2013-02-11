@@ -7,25 +7,22 @@
   {% else %}
     <meta http-equiv="refresh" content="10; url={{ results_path }}/{{ job.uid }}/index.html">
   {% endif -%}
-{% elif job.get_short_status() == "failed" %}
-    <!-- Job failed -->
-{% else %}
-    <meta http-equiv="refresh" content="20">
 {% endif -%}
-{% include 'server_status_js.html' %}
 {% endblock %}
 
 {% block body %}
 <div id="display">
 <h2>Status of job {{ job.filename }} analysis</h2>
-<p>Submitted: {{ job.added.strftime('%Y-%m-%d %H:%M:%S') }}<br />
+<p>Submitted: <span id="submitted">{{ job.added.strftime('%Y-%m-%d %H:%M:%S') }}</span><br />
 Status: <span id="status">
   {% autoescape false %}
     {{ job.get_status()|e|replace('\n', '<br>') }}
   {% endautoescape %}
-     <img src="{{ url_for('static', filename=job.get_short_status()+'.gif')}}"></span><br />
-   Last status change at: {{ job.last_changed.strftime('%Y-%m-%d %H:%M:%S') }}<br />
+  </span>
+   <img id="status-img" src="{{ url_for('static', filename='images/' + job.get_short_status()+'.gif')}}"><br />
+   Last status change at: <span id="last-changed">{{ job.last_changed.strftime('%Y-%m-%d %H:%M:%S') }}</span><br />
 </p>
+<div id="result-link">
 {% if job.get_short_status() == "done" %}
   {% if job.jobtype == "antismash" %}
     <p>See the <a href="{{ results_path }}/{{ job.uid }}/display.xhtml">results</a>
@@ -33,12 +30,14 @@ Status: <span id="status">
     <p>See the <a href="{{ results_path }}/{{ job.uid }}/index.html">results</a>
   {% endif -%}
 {% endif -%}
+</div>
 <p><b>Important:</b> If you did not provide an email address, please bookmark this page so you can access your antiSMASH results later.
 <p>If you specified an email address on the job submission page, you will be notified by email once the job is complete.</p>
 <p>Running antiSMASH on a complete genome will take a couple of hours, and depending on the server load it will
    take a while for your job to start.
-   Currently, the server is <span id="server_status">in an unknown status</span>
-   with <span id="queue_length">-1</span> job(s) in the work queue.
 </p>
 </div>
+{% endblock %}
+{% block ready_function %}
+    repeatedly_update_job_status("{{ url_for('status', task_id=job.uid) }}", "{{ url_for('static', filename='images') }}");
 {% endblock %}

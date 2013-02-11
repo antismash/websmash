@@ -1,22 +1,16 @@
 {% extends 'layout.html' %}
 {% block body %}
-<h1>Contact</h1>
-    {% if error %}<div class="error">{{ error }}</div>{% endif %}
-    <div id="contact">
-    <h4>If you have a question about using antiSMASH, or want to report a possible bug, you can contact us with this form.</h4>
-    <form action="{{ url_for('contact') }}" method="POST">
-      <div>
-        <label for="email">Your email address:</label><br />
-        <input type="text" name="email" id="email" value="{{ email }}" size="30">
-      </div>
-      <div>
-        <label for="body">Your message:</label><br />
-        <textarea name="body" id="body" cols="70" rows="5">{{ message }}</textarea>
-      </div>
-      <div><button type="submit">Send message</button></div>
-    </form>
-    <br />Or ask on Twitter:
-	<a href="https://twitter.com/intent/tweet?screen_name=antiSMASH_help" class="twitter-mention-button" data-lang="en" data-related="antiSMASH_help">Tweet to @antiSMASH_help</a>
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-    </div>
+<form action="{{ url_for('contact') }}" method="POST">
+  <fieldset>
+    <legend>Contact us if you have questions or want to report a bug.</legend>
+    <label>Your email:</label>
+    <input type="email" name="email" id="email" placeholder="your.email@example.com">
+    <label>Your message</label>
+    <textarea rows="5" class="input-xxlarge"></textarea><br>
+    <button type="submit" class="btn">Send</button>
+  </fieldset>
+</form>
+<p>Or ask on Twitter:
+<a href="https://twitter.com/intent/tweet?screen_name=antiSMASH_help" class="twitter-mention-button" data-lang="en" data-related="antiSMASH_help">Tweet to @antiSMASH_help</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 {% endblock %}

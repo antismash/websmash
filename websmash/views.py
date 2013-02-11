@@ -46,11 +46,13 @@ sec_met_types = [
 def new():
     error = None
     results_path = app.config['RESULTS_URL']
+    old_email = ''
     try:
         if request.method == 'POST':
             kwargs = {}
             kwargs['ncbi'] = request.form.get('ncbi', '').strip()
             kwargs['email'] = request.form.get('email', '').strip()
+            old_email = kwargs['email']
             kwargs['from'] = request.form.get('from', '').strip()
             kwargs['to'] = request.form.get('to', '').strip()
             legacy = request.form.get('legacy', u'off')
@@ -122,27 +124,52 @@ def new():
     except Exception, e:
         error = unicode(e)
     return render_template('new.html', error=error,
+                           old_email=old_email,
                            sec_met_types=sec_met_types,
                            results_path=results_path)
 
-@app.route('/protein', methods=['GET', 'POST'])
+@app.route('/protein', methods=['POST'])
 def protein():
     error = None
     results_path = app.config['RESULTS_URL']
     old_sequence = ''
     old_email = ''
     try:
-        if request.method == 'POST':
-            kwargs = {}
-            kwargs['email'] = request.form.get('email', '').strip()
-            old_email = kwargs['email']
-            # We always run all sec met types for the protein search
-            kwargs['geneclustertypes'] = "1"
-            # And we always run antiSMASH2 jobs for this
-            kwargs['jobtype'] = 'antismash2'
-            # And of course this is protein input
-            kwargs['molecule'] = 'prot'
+        kwargs = {}
+        kwargs['prot-ncbi'] = request.form.get('prot-ncbi', '').strip()
+        kwargs['email'] = request.form.get('email', '').strip()
+        old_email = kwargs['email']
+        # We always run all sec met types for the protein search
+        kwargs['geneclustertypes'] = "1"
+        # And we always run antiSMASH2 jobs for this
+        kwargs['jobtype'] = 'antismash2'
+        # And of course this is protein input
+        kwargs['molecule'] = 'prot'
 
+        job = Job(**kwargs)
+        dirname = path.join(app.config['RESULTS_PATH'], job.uid)
+        os.mkdir(dirname)
+
+        if kwargs['prot-ncbi'] != '':
+            ncbi =  kwargs['prot-ncbi']
+            if kwargs['email'] != '':
+                email = kwargs['email']
+            else:
+                email = app.config['DEFAULT_MAIL_SENDER']
+
+            url = app.config['NCBI_PROT_URL'] % (email, ncbi)
+            upload = dl.download(str(url))
+            if upload is not None:
+                upload.filename = '%s.fasta' % ncbi
+
+            if upload is not None:
+                filename = secure_filename(upload.filename)
+                upload.save(path.join(dirname, filename))
+                job.filename = filename
+            else:
+                raise Exception("Downloading or uploading input file failed!")
+
+        else:
             sequence = request.form.get('sequence', '').strip()
             old_sequence = sequence
 
@@ -155,24 +182,22 @@ def protein():
             if sequence.count('\n') < 1:
                 raise Exception("No newline between FASTA header and sequence")
 
-            job = Job(**kwargs)
-            dirname = path.join(app.config['RESULTS_PATH'], job.uid)
-            os.mkdir(dirname)
-
             filename = path.join(dirname, 'protein_input.fa')
             with open(filename, 'w') as handle:
                 handle.write(sequence)
-
             job.filename = 'protein_input.fa'
-            db.session.add(job)
-            db.session.commit()
-            return redirect(url_for('.display', task_id=job.uid))
+
+        db.session.add(job)
+        db.session.commit()
+        return redirect(url_for('.display', task_id=job.uid))
 
     except Exception, e:
         error = unicode(e)
-    return render_template('protein.html', error=error,
+    return render_template('new.html', error=error,
+                           sec_met_types=sec_met_types,
                            old_email=old_email,
-                           old_sequence = old_sequence,
+                           old_sequence=old_sequence,
+                           switch_to='prot',
                            results_path=results_path)
 
 @app.route('/about')
@@ -219,17 +244,26 @@ def contact():
         error = unicode(e)
     return render_template('contact_form.html', error=error, email=email, message=message)
 
-@app.route('/status.php')
-def compat_status():
-    """Allow to resolve old-style job status URLs"""
-    task_id = request.args.get('user', '')
-    return display(task_id)
-
 @app.route('/display/<task_id>')
 def display(task_id):
     results_path = app.config['RESULTS_URL']
     res = Job.query.filter_by(uid=task_id).first_or_404()
     return render_template('display.html', job=res, results_path=results_path)
+
+@app.route('/status/<task_id>')
+def status(task_id):
+    res = Job.query.filter_by(uid=task_id).first_or_404()
+    job = res.get_dict()
+    if res.status == 'done':
+        result_url = "%s/%s" % (app.config['RESULTS_URL'], res.uid)
+        if res.jobtype == 'antismash':
+            result_url += "/display.xhtml"
+        else:
+            result_url += "/index.html"
+        job['result_url'] = result_url
+
+    return jsonify(job)
+
 
 @app.route('/server_status')
 def server_status():

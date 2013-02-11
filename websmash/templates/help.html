@@ -1,307 +1,309 @@
 {% extends 'layout.html' %}
-
 {% block body %}
-
-<h1>antiSMASH Help</h1>
-<div id="navmenu">
-<ul>
-<li><a href="#news">News</a></li>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#input">antiSMASH Input</a></li>
-<li><a href="#output">antiSMASH Output</a></li>
-<li><a href="#faq">FAQ</a></li>
-</ul>
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Help</a>
+    <ul class="nav">
+      <li><a href="#news">News</a></li>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#input">Input</a></li>
+      <li><a href="#output">Output</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
 </div>
-<div id="help">
-<a name="news"></a><h2>News</h2>
-<p>Version 2 of antiSMASH is online now! <br/>
-antiSMASH was entirely redesigned using a plug-and-play concept that allows
-easy integration of novel prediction or output modules by third parties.
-In addition to all functions included in the old version, antiSMASH2 now
-supports input of multiple related entries simultaneously
-multi-FASTA/GenBank/EMBL), which allows the analysis of draft
-genomes comprised of multiple contigs. antiSMASH2 has also been
-equipped with the capacity to detect additional classes of
-antibiotics, including oligosaccharide antibiotics, phenazines, and furans.
-</p>
+<div class="help-content" data-spy="scroll" data-target=".navbar"
+  data-offset="0">
+  <div id="news">
+    <h4>News</h4>
+    Version 2 of antiSMASH is online now!<br>
+    antiSMASH was entirely redesigned using a plug-and-play concept
+    that allows easy integration of novel prediction or output modules
+    by third parties. In addition to all functions included in the old
+    version, antiSMASH2 now supports input of multiple related entries
+    simultaneously multi-FASTA/GenBank/EMBL), which allows the
+    analysis of draft genomes comprised of multiple contigs. antiSMASH2
+    has also been equipped with the capacity to detect additional
+    classes of antibiotics, including oligosaccharide antibiotics,
+    phenazines, and furans.
+  </div>
+  <div id="intro">
+    <h4>Introduction</h4>
+    <p>
+    The secondary metabolism of bacteria and fungi constitutes a rich
+    source of bioactive compounds of potential pharmaceutical value,
+    comprising biosynthetic pathways of many chemicals that have been
+    and are being utilized as e.g.  antibiotics, cholesterol-lowering
+    drugs or antitumor drugs.<br>
 
-<a name="introduction"></a><h2>Introduction</h2>
-<p>
-The secondary metabolism of bacteria and fungi constitutes a rich source of
-bioactive compounds of potential pharmaceutical value, comprising biosynthetic
-pathways of many chemicals that have been and are being utilized as e.g.
-antibiotics, cholesterol-lowering drugs or antitumor drugs.<br>
+    Interestingly, the genes encoding the biosynthetic pathway
+    responsible for the production of such a secondary metabolite are
+    very often spatially clustered together at a certain position on the
+    chromosome; such a compendium of genes is referred to as a
+    'secondary metabolite biosynthesis gene cluster'.<br>
 
-Interestingly, the genes encoding the biosynthetic pathway responsible for the
-production of such a secondary metabolite are very often spatially clustered
-together at a certain position on the chromosome; such a compendium of genes is
-referred to as a 'secondary metabolite biosynthesis gene cluster'.<br>
+    This genetic architecture has opened up the possibility for
+    straightforward detection of secondary metabolite biosynthesis
+    pathways by locating their gene clusters. In recent years, the costs
+    of sequencing bacterial and fungi has dropped dramatically, and many
+    genome sequences have become available. Based on <a
+      href="http://www.ncbi.nlm.nih.gov/pubmed/9918945">profile hidden
+      Markov models</a> of genes that are specific for certain types of
+    gene clusters, antiSMASH is able to accurately identify the gene
+    clusters encoding secondary metabolites of all known broad chemical
+    classes.<br>
 
-This genetic architecture has opened up the possibility for straightforward
-detection of secondary metabolite biosynthesis pathways by locating their gene
-clusters. In recent years, the costs of sequencing bacterial and fungi has
-dropped dramatically, and many genome sequences have become available. Based on
-<a href="http://www.ncbi.nlm.nih.gov/pubmed/9918945">profile hidden Markov
-models</a> of genes that are specific for certain types of gene clusters,
-antiSMASH is able to accurately identify the gene clusters encoding secondary
-metabolites of all known broad chemical classes.<br>
+    antiSMASH not only detects the gene clusters, but also offers
+    detailed sequence analysis.
+    </p>
+  </div>
+  <div id="input">
+    <h4>antiSMASH input parameters</h4>
+    <p>
+    The ideal input for antiSMASH is an annotated nucleotide file in <a
+      href="http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html">Genbank
+      format</a> or <a
+      href="http://www.ebi.ac.uk/help/formats.html#EMBL">EMBL
+      format</a>. You can either upload a GenBank/EMBL file manually, or
+    simply enter the GenBank/RefSeq accession number of your sequence
+    for antiSMASH to upload it. If no annotation is available, we
+    recommend running your sequence through an annotation pipeline like
+    <a href="http://rast.nmpdr.org/">RAST</a> to obtain GBK/EMBL files
+    with high-quality annotations.  </p>
 
-antiSMASH not only detects the gene clusters, but also offers detailed sequence
-analysis.
-</p>
+    <p> Alternatively, you can provide a FASTA file containing a single
+    sequence.  antiSMASH will generate a preliminary annotation using
+    Glimmer3, and use that to run the rest of the analysis.
+    Multi-sequence FASTA files should be split into single FASTA files
+    before running.  When a prokaryotic FASTA file is provided, you will
+    be able to input settings for Glimmer3 gene prediction: GenBank
+    translation table (genetic code), minimal gene length (smallest
+    genes allowed) and genome configuration (circular/linear chromosome
+    or plasmid).  </p>
 
-<a name="input"></a><h2>antiSMASH input parameters</h2>
-<p>
-The ideal input for antiSMASH is an annotated nucleotide file in <a
-href="http://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html">Genbank format</a>
-or <a href="http://www.ebi.ac.uk/help/formats.html#EMBL">EMBL format</a>. You
-can either upload a GenBank/EMBL file manually, or simply enter the
-GenBank/RefSeq accession number of your sequence for antiSMASH to upload
-it. If no annotation is available, we recommend running your sequence through
-an annotation pipeline like <a href="http://rast.nmpdr.org/">RAST</a> to obtain
-GBK/EMBL files with high-quality annotations.
-</p>
+    <p> Input files should be properly formatted. If you are creating
+    your GBK/EMBL/FASTA file manually, be sure to do so in a plain text
+    editor like Notepad or Emacs, and saving your files as "All files
+    (*.*)", ending with the correct extension (for example ".fasta",
+    ".gbk", or ".embl".  </p>
 
-<p>
-Alternatively, you can provide a FASTA file containing a single sequence.
-antiSMASH will generate a preliminary annotation using Glimmer3, and use that
-to run the rest of the analysis. Multi-sequence FASTA files should be split
-into single FASTA files before running.  When a prokaryotic FASTA file is
-provided, you will be able to input settings for Glimmer3 gene prediction:
-GenBank translation table (genetic code), minimal gene length (smallest genes
-allowed) and genome configuration (circular/linear chromosome or plasmid).
-</p>
+    <p> There are several optional analyses that may or may not be run
+    on your sequence.<br>
 
-<p>
-Input files should be properly formatted. If you are creating your GBK/EMBL/FASTA
-file manually, be sure to do so in a plain text editor like Notepad or Emacs, and saving
-your files as "All files (*.*)", ending with the correct extension (for example
-".fasta", ".gbk", or ".embl".
-</p>
+    Highly recommended is the Gene Cluster Blast Comparative Analysis,
+    which runs BlastP using each amino acid sequence from a detected
+    gene cluster as a query on a large database of predicted protein
+    sequences from secondary metabolite biosynthetic gene clusters, and
+    pools the results to identify the gene clusters that are most
+    homologous to the gene cluster that was detected in your query
+    nucleotide sequence.<br> This analysis is selected by default </p>
 
-<p>
-There are several optional analyses that may or may not be run on your sequence.<br>
+    <p> Also available is the analysis of secondary metabolism gene
+    families (smCOGs).  This analysis attempts to allocate each gene in
+    the detected gene clusters to a secondary metabolism-specific gene
+    family using profile hidden Markov models specific for the conserved
+    sequence region characteristic of this family.  Additionally, a
+    phylogenetic tree is constructed of each gene together with the
+    (max. 100) sequences of the smCOG seed alignment.<br> This analysis
+    is selected by default </p>
 
-Highly recommended is the Gene Cluster Blast Comparative Analysis, which runs
-BlastP using each amino acid sequence from a detected gene cluster as a query
-on a large database of predicted protein sequences from secondary metabolite
-biosynthetic gene clusters, and pools the results to identify the gene clusters
-that are most homologous to the gene cluster that was detected in your query
-nucleotide sequence.<br>
-This analysis is selected by default
-</p>
+    <p> For the most thorough genome analysis, we provide genome-wide
+    PFAM HMM analysis of all genes in the genome through
+    modules of the <a
+      href="https://bitbucket.org/antismash/clusean">CLUSEAN
+      pipeline</a>. Of course, some regions important to secondary
+    metabolism may have been missed in the gene cluster identification
+    stage (e.g. because they represent the biosynthetic pathway of a yet
+    unknown secondary metabolite).  Therefore, when genome-wide PFAM HMM
+    analysis is selected, the PFAM frequencies are also used to find all
+    genome regions in which PFAM domains typical for secondary
+    metabolism are overrepresented.<br> The whole genome PFAM HMM
+    analysis is selected by default.            </p>
+  </div>
+  <div id="output">
+    <h4>antiSMASH output</h4>
 
-<p>
-Also available is the analysis of secondary metabolism gene families (smCOGs).
-This analysis attempts to allocate each gene in the detected gene clusters to a
-secondary metabolism-specific gene family using profile hidden Markov models
-specific for the conserved sequence region characteristic of this family.
-Additionally, a phylogenetic tree is constructed of each gene together with the
-(max. 100) sequences of the smCOG seed alignment.<br>
-This analysis is selected by default
-</p>
+    <p>
+    The output of the antiSMASH analysis pipeline is organized in an interactive
+    HTML page with SVG graphics, and different parts of the analysis are displayed
+    in different panels for every gene cluster (see <a
+      href="/upload/example/index.html" target="_blank">example output file of
+      Streptomyces coelicolor A3(2) genome</a>).
+    </p>
 
-<p>
-For the most thorough genome analysis, we provide genome-wide PFAM HMM &amp;
-BLAST analysis of all genes in the genome through modules of the <a
-href="http://redmine.secondarymetabolites.org/projects/clusean">CLUSEAN
-pipeline</a>. Of course, some regions important to secondary metabolism may
-have been missed in the gene cluster identification stage (e.g. because they
-represent the biosynthetic pathway of a yet unknown secondary metabolite).
-Therefore, when genome-wide PFAM HMM analysis is selected, the PFAM frequencies
-are also used to find all genome regions in which PFAM domains typical for
-secondary metabolism are overrepresented.<br/>
-The whole genome PFAM HMM analysis is selected by default. As the whole genome
-BLAST analysis is very computing intensive (for a large bacterial genome it takes
-days, for large fungi even weeks to compute), this option is disabled by default.
-<strong> Please only enable the whole genome BLAST option if you really
-need this information.</strong>
-</p>
+    <img src="{{ url_for('static', filename='images/selectpanel.jpg') }}">
 
+    <p>
+    Initially, a list of identified clusters is displayed in the results page.
+    A gene cluster can be selected for viewing by clicking its number (gene
+    clusters are numbered in the order in which they appear on the input nucleotide
+    sequence) in the "Select Gene Cluster" panel just below the top banner or by
+    clicking on the colored "Cluster XX" boxes. A click on "Overview" brings you
+    back to the overview list.<br>
+    Gene cluster buttons are color coded by predicted secondary metabolite type.
+    </p>
 
-<a name="output"></a><h2>antiSMASH output</h2>
+    <img src="{{ url_for('static', filename='images/panel1.jpg') }}">
 
-<p>
-The output of the antiSMASH analysis pipeline is organized in an interactive
-HTML page with SVG graphics, and different parts of the analysis are displayed
-in different panels for every gene cluster (see <a
-href="/upload/example/index.html" target="_blank">example output file of
-Streptomyces coelicolor A3(2) genome</a>).
-</p>
+    <p>
+    In the upper panel. "Gene cluster description", information is given about each
+    gene cluster that was detected. In the upper line, the biosynthetic type and
+    location of the gene cluster are displayed. Underneath this title line, all genes
+    present in a detected gene cluster are outlined. The borders of the gene clusters
+    have been estimated using different greedily chosen cut-offs specified per gene
+    cluster type.<br>
+    Genes are color coded by predicted function. Putative biosynthetic genes are colored red,
+    transport-related genes are colored blue, and regulation-related genes are colored green.
+    These predictions depend on the smCOG functionality an will be missing if you chose to not
+    run smCOG predictions.<br>
+    Hovering over a gene with the mouse will prompt the gene
+    name to be displayed above the gene. Clicking the gene will provide more
+    information on the gene: its annotation, its smCOG (secondary metabolism gene
+    family), its location, and cross-links specific to that gene.
+    </p>
 
-<div class="image"><img src="{{ url_for('static', filename='selectpanel.jpg') }}"></div>
+    <img src="{{ url_for('static', filename='images/panel2.jpg') }}">
 
-<p>
-Initially, a list of identified clusters is displayed in the results page.
-A gene cluster can be selected for viewing by clicking its number (gene
-clusters are numbered in the order in which they appear on the input nucleotide
-sequence) in the "Select Gene Cluster" panel just below the top banner or by
-clicking on the colored "Cluster XX" boxes. A click on "Overview" brings you
-back to the overview list.<br>
-Gene cluster buttons are color coded by predicted secondary metabolite type.
-</p>
+    <p>
+    In the middle panel. "Detailed annotation", you can find more in-depth information
+    on the selected gene cluster.<br>
+    For predicted modular polyketide synthase (PKS) and/or nonribosomal
+    peptide synthetase (NRPS) proteins, you will find the domain annotation.
+    Hovering over them with the mouse will prompt more information to be displayed,
+    such as the name of the detected domain, its precise location, any substrate
+    specificites predicted, and a link to run Blast on the domain.<br>
+    For predicted Lantipeptide clusters, the predicted core peptide sequences of all
+    identified prepeptides is displayed.
+    </p>
 
-<div class="image"><a name="panel1"></a><img src="{{ url_for('static', filename='panel1.jpg') }}"></div>
+    <img src="{{ url_for('static', filename='images/panel3.jpg') }}">
 
-<p>
-In the upper panel. "Gene cluster description", information is given about each
-gene cluster that was detected. In the upper line, the biosynthetic type and
-location of the gene cluster are displayed. Underneath this title line, all genes
-present in a detected gene cluster are outlined. The borders of the gene clusters
-have been estimated using different greedily chosen cut-offs specified per gene
-cluster type.<br>
-Genes are color coded by predicted function. Putative biosynthetic genes are colored red,
-transport-related genes are colored blue, and regulation-related genes are colored green.
-These predictions depend on the smCOG functionality an will be missing if you chose to not
-run smCOG predictions.<br>
-Hovering over a gene with the mouse will prompt the gene
-name to be displayed above the gene. Clicking the gene will provide more
-information on the gene: its annotation, its smCOG (secondary metabolism gene
-family), its location, and cross-links specific to that gene.
-</p>
+    <p>
+    The lower panel. "Homologous gene clusters", displays the top ten gene clusters
+    from the internal antiSMASH database that are most similar to a detected gene
+    cluster, visually aligned to it. The drop-down selection menu can be used to
+    browse through the gene clusters. Genes with the same
+    colour are putative homologs based on significant Blast hits between them.
+    <!--
+    Cross-links are provided for the hit gene clusters to their source GenBank
+    entries and, when available, to literature describing the cluster or to the
+    PubChem database entry describing the compound synthesized through it.
+    -->
+    </p>
 
-<div class="image"><a name="panel2"></a><img src="{{ url_for('static', filename='panel2.jpg') }}"></div>
+    <img src="{{ url_for('static', filename='images/sidepanel1.jpg') }}">
 
-<p>
-In the middle panel. "Detailed annotation", you can find more in-depth information
-on the selected gene cluster.<br>
-For predicted modular polyketide synthase (PKS) and/or nonribosomal
-peptide synthetase (NRPS) proteins, you will find the domain annotation.
-Hovering over them with the mouse will prompt more information to be displayed,
-such as the name of the detected domain, its precise location, any substrate
-specificites predicted, and a link to run Blast on the domain.<br>
-For predicted Lantipeptide clusters, the predicted core peptide sequences of all
-identified prepeptides is displayed.
-</p>
+    <p>
+    In the upper side panel on the right. "Predicted core structure", a rough
+    prediction of the overall chemical structure of a the product of a detected
+    nonribosomal peptide or polyketide biosynthesis gene cluster is given, along
+    with prediction details for all monomers.<br>
 
-<div class="image"><a name="panel3"></a><img src="{{ url_for('static', filename='panel3.jpg') }}"></div>
+    Prediction details are available for multiple methods. PKS AT domain
+    specificities are predicted using a twenty-four amino acid signature sequence
+    of the active site (<a href="http://www.ncbi.nlm.nih.gov/pubmed/12691745">Yadav
+      et al., 2003</a>), as well as with pHMMs based on the method of Minowa et al.
+    (<a href="http://www.ncbi.nlm.nih.gov/pubmed/17400247">Minowa et al.,
+      2007</a>), which is also used to predict co-enzyme A ligase domain
+    specificities. NRPS A domain specificities are predicted using both the
+    signature sequence method and the support-vector machines-based method of
+    NRPSPredictor2 (<a href="http://www.ncbi.nlm.nih.gov/pubmed/16221976">Rausch et
+      al., 2005</a> &amp; <a href="http://www.ncbi.nlm.nih.gov/pubmed/21558170">
+      R&ouml;ttig et al., 2011</a>), and the method of Minowa et al. (<a
+      href="http://www.ncbi.nlm.nih.gov/pubmed/17400247">Minowa et al.,
+      2007</a>).  Ketoreductase domain-based stereochemistry predictions for PKSs
+    (<a href="http://www.ncbi.nlm.nih.gov/pubmed/18978015">Starcevic et al.,
+      2008</a>) are also performed.
 
-<p>
-The lower panel. "Homologous gene clusters", displays the top ten gene clusters
-from the internal antiSMASH database that are most similar to a detected gene
-cluster, visually aligned to it. The drop-down selection menu can be used to
-browse through the gene clusters. Genes with the same
-colour are putative homologs based on significant Blast hits between them.
-<!--
-Cross-links are provided for the hit gene clusters to their source GenBank
-entries and, when available, to literature describing the cluster or to the
-PubChem database entry describing the compound synthesized through it.
--->
-</p>
+    </p>
 
-<div class="image"><a name="sidepanel1"></a><img src="{{ url_for('static', filename='sidepanel1.jpg') }}"></div>
+    <img src="{{ url_for('static', filename='images/sidepanel2.jpg') }}">
 
-<p>
-In the upper side panel on the right. "Predicted core structure", a rough
-prediction of the overall chemical structure of a the product of a detected
-nonribosomal peptide or polyketide biosynthesis gene cluster is given, along
-with prediction details for all monomers.<br>
+    <p> In the upper right, a small list of buttons offers further functionality.
+    The house-shaped button will get you back on the <a href="/">antiSMASH start page</a>.
+    The question-mark button will get you to this help page.
+    The exclamation-mark button leads to a page explaining <a href="/about.html">about antiSMASH</a>.
+    The downward-pointing arrow will open a menu offering to download the complete set of results
+    from the antiSMASH run, a summary Excel file and to the summary EMBL/GenBank output file.
+    The EMBL/GenBank file can be viewed in a genome browser such as <a
+      href="http://www.sanger.ac.uk/resources/software/artemis/">Artemis</a>.<br>
+    </p>
 
-Prediction details are available for multiple methods. PKS AT domain
-specificities are predicted using a twenty-four amino acid signature sequence
-of the active site (<a href="http://www.ncbi.nlm.nih.gov/pubmed/12691745">Yadav
-et al., 2003</a>), as well as with pHMMs based on the method of Minowa et al.
-(<a href="http://www.ncbi.nlm.nih.gov/pubmed/17400247">Minowa et al.,
-2007</a>), which is also used to predict co-enzyme A ligase domain
-specificities. NRPS A domain specificities are predicted using both the
-signature sequence method and the support-vector machines-based method of
-NRPSPredictor2 (<a href="http://www.ncbi.nlm.nih.gov/pubmed/16221976">Rausch et
-al., 2005</a> &amp; <a href="http://www.ncbi.nlm.nih.gov/pubmed/21558170">
-R&ouml;ttig et al., 2011</a>), and the method of Minowa et al. (<a
-href="http://www.ncbi.nlm.nih.gov/pubmed/17400247">Minowa et al.,
-2007</a>).  Ketoreductase domain-based stereochemistry predictions for PKSs
-(<a href="http://www.ncbi.nlm.nih.gov/pubmed/18978015">Starcevic et al.,
-2008</a>) are also performed.
+  </div>
+  <div id="faq">
+    <h4>Frequently Asked Questions</h4>
+    <ol>
+      <li>
+      <div class="question">Can I run antiSMASH locally as a stand-alone program?</div>
+      Yes. A stand-alone version of antiSMASH is available from the download
+      section of this website. You can choose between versions for Windows,
+      Linux and Mac OS X.
+      </li>
+      <li>
+      <div class="question">Why doesn't antiSMASH detect my gene cluster?</div>
 
-</p>
-
-<div class="image"><a name="sidepanel2"></a><img src="{{ url_for('static', filename='sidepanel2.jpg') }}"></div>
-
-<p> In the upper right, a small list of buttons offers further functionality.
-The house-shaped button will get you back on the <a href="{{ url_for('new') }}">antiSMASH start page</a>.
-The question-mark button will get you to this help page.
-The exclamation-mark button leads to a page explaining <a href="{{ url_for('about') }}">about antiSMASH</a>.
-The downward-pointing arrow will open a menu offering to download the complete set of results
-from the antiSMASH run, a summary Excel file and to the summary EMBL/GenBank output file.
-The EMBL/GenBank file can be viewed in a genome browser such as <a
-href="http://www.sanger.ac.uk/resources/software/artemis/">Artemis</a>.<br>
-</p>
-
-<a name="faq"></a><h2>Frequently Asked Questions</h2>
-<div class="faq">
-<ol>
-    <li>
-        <div class="question">Can I run antiSMASH locally as a stand-alone program?</div>
-        Yes. A stand-alone version of antiSMASH is available from the download
-        section of this website. You can choose between versions for Windows,
-        Linux and Mac OS X.
-    </li>
-    <li>
-        <div class="question">Why doesn't antiSMASH detect my gene cluster?</div>
-
-        Some gene clusters, such as fatty acid or cofactor biosynthesis gene
-        clusters are not identified by antiSMASH, as they are categorized as <a
+      Some gene clusters, such as fatty acid or cofactor biosynthesis gene
+      clusters are not identified by antiSMASH, as they are categorized as <a
         href="http://en.wikipedia.org/wiki/Primary_metabolism">primary
         metabolism</a> instead of <a
         href="http://en.wikipedia.org/wiki/Secondary_metabolism">secondary
         metabolism</a>. If you are aware of a true secondary metabolite
-        biosynthesis gene cluster that escapes detection by antiSMASH, please
-        contact us, and we will add the models necessary to detect it.
-    </li>
-    <li>
+      biosynthesis gene cluster that escapes detection by antiSMASH, please
+      contact us, and we will add the models necessary to detect it.
+      </li>
+      <li>
 
-        <div class="question">In some cases, two or three gene clusters appear
-            to be fused into one gene cluster by antiSMASH while they are in
-            fact separate gene clusters. Why is this?
-        </div>
-        Currently, it is not possible to judge on the basis of sequence
-        information only whether a large cluster of secondary metabolite
-        biosynthesis genes of different types is either a hybrid gene cluster
-        or comprises multiple separate gene clusters that are located very
-        close to one another. A careful manual study of the provided
-        comparative gene cluster analysis results may provide hints on solving
-        this question.
-    </li>
-    <li>
+      <div class="question">In some cases, two or three gene clusters appear
+        to be fused into one gene cluster by antiSMASH while they are in
+        fact separate gene clusters. Why is this?
+      </div>
+      Currently, it is not possible to judge on the basis of sequence
+      information only whether a large cluster of secondary metabolite
+      biosynthesis genes of different types is either a hybrid gene cluster
+      or comprises multiple separate gene clusters that are located very
+      close to one another. A careful manual study of the provided
+      comparative gene cluster analysis results may provide hints on solving
+      this question.
+      </li>
+      <li>
 
-        <div class="question">Why are several genes upstream and downstream of
-            gene clusters included, even though they do not seem to be part of
-            the gene cluster?
-        </div>
-        In designing antiSMASH, we tried to be very conservative in cutting
-        gene cluster borders, leaving this to the expert eye of the user, as it
-        is better to show some extra genes than to leave out key genes.
-    </li>
+      <div class="question">Why are several genes upstream and downstream of
+        gene clusters included, even though they do not seem to be part of
+        the gene cluster?
+      </div>
+      In designing antiSMASH, we tried to be very conservative in cutting
+      gene cluster borders, leaving this to the expert eye of the user, as it
+      is better to show some extra genes than to leave out key genes.
+      </li>
 
-    <li>
+      <li>
 
-        <div class="question">Can I also submit an unannotated genome sequence
-            in FASTA format?
-        </div>
-        Yes. We offer integrated preliminary gene prediction by Glimmer3 or
-        GlimmerHMM based on a FASTA input. Settings for Glimmer3 can be adjusted
-        on the main input page. If you want the highest possible quality of
-        results, we recommend you to use an annotation pipeline like <a
+      <div class="question">Can I also submit an unannotated genome sequence
+        in FASTA format?
+      </div>
+      Yes. We offer integrated preliminary gene prediction by Glimmer3 or
+      GlimmerHMM based on a FASTA input. Settings for Glimmer3 can be adjusted
+      on the main input page. If you want the highest possible quality of
+      results, we recommend you to use an annotation pipeline like <a
         href="http://rast.nmpdr.org/">RAST</a> first to obtain high-quality gene
-        predictions in GBK format. This is especially true for smaller nucleotide
-        sequences, which are bad substrates for de novo training of gene
-        predictors like Glimmer.
-    </li>
-    <li>
+      predictions in GBK format. This is especially true for smaller nucleotide
+      sequences, which are bad substrates for de novo training of gene
+      predictors like Glimmer.
+      </li>
+      <li>
 
-        <div class="question">What is the privacy policy of antiSMASH
-            concerning my sequence data?
-        </div>
+      <div class="question">What is the privacy policy of antiSMASH
+        concerning my sequence data?
+      </div>
 
-        We try to keep this site and the data that it analyzes as safe and
-        secure as possible. Your output files will be deleted from our server
-        within one month. However, sending your data to the web site is at your
-        own risk. If you are concerned about the sensitivity of your data,
-        please use the stand-alone version of our tool.
-    </li>
+      We try to keep this site and the data that it analyzes as safe and
+      secure as possible. Your output files will be deleted from our server
+      within one month. However, sending your data to the web site is at your
+      own risk. If you are concerned about the sensitivity of your data,
+      please use the stand-alone version of our tool.
+      </li>
 
-</ol>
-
+    </ol>
+  </div>
 </div>
-
 {% endblock %}

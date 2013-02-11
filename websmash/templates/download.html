@@ -1,40 +1,65 @@
 {% extends 'layout.html' %}
-
 {% block body %}
-      <h1>antiSMASH stand-alone</h1>
-
-      <div id="about">
-      <h2>Download antiSMASH</h2>
-    <p>
-        The current version of antiSMASH is 1.2.2 (June 22nd, 2012).
-        <br><br>
-		<h4>WindowsXP/Vista/7</h4>
-		<a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.win32.exe">antiSMASH v1.2.2 installer package</a><br><br>
-		To be able to run antiSMASH on Windows, you will also need to install the following packages:<br>
-		- <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9b2da534-3e03-4391-8a4d-074b9f2bc1bf&displaylang=en" target="_blank">Microsoft Visual C++ 2008 Redistributable Package</a><br>
-		- <a href="http://www.java.com/en/download/index.jsp" target="_blank">Java</a><br>
-    </p>
-
-    <p>
-		<h4>Ubuntu Linux</h4>
-		<a href="https://bitbucket.org/antismash/antismash1/downloads/install_ubuntu.sh">antiSMASH v1.2.2 installer script</a>
-    </p>
-
-    <p>
-        <h4>Max OS X, for versions 10.6 (Snow Leopard) and higher </h4>
-        <a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.macosx.dmg">antiSMASH v1.2.2 installer package; </a><br><br>
-        To be able to run antiSMASH on Mac OS X, you will also need to install Cairo:<br>
-        - Install <a href="http://www.macports.org/install.php" target="_blank">MacPorts</a>; then type 'sudo port install cairo' in the terminal.<br>
-        - Install <a href="http://www.finkproject.org/download/index.php?phpLang=en" target="_blank">Fink</a>; then type 'sudo apt-get install cairo' in the terminal.<br>
-    </p>
-
-
-    <p>
-        <h4>We also provide some scripts that can aid in using antiSMASH:</h4>
-        <a href="https://bitbucket.org/antismash/antismash1/downloads/format_embl.zip">format_embl</a> Script for preparing an EMBL file from a TXT file with gene annotations and a DNA sequence in FASTA format<br>
-        <a href="https://bitbucket.org/antismash/antismash1/downloads/batch_antismash.zip">batch_antismash</a> Script for batch-processing multiple files in the stand-alone version
-    </p>
-
-
+<h3>Download antiSMASH standalone</h3>
+<div class="alert">
+  <h4>Not updated yet!</h4>
+  Please note that the standalone installers were not updated to antiSMASH version 2 yet.
+</div>
+<div class="tabbable tabs-left">
+  <ul class="nav nav-tabs">
+    <li><a href="#windows" data-toggle="tab">Windows</a></li>
+    <li><a href="#linux" data-toggle="tab">Linux</a></li>
+    <li><a href="#osx" data-toggle="tab">Mac OSX</a></li>
+    <li><a href="#extras" data-toggle="tab">Extras</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active">
+      <p>The current standalone release is antiSMASH <strong>1.2.2</strong> (<em>June 22nd, 2012</em>)</p>
+      <p>Please select the installer for your operating system on the left. Under "extras", you can find some
+      scripts that can aid in using antiSMASH</p>
     </div>
+    <div class="tab-pane" id="windows">
+      <h4>Windows XP/Vista/7 downloads</h4>
+      <p>
+      <a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.win32.exe">
+        antiSMASH v1.2.2 installer package
+      </a>
+      </p>
+      <p>
+      To be able to run antiSMASH on Windows, you will also need to install the following packages:
+      <ul>
+        <li><a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9b2da534-3e03-4391-8a4d-074b9f2bc1bf&displaylang=en">Microsoft Visual C++ 2008 Redistributable Package</a></li>
+        <li><a href="http://www.java.com/en/download/index.jsp">Java</a></li>
+      </ul>
+      </p>
+    </div>
+    <div class="tab-pane" id="linux">
+      <h4>Ubuntu Linux 10.04-12.10</h4>
+      <p><a href="https://bitbucket.org/antismash/antismash1/downloads/install_ubuntu.sh">
+        antiSMASH v1.2.2 installer script</a>
+      </p>
+    </div>
+    <div class="tab-pane" id="osx">
+      <h4>Max OS X, for versions 10.6 (Snow Leopard) and higher</h4>
+      <p><a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.macosx.dmg">
+        antiSMASH v1.2.2 installer package</a>
+      </p>
+      <p>To be able to run antiSMASH on Mac OS X, you will also need to install Cairo:
+      <ul>
+        <li>Install MacPorts; then type 'sudo port install cairo' in the terminal.</li>
+        <li>Install Fink; then type 'sudo apt-get install cairo' in the terminal.</li>
+      </ul>
+      </p>
+    </div>
+    <div class="tab-pane" id="extras">
+      <h4>Scripts that can aid in using antiSMASH:</h4>
+      <dl class="dl-horizontal">
+        <dt><a href="https://bitbucket.org/antismash/antismash1/downloads/format_embl.zip">format_embl</a></dt>
+        <dd>Script for preparing an EMBL file from a TXT file with gene annotations and a DNA sequence in FASTA format</dd>
+        <dt><a href="https://bitbucket.org/antismash/antismash1/downloads/batch_antismash.zip">batch_antismash</a></dt>
+        <dd>Script for batch-processing multiple files in the stand-alone version</dd>
+      </dl>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -7,6 +7,9 @@ RESULTS_URL = '/upload'
 NCBI_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
 NCBI_URL += '?db=nucleotide&email="%s"&tool="antiSMASH"&id=%s&rettype=gbwithparts'
 NCBI_URL += '&retmode=text'
+NCBI_PROT_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
+NCBI_PROT_URL += '?db=protein&email="%s"&tool="antiSMASH"&id=%s&rettype=fasta'
+NCBI_PROT_URL += '&retmode=text'
 
 # Flask-Mail settings
 MAIL_SERVER = "smtpserv.uni-tuebingen.de"
