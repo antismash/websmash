@@ -1,4 +1,12 @@
 {% extends 'layout.html' %}
+{% block extra_notices %}
+{% if error %}
+<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Error:</strong> {{error}}
+</div>
+{% endif %}
+{% endblock %}
 {% block body %}
 <form action="{{ url_for('contact') }}" method="POST">
   <fieldset>
@@ -6,7 +14,7 @@
     <label>Your email:</label>
     <input type="email" name="email" id="email" placeholder="your.email@example.com">
     <label>Your message</label>
-    <textarea rows="5" class="input-xxlarge"></textarea><br>
+    <textarea name="body" id="body" rows="5" class="input-xxlarge"></textarea><br>
     <button type="submit" class="btn">Send</button>
   </fieldset>
 </form>
