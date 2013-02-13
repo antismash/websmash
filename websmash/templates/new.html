@@ -181,37 +181,41 @@
         <div class="control-group as-form">
           <label class="checkbox" for="inclusive">
             <input type="checkbox" name="inclusive" id="inclusive">
-            Detect putative gene clusters based on PFAM domain probabilities
+            Detect putative gene clusters based on PFAM domain probabilities</label>
         </div>
         <div class="control-group as-form dna_related">
           <label class="control-label" for="trans_table">GenBank translation table used for Glimmer:</label>
-          <select id="trans_table" name="trans_table">
-            <option value="1"> The Standard Code</option>
-            <option value="none"> Without Glimmer</option>
-            <option value="11"> The Bacterial, Archaeal and Plant Plastid Code</option>
-            <option value="10"> The Euplotid Nuclear Code</option>
-            <option value="13"> The Ascidian Mitochondrial Code</option>
-            <option value="12"> The Alternative Yeast Nuclear Code</option>
-            <option value="15"> Blepharisma Nuclear Code</option>
-            <option value="14"> The Alternative Flatworm Mitochondrial Code</option>
-            <option value="22"> Scenedesmus Obliquus Mitochondrial Code</option>
-            <option value="16"> Chlorophycean Mitochondrial Code</option>
-            <option value="23"> Thraustochytrium Mitochondrial Code</option>
-            <option value="3"> The Yeast Mitochondrial Code</option>
-            <option value="2"> The Vertebrate Mitochondrial Code</option>
-            <option value="5"> The Invertebrate Mitochondrial Code</option>
-            <option value="4"> The Mold, Protozoan, and Coelenterate Mitochondrial Code and the Mycoplasma/Spiroplasma Code</option>
-            <option value="6"> The Ciliate, Dasycladacean and Hexamita Nuclear Code</option>
-            <option value="9"> The Echinoderm and Flatworm Mitochondrial Code</option>
-            <option value="21"> Trematode Mitochondrial Code</option>
-          </select>
-        </div>
-        <div class="control-group as-form dna_related">
-          <input type="text" name="gene_length" id="gene_length" value="50">
-          <span class="help-inline">Glimmer minimal gene length</span>
-          <span class="help-block"> Genome configuration used for Glimmer</span>
-          <label class="radio inline"><input type="radio" name="genome_conf" id="genome_conf_linear" value="linear" checked>linear</label>
-          <label class="radio inline"><input type="radio" name="genome_conf" id="genome_conf_circular" value="circular">circular</label>
+          <div class="control">
+            <select id="trans_table" name="trans_table">
+              <option value="1"> The Standard Code</option>
+              <option value="11"> The Bacterial, Archaeal and Plant Plastid Code</option>
+              <option value="10"> The Euplotid Nuclear Code</option>
+              <option value="13"> The Ascidian Mitochondrial Code</option>
+              <option value="12"> The Alternative Yeast Nuclear Code</option>
+              <option value="15"> Blepharisma Nuclear Code</option>
+              <option value="14"> The Alternative Flatworm Mitochondrial Code</option>
+              <option value="22"> Scenedesmus Obliquus Mitochondrial Code</option>
+              <option value="16"> Chlorophycean Mitochondrial Code</option>
+              <option value="23"> Thraustochytrium Mitochondrial Code</option>
+              <option value="3"> The Yeast Mitochondrial Code</option>
+              <option value="2"> The Vertebrate Mitochondrial Code</option>
+              <option value="5"> The Invertebrate Mitochondrial Code</option>
+              <option value="4"> The Mold, Protozoan, and Coelenterate Mitochondrial Code and the Mycoplasma/Spiroplasma Code</option>
+              <option value="6"> The Ciliate, Dasycladacean and Hexamita Nuclear Code</option>
+              <option value="9"> The Echinoderm and Flatworm Mitochondrial Code</option>
+              <option value="21"> Trematode Mitochondrial Code</option>
+            </select>
+          </div>
+          <div class="control">
+            <input type="text" name="gene_length" id="gene_length" value="50">
+            <span class="help-inline">Glimmer minimal gene length</span>
+          </div>
+          <div class="control">
+            <label class="checkbox" for="all_orfs">
+              <input type="checkbox" name="all_orfs" id="all_orfs" checked>
+              Run secondary metabolite detection on all possible ORFs
+            </div>
+
         </div>
         <div class="control-group as-form">
           <label class="checkbox" for="smcog">
