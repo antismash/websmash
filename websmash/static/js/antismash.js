@@ -1,10 +1,12 @@
 function toggle_clusters() {
     var id = 2;
-    if ($('#cluster_1').prop('checked')) {
-        $('.sec-met-extended').hide("fast");
+    var value_to_set = $('#cluster_1').prop('checked');
+    if (!value_to_set) {
+        value_to_set = false;
     }
-    else {
-        $('.sec-met-extended').show("fast");
+    while($('#cluster_' + id).length) {
+        $('#cluster_' + id).prop('checked', value_to_set);
+        id++;
     }
 }
 

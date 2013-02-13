@@ -20,14 +20,9 @@
         <button class="btn btn-inverse" id="dna-sample-input">Load sample input</button>
         <button class="btn btn-inverse" id="dna-sample-output">Open example output</button>
       </div>
-      <form method="POST" enctype="multipart/form-data">
-        <div class="control-group as-form">
-          <label class="checkbox">
-            <input type="checkbox" name="legacy" id="legacy">
-            Run legacy antiSMASH 1 instead of up-to-date version
-          </label>
-        </div>
-        <div class="control-group as-form">
+      <form class="form-vertical" method="POST" enctype="multipart/form-data">
+        <fieldset class="as-form">
+        <div class="control-group">
           <div class="controls">
             <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
             <span class="help-inline">Email address (optional)</span>
@@ -40,48 +35,62 @@
             <input type="text" name="ncbi" id="ncbi" placeholder="NCBI ACC #">
             <span class="help-inline">Or input NCBI accession number of desired file</span>
           </div>
-          <div class="controls controls-row">
+        </fieldset>
+        <div id="legacy-control" data-toggle="collapse" data-target=".legacy-options">
+          <i class="icon-plus" id="legacy-button"></i>
+          <span id="legacy-description">Show</span> deprecated options.
+          <a href="#" data-toggle="tooltip" data-placement="right" title="Allows selecting deprecated options"><i class="icon-question-sign"></i></a>
+        </div>
+        <fieldset class="as-form collapse legacy-options">
+          <div class="control-group collapse legacy-options">
             <label class="checkbox">
-              <input type="checkbox" name="region" id="region">
-              Only run prediction on a region
+              <input type="checkbox" name="legacy" id="legacy">
+              Run legacy antiSMASH 1 instead of up-to-date version
             </label>
-            <div id="region-input">
-              <input type="text" name="from" id="from" placeholder="start at bp">
-              <input type="text" name="to" id="to" placeholder="stop at bp">
-            </div>
-
           </div>
+        </fieldset>
+        <div id="region-control" data-toggle="collapse" data-target=".region">
+          <i class="icon-plus" id="region-button"></i>
+          Limit prediction to an input region
+          <a href="#" data-toggle="tooltip" data-placement="right" title="Set start/end coordinates for analysis"><i class="icon-question-sign"></i></a>
         </div>
-        <div class="control-group as-form">
-          <label class="checkbox" for="eukaryotic">
-            <input type="checkbox" name="eukaryotic" id="eukaryotic">
-            DNA of Eukaryotic origin</label>
+        <fieldset class="as-form collapse region">
+          <div class="controls collapse region">
+            <label for="from">Start at
+              <input type="text" name="from" id="from" placeholder="start at bp"></label>
+          </div>
+          <div class="controls collapse region">
+            <label for="to">Stop at
+              <input type="text" name="to" id="to" placeholder="stop at bp"></label>
+          </div>
+        </fieldset>
+        <fieldset class="as-form">
+          <div class="control-group">
+            <label class="checkbox" for="eukaryotic">
+              <input type="checkbox" name="eukaryotic" id="eukaryotic">
+              DNA of Eukaryotic origin</label>
+          </div>
+        </fieldset>
+        <div id="sec-met-control" data-toggle="collapse" data-target=".sec-met">
+          <i class="icon-plus" id="sec-met-button"></i>
+          Restrict which of the {{ sec_met_types|length - 1}} supported secondary metabolite types to detect
+          <a href="#" data-toggle="tooltip" data-placement="right" title="Restrict which secondary metabolites to detect"><i class="icon-question-sign"></i></a>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <td>Secondary metabolite types to detect</td>
-            </tr>
-          </thead>
-          <tbody>
+        <fieldset class="as-form sec-met collapse">
+          <div class="control-group collapse sec-met">
 {% for met in sec_met_types %}
 {% if loop.first %}
-            <tr class="sec-met-all">
-{% elif loop.index % 3 == 2 %}
-            <tr class="sec-met-extended">
-{% endif %}
-              <td>
-                <input type="checkbox" name="cluster_{{loop.index}}" id="cluster_{{loop.index}}">
-                <label class="checkbox inline" for="cluster_{{loop.index}}">{{ met }}
-                  {% if loop.first %} {{loop.length - 1}} cluster types (deselect to pick specific types){% endif %}</label>
-              </td>
-{% if loop.first or loop.index % 3 == 1 or loop.last %}
-          </tr>
+            <div class="controls span12 collapse sec-met">
+              <label class="checkbox" for="cluster_1"><input type="checkbox" name="cluster_1" id="cluster_1">all {{sec_met_types|length - 1}} cluster types</label>
+            </div>
+{% else %}
+            <div class="controls span3 collapse sec-met">
+              <label class="checkbox" for="cluster_{{loop.index}}"><input type="checkbox" name="cluster_{{loop.index}}" id="cluster_{{loop.index}}">{{ met }}</label>
+            </div>
 {% endif %}
 {% endfor %}
-          </tbody>
-        </table>
-        <div class="as-form"></div>
+          </div>
+        </fieldset>
         <div class="control-group as-form">
           <label class="checkbox" for="inclusive">
             <input type="checkbox" name="inclusive" id="inclusive">
@@ -199,10 +208,6 @@
     $('#cluster_1').prop('checked', 'checked');
     toggle_clusters();
 
-    // Hide the input region limit
-    $('#region').change(toggle_region);
-    toggle_region();
-
     // disable new options for legacy antismash1 jobs
     $('#legacy').change(toggle_legacy);
     toggle_legacy();
@@ -218,6 +223,37 @@
     $('#prot-ncbi').change(clear_sequence);
 
     show_glimmer_if_needed();
+
+    $('.legacy-options').on('shown', function(){
+        $('#legacy-button').removeClass('icon-plus')
+            .addClass('icon-minus');
+        $('#legacy-description').text('Hide');
+    })
+    .on('hidden', function() {
+        $('#legacy-button').removeClass('icon-minus')
+            .addClass('icon-plus');
+        $('#legacy-description').text('Show');
+    });
+
+    $('.region').on('shown', function(){
+        $('#region-button').removeClass('icon-plus')
+            .addClass('icon-minus');
+    })
+    .on('hidden', function() {
+        $('#region-button').removeClass('icon-minus')
+            .addClass('icon-plus');
+    });
+
+    $('.sec-met').on('shown', function(){
+        $('#sec-met-button').removeClass('icon-plus')
+            .addClass('icon-minus');
+    })
+    .on('hidden', function() {
+        $('#sec-met-button').removeClass('icon-minus')
+            .addClass('icon-plus');
+    });
+    $('a[data-toggle="tooltip"]').tooltip();
+
     {% if switch_to %}
     $('.nav-tabs a[href="#{{switch_to}}"]').tab('show');
     {% endif %}
