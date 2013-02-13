@@ -58,124 +58,28 @@
             DNA of Eukaryotic origin</label>
         </div>
         <table>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_1" id="cluster_1" />
-              <label class="checkbox inline" for="cluster_1">all</label>
-            </td>
+          <thead>
+            <tr>
+              <td>Secondary metabolite types to detect</td>
+            </tr>
+          </thead>
+          <tbody>
+{% for met in sec_met_types %}
+{% if loop.first %}
+            <tr class="sec-met-all">
+{% elif loop.index % 3 == 2 %}
+            <tr class="sec-met-extended">
+{% endif %}
+              <td>
+                <input type="checkbox" name="cluster_{{loop.index}}" id="cluster_{{loop.index}}">
+                <label class="checkbox inline" for="cluster_{{loop.index}}">{{ met }}
+                  {% if loop.first %} {{loop.length - 1}} cluster types (deselect to pick specific types){% endif %}</label>
+              </td>
+{% if loop.first or loop.index % 3 == 1 or loop.last %}
           </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_2" id="cluster_2" />
-              <label class="checkbox inline" for="cluster_2">polyketides (type I)</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_3" id="cluster_3" />
-              <label class="checkbox inline" for="cluster_3">polyketides (type II)</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_4" id="cluster_4" />
-              <label class="checkbox inline" for="cluster_4">polyketides (type III)</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_5" id="cluster_5" />
-              <label class="checkbox inline" for="cluster_5">polyketides (type IV)</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_6" id="cluster_6" />
-              <label class="checkbox inline" for="cluster_6">nonribosomal peptides</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_7" id="cluster_7" />
-              <label class="checkbox inline" for="cluster_7">terpenes</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_8" id="cluster_8" />
-              <label class="checkbox inline" for="cluster_8">lantibiotics</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_9" id="cluster_9" />
-              <label class="checkbox inline" for="cluster_9">bacteriocins</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_10" id="cluster_10" />
-              <label class="checkbox inline" for="cluster_10">beta-lactams</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_11" id="cluster_11" />
-              <label class="checkbox inline" for="cluster_11">aminoglycosides / aminocyclitols</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_12" id="cluster_12" />
-              <label class="checkbox inline" for="cluster_12">aminocoumarins</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_13" id="cluster_13" />
-              <label class="checkbox inline" for="cluster_13">siderophores</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_14" id="cluster_14" />
-              <label class="checkbox inline" for="cluster_14">ectoines</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_15" id="cluster_15" />
-              <label class="checkbox inline" for="cluster_15">butyrolactones</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_16" id="cluster_16" />
-              <label class="checkbox inline" for="cluster_16">indoles</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_17" id="cluster_17" />
-              <label class="checkbox inline" for="cluster_17">nucleosides</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_18" id="cluster_18" />
-              <label class="checkbox inline" for="cluster_18">phosphoglycolipids</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_19" id="cluster_19" />
-              <label class="checkbox inline" for="cluster_19">melanins</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_20" id="cluster_20" />
-              <label class="checkbox inline" for="cluster_20">oligosaccharides</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_21" id="cluster_21" />
-              <label class="checkbox inline" for="cluster_21">furans</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_22" id="cluster_22" />
-              <label class="checkbox inline" for="cluster_22">homoserine lactones</label>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" name="cluster_23" id="cluster_23" />
-              <label class="checkbox inline" for="cluster_23">thiopeptides</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_24" id="cluster_24" />
-              <label class="checkbox inline" for="cluster_24">phenazines</label>
-            </td>
-            <td>
-              <input type="checkbox" name="cluster_25" id="cluster_25" />
-              <label class="checkbox inline" for="cluster_25">others</label>
-            </td>
-          </tr>
+{% endif %}
+{% endfor %}
+          </tbody>
         </table>
         <div class="as-form"></div>
         <div class="control-group as-form">
