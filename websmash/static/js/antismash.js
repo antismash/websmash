@@ -139,13 +139,6 @@ function getFileSize() {
     }
 }
 
-/*
-function BoolFullBlast(){
-    var fullblast;
-    fullblast = $('#fullblast');
-    return fullblast;
-}
-
 function verify_form() {
     var file = $('#seq').val();
     var ncbi = $('#ncbi').val();
@@ -177,15 +170,8 @@ function verify_form() {
         return false;
     }
 
-    if(getFileSize() > 10000000 && BoolFullBlast()){
-        alert("The server cannot run whole-genome Blast on a file if this size. Please use the stand-alone version or contact the antiSMASH team using the Contact form");
-        return false;
-    }
-
     return true;
 }
-
-*/
 
 function update_status(url) {
     $.getJSON(url, function(json) {

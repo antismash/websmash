@@ -23,18 +23,23 @@
       </div>
       <form class="form-vertical" method="POST" enctype="multipart/form-data">
         <fieldset class="as-form">
-        <div class="control-group">
-          <div class="controls">
-            <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
-            <span class="help-inline">Email address (optional)</span>
+          <div class="control-group">
+            <div class="controls">
+              <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
+              <span class="help-inline">Email address (optional)</span>
+            </div>
           </div>
-          <div class="controls">
-            <input type="file" name="seq" id="seq">
-            <span class="help-inline">Load a file (GenBank / EMBL / FASTA formats accepted)</span>
+          <div class="control-group">
+            <div class="controls">
+              <input type="file" name="seq" id="seq">
+              <span class="help-inline">Load a file (GenBank / EMBL / FASTA formats accepted)</span>
+            </div>
           </div>
-          <div class="controls">
-            <input type="text" name="ncbi" id="ncbi" placeholder="NCBI ACC #">
-            <span class="help-inline">Or input NCBI accession number of desired file</span>
+          <div class="control-group">
+            <div class="controls">
+              <input type="text" name="ncbi" id="ncbi" placeholder="NCBI ACC #">
+              <span class="help-inline">Or input NCBI accession number of desired file</span>
+            </div>
           </div>
         </fieldset>
         <div id="legacy-control" data-toggle="collapse" data-target=".legacy-options">
@@ -273,4 +278,6 @@
     {% if switch_to %}
     $('.nav-tabs a[href="#{{switch_to}}"]').tab('show');
     {% endif %}
+
+    $('form').submit(verify_form);
 {% endblock %}
