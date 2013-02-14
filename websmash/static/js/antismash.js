@@ -202,7 +202,6 @@ function display_notices(url) {
             teaser.text(notice_data.teaser);
             notice.append(teaser);
             notice.append(document.createTextNode(notice_data.text));
-            console.log(notice);
             $('#notice-container').append(notice);
 
         }
