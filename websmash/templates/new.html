@@ -11,6 +11,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a href="#nucl" data-toggle="tab">Nucleotide input</a></li>
   <li><a href="#prot" data-toggle="tab">Protein input</a></li>
+  <li><a href="#job" data-toggle="tab">Results for exising job</a></li>
 </ul>
 <div class="tab-content">
   <div class="tab-pane active" id="nucl">
@@ -184,6 +185,15 @@
       </form>
     </div>
   </div>
+  <div class="tab-pane" id="job">
+    <div>Display results for an existing job</div>
+    <form class="form-inline">
+      <label for="jobid">Job ID:
+        <input type="text" name="jobid" id="jobid" class="input-xlarge" placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee">
+      </label>
+      <button id="display-job" class="btn btn-primary">Display</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
 {% block ready_function %}
@@ -253,6 +263,12 @@
             .addClass('icon-plus');
     });
     $('a[data-toggle="tooltip"]').tooltip();
+
+    $('#display-job').click(function(){
+        var jobid = $('#jobid').val();
+        window.open("{{ url_for('display', task_id='') }}" + jobid, "_self");
+        return false;
+    });
 
     {% if switch_to %}
     $('.nav-tabs a[href="#{{switch_to}}"]').tab('show');
