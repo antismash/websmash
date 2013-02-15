@@ -139,7 +139,7 @@ function getFileSize() {
     }
 }
 
-function verify_form() {
+function verify_nucl_form() {
     var file = $('#seq').val();
     var ncbi = $('#ncbi').val();
     var from = $('#from').val();
@@ -170,6 +170,17 @@ function verify_form() {
         return false;
     }
 
+    return true;
+}
+
+function verify_prot_form() {
+    var sequence = $('#sequence').val();
+    var ncbi = $('#prot-ncbi').val();
+
+    if( (sequence == '') && (ncbi == '')){
+        alert('No input provided. Please enter NCBI number or paste your own sequence');
+        return false;
+    }
     return true;
 }
 

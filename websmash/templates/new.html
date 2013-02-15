@@ -21,7 +21,7 @@
         <button class="btn btn-inverse" id="dna-sample-input">Load sample input</button>
         <button class="btn btn-inverse" id="dna-sample-output">Open example output</button>
       </div>
-      <form class="form-vertical" method="POST" enctype="multipart/form-data">
+      <form class="form-vertical" method="POST" id="nucl-form" enctype="multipart/form-data">
         <fieldset class="as-form">
           <div class="control-group">
             <div class="controls">
@@ -169,7 +169,7 @@
         <button class="btn btn-inverse" id="prot-sample-input">Load sample input</button>
         <button class="btn btn-inverse" id="prot-sample-output">Open example output</button>
       </div>
-      <form action="{{ url_for('protein') }}" method="POST">
+      <form action="{{ url_for('protein') }}" id="prot-form" method="POST">
         <div class="control-group">
           <div class="controls">
             <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
@@ -279,5 +279,6 @@
     $('.nav-tabs a[href="#{{switch_to}}"]').tab('show');
     {% endif %}
 
-    $('form').submit(verify_form);
+    $('#nucl-form').submit(verify_nucl_form);
+    $('#prot-form').submit(verify_prot_form);
 {% endblock %}
