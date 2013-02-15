@@ -250,6 +250,13 @@ def display(task_id):
     res = Job.query.filter_by(uid=task_id).first_or_404()
     return render_template('display.html', job=res, results_path=results_path)
 
+@app.route('/display')
+def display_tab():
+    return render_template('new.html',
+                           sec_met_types=sec_met_types,
+                           switch_to='job',
+                           results_path=app.config['RESULTS_URL'])
+
 @app.route('/status/<task_id>')
 def status(task_id):
     res = Job.query.filter_by(uid=task_id).first_or_404()
