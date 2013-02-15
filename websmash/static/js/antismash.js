@@ -210,16 +210,14 @@ function display_notices(url) {
 
 function display_job_status(url, img_dir) {
     $.getJSON(url, function(json) {
+        $('body').data('job_status', json.short_status);
         $("#last-changed").text(json.last_changed);
         var stat = json.status;
         stat = stat.replace(/\n/g, '<br>');
         $("#status").html(stat);
         $("#status-img").attr('src', img_dir + '/' + json.short_status + '.gif');
-        if (json.short_status == "failed") {
-            return false;
-        }
         if (json.status != 'done') {
-            return true;
+            return;
         }
         var result = $('<a>');
         result.attr('href', json.result_url);
@@ -229,14 +227,14 @@ function display_job_status(url, img_dir) {
         $.timer(5000, function(timer) {
             window.location.href = json.result_url;
         });
-        return false;
     });
 }
 
 function repeatedly_update_job_status(url, img_dir) {
     $.timer(10000, function(timer) {
-        var ret = display_job_status(url, img_dir);
-        if (!ret) {
+        display_job_status(url, img_dir);
+        var stat = $('body').data('job_status');
+        if ( stat == 'done' || stat == 'failed' ) {
             timer.stop();
         }
     });
