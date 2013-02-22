@@ -181,6 +181,16 @@ function verify_prot_form() {
         alert('No input provided. Please enter NCBI number or paste your own sequence');
         return false;
     }
+
+    if (ncbi.indexOf(';') > -1){
+        alert('; found in NCBI ID list, please use a plain comma (,) to separate IDs');
+        return false;
+    }
+
+    if (ncbi.indexOf(' ') > -1 || ncbi.indexOf('\t') > -1){
+        alert('whitespace found in NCBI ID list, please use a comma (,) to separate IDs');
+        return false;
+    }
     return true;
 }
 

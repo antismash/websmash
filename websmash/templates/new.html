@@ -177,7 +177,7 @@
           </div>
           <div class="controls">
             <input type="text" name="prot-ncbi" id="prot-ncbi" placeholder="NCBI ACC #">
-            <span class="help-inline">Input NCBI accession number of desired file</span>
+            <span class="help-inline">Input (comma-separated) NCBI accession number(s) of desired protein(s)</span>
           </div>
           <div class="controls">
             <label for="sequence">or paste a FASTA amino acid sequence here:</label>
@@ -211,7 +211,7 @@
         window.open('/upload/example/index.html', '_self');
     });
     $('#prot-sample-input').click(function(){
-        $('#prot-ncbi').val('ADJ56352');
+        $('#prot-ncbi').val('ADJ56352.1,ADJ56353.1');
         clear_sequence();
     });
     $('#prot-sample-output').click(function(){

@@ -128,12 +128,20 @@ def new():
                            sec_met_types=sec_met_types,
                            results_path=results_path)
 
-@app.route('/protein', methods=['POST'])
+@app.route('/protein', methods=['GET', 'POST'])
 def protein():
     error = None
     results_path = app.config['RESULTS_URL']
     old_sequence = ''
     old_email = ''
+    if request.method == 'GET':
+        return render_template('new.html', error=error,
+                               sec_met_types=sec_met_types,
+                               old_email=old_email,
+                               old_sequence=old_sequence,
+                               switch_to='prot',
+                               results_path=results_path)
+
     try:
         kwargs = {}
         kwargs['prot-ncbi'] = request.form.get('prot-ncbi', '').strip()
@@ -159,10 +167,9 @@ def protein():
 
             url = app.config['NCBI_PROT_URL'] % (email, ncbi)
             upload = dl.download(str(url))
-            if upload is not None:
-                upload.filename = '%s.fasta' % ncbi
 
             if upload is not None:
+                upload.filename = '%s.fasta' % ncbi
                 filename = secure_filename(upload.filename)
                 upload.save(path.join(dirname, filename))
                 job.filename = filename
