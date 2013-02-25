@@ -1,9 +1,9 @@
 {% extends 'layout.html' %}
 {% block body %}
 <h3>Download antiSMASH standalone</h3>
-<div class="alert">
-  <h4>Not updated yet!</h4>
-  Please note that the standalone installers were not updated to antiSMASH version 2 yet.
+<div class="alert alert-info">
+  <h4>antiSMASH 2.0 standalone installer available now.</h4>
+  Stand-alone versions of antiSMASH 2.0 are available now for Windows, Linux and Mac OSX.
 </div>
 <div class="tabbable tabs-left">
   <ul class="nav nav-tabs">
@@ -14,15 +14,15 @@
   </ul>
   <div class="tab-content">
     <div class="tab-pane active">
-      <p>The current standalone release is antiSMASH <strong>1.2.2</strong> (<em>June 22nd, 2012</em>)</p>
+      <p>The current standalone release is antiSMASH <strong>2.0.0</strong> (<em>February 24th, 2013</em>)</p>
       <p>Please select the installer for your operating system on the left. Under "extras", you can find some
       scripts that can aid in using antiSMASH</p>
     </div>
     <div class="tab-pane" id="windows">
       <h4>Windows XP/Vista/7 downloads</h4>
       <p>
-      <a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.win32.exe">
-        antiSMASH v1.2.2 installer package
+      <a href="https://bitbucket.org/antismash/antismash2/downloads/antismash_2.0_win32.exe">
+        antiSMASH v2.0.0 installer package
       </a>
       </p>
       <p>
@@ -35,14 +35,14 @@
     </div>
     <div class="tab-pane" id="linux">
       <h4>Ubuntu Linux 10.04-12.10</h4>
-      <p><a href="https://bitbucket.org/antismash/antismash1/downloads/install_ubuntu.sh">
-        antiSMASH v1.2.2 installer script</a>
+      <p><a href="https://bitbucket.org/antismash/antismash2/downloads/install_ubuntu.sh">
+        antiSMASH v2.0.0 installer script</a>
       </p>
     </div>
     <div class="tab-pane" id="osx">
       <h4>Max OS X, for versions 10.6 (Snow Leopard) and higher</h4>
-      <p><a href="https://bitbucket.org/antismash/antismash1/downloads/antiSMASH-1.2.2.macosx.dmg">
-        antiSMASH v1.2.2 installer package</a>
+      <p><a href="https://bitbucket.org/antismash/antismash2/downloads/antiSMASH2.0_macosx.zip">
+        antiSMASH v2.0.0 installer package</a>
       </p>
       <p>To be able to run antiSMASH on Mac OS X, you will also need to install Cairo:
       <ul>
@@ -54,6 +54,10 @@
     <div class="tab-pane" id="extras">
       <h4>Scripts that can aid in using antiSMASH:</h4>
       <dl class="dl-horizontal">
+        <dt><a href="https://bitbucket.org/antismash/antismash2/downloads/analysis_template.zip">analysis plug-in</a></dt>
+        <dd>Template code for creating your own antismash 2.0 analysis plug-ins</dd>
+        <dt><a href="https://bitbucket.org/antismash/antismash2/downloads/output_template.zip">output plug-in</a></dt>
+        <dd>Template code for creating your own antismash 2.0 output plug-ins</dd>
         <dt><a href="https://bitbucket.org/antismash/antismash1/downloads/format_embl.zip">format_embl</a></dt>
         <dd>Script for preparing an EMBL file from a TXT file with gene annotations and a DNA sequence in FASTA format</dd>
         <dt><a href="https://bitbucket.org/antismash/antismash1/downloads/batch_antismash.zip">batch_antismash</a></dt>
