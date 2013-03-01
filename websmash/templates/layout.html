@@ -75,6 +75,9 @@ $(document).ready(function () {
         alert(msg);
     }
 
+    // Internet Explorer likes to cache ajax requests. Go figure...
+    $.ajaxSetup({ cache: false });
+
     display_notices("{{ url_for('current_notices') }}");
 
     repeatedly_update_status("{{ url_for('server_status') }}");
