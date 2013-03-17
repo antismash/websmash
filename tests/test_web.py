@@ -31,7 +31,7 @@ class WebTestCase(WebsmashTestCase):
     def test_contactpage(self):
         """Test if contact form is displayed"""
         rv = self.client.get('/contact')
-        assert "you can contact us with this form" in rv.data
+        assert "Contact us if you have questions" in rv.data
 
     def test_contactpage_no_email(self):
         """Test if contact form complains without an email address"""
