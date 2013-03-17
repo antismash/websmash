@@ -225,7 +225,7 @@ class WebTestCase(WebsmashTestCase):
     def test_compat_contactpage(self):
         """Test if old contact form link works"""
         rv = self.client.get('/contact.html')
-        assert "you can contact us with this form" in rv.data
+        assert "Contact us if you have questions" in rv.data
 
     def test_compat_contactpage_sent_mail(self):
         """Test if contact page reports that it sent a message"""
