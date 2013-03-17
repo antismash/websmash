@@ -11,7 +11,7 @@ class WebTestCase(WebsmashTestCase):
     def test_startpage(self):
         """Test if startpage has a "Submit Query" button"""
         rv = self.client.get('/')
-        assert "Submit Query" in rv.data
+        assert "Submit" in rv.data
 
     def test_downloadpage(self):
         """Test if download page works"""
