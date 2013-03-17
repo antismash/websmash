@@ -21,7 +21,7 @@ class WebTestCase(WebsmashTestCase):
     def test_helppage(self):
         """Test if help page works"""
         rv = self.client.get('/help')
-        assert "antiSMASH Help" in rv.data
+        assert "antiSMASH input parameters" in rv.data
 
     def test_aboutpage(self):
         """Test if about page works"""
@@ -215,7 +215,7 @@ class WebTestCase(WebsmashTestCase):
     def test_compat_helppage(self):
         """Test if old help page link works"""
         rv = self.client.get('/help.html')
-        assert "antiSMASH Help" in rv.data
+        assert "antiSMASH input parameters" in rv.data
 
     def test_compat_aboutpage(self):
         """Test if old about page link works"""
