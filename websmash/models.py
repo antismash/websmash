@@ -36,7 +36,7 @@ class Job(db.Model):
         self.added = kwargs.get('added', datetime.utcnow())
         self.last_changed = self.added
         self.geneclustertypes = kwargs.get('geneclustertypes', '1')
-        self.taxon = kwargs.get('taxon', 'p')
+        self.taxon = 'e' if kwargs.get('eukaryotic', False) else 'p'
         self.gtransl = kwargs.get('gtransl', 1)
         self.minglength = kwargs.get('minglength', 50)
         self.genomeconf = kwargs.get('genomeconf', 'l')
