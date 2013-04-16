@@ -91,3 +91,8 @@
   </div>
 </div>
 {% endblock %}
+{% block ready_function %}
+  if (window.location.hash.length > 0) {
+    $('.nav-tabs a[href=' + window.location.hash + ']').tab('show');
+  }
+{% endblock %}
