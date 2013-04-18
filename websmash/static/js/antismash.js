@@ -198,6 +198,7 @@ function update_status(url) {
     $.getJSON(url, function(json) {
         $("#server-status").html(json.status);
         $("#queue-length").html(json.queue_length);
+        $("#running-jobs").html(json.running);
     });
 }
 
