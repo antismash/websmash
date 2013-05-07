@@ -223,7 +223,10 @@ function display_notices(url) {
             var teaser = $('<h4>');
             teaser.text(notice_data.teaser);
             notice.append(teaser);
-            notice.append(document.createTextNode(notice_data.text));
+            var contents = $('<div>');
+            contents.text(notice_data.text);
+            contents.html(contents.html().replace(/\n/g,'<br>'));
+            notice.append(contents);
             $('#notice-container').append(notice);
 
         }
