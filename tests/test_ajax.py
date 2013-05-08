@@ -6,12 +6,18 @@ class AjaxTestCase(WebsmashTestCase):
     def test_server_status(self):
         """Test if server status returns the correct values"""
         rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='idle', queue_length=0))
+        self.assertEquals(rv.json, dict(status='idle', queue_length=0, running=0))
         j = Job()
         self.db.session.add(j)
         self.db.session.commit()
         rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='working', queue_length=1))
+        self.assertEquals(rv.json, dict(status='working', queue_length=1, running=0))
+        j.status="running: not really"
+        self.db.session.commit()
+        self.db.session.commit()
+        rv = self.client.get('/server_status')
+        self.assertEquals(rv.json, dict(status='working', queue_length=0, running=1))
+
 
     def test_current_notices(self):
         "Test if current notices are displayed"

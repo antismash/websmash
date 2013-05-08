@@ -198,6 +198,7 @@ function update_status(url) {
     $.getJSON(url, function(json) {
         $("#server-status").html(json.status);
         $("#queue-length").html(json.queue_length);
+        $("#running-jobs").html(json.running);
     });
 }
 
@@ -222,7 +223,10 @@ function display_notices(url) {
             var teaser = $('<h4>');
             teaser.text(notice_data.teaser);
             notice.append(teaser);
-            notice.append(document.createTextNode(notice_data.text));
+            var contents = $('<div>');
+            contents.text(notice_data.text);
+            contents.html(contents.html().replace(/\n/g,'<br>'));
+            notice.append(contents);
             $('#notice-container').append(notice);
 
         }

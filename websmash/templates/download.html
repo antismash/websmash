@@ -78,6 +78,8 @@
     <div class="tab-pane" id="extras">
       <h4>Scripts that can aid in using antiSMASH:</h4>
       <dl class="dl-horizontal">
+        <dt><a href="https://bitbucket.org/antismash/antismash2/downloads/antiSMASH2_pHMM_seed_alignments.zip">pHMM seed alignments</a>
+        <dd>Seed alignments used for building pHMMs used in secondary metabolite cluster finding</dd>
         <dt><a href="https://bitbucket.org/antismash/antismash2/downloads/analysis_template.zip">analysis plug-in</a></dt>
         <dd>Template code for creating your own antismash 2.0 analysis plug-ins</dd>
         <dt><a href="https://bitbucket.org/antismash/antismash2/downloads/output_template.zip">output plug-in</a></dt>
@@ -90,4 +92,9 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block ready_function %}
+  if (window.location.hash.length > 0) {
+    $('.nav-tabs a[href=' + window.location.hash + ']').tab('show');
+  }
 {% endblock %}

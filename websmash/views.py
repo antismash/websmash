@@ -281,14 +281,14 @@ def status(task_id):
 
 @app.route('/server_status')
 def server_status():
-    jobcount = Job.query.filter(or_(Job.status.like('running%'),
-                    Job.status == 'pending')).count()
+    pending = Job.query.filter(Job.status == 'pending').count()
+    running = Job.query.filter(Job.status.like('running%')).count()
 
-    if jobcount > 0:
+    if pending + running > 0:
         status = 'working'
     else:
         status = 'idle'
-    return jsonify(status=status, queue_length=jobcount)
+    return jsonify(status=status, queue_length=pending, running=running)
 
 @app.route('/current_notices')
 def current_notices():
