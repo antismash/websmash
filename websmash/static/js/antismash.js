@@ -231,7 +231,6 @@ function display_notices(url, more_url) {
                 if (notice_data.text.length > cutoff) {
                     var last_space = notice_data.text.lastIndexOf(' ', cutoff);
                     cutoff = last_space > 10 ? last_space : cutoff;
-                    console.log("using cutoff " + cutoff);
                     notice_data.text = notice_data.text.substr(0, cutoff);
                     add_more_link = true;
                 }
