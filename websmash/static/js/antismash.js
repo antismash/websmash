@@ -227,7 +227,11 @@ function display_notices(url) {
             contents.text(notice_data.text);
             contents.html(contents.html().replace(/\n/g,'<br>'));
             notice.append(contents);
-            $('#notice-container').append(notice);
+            if (notice_data.category == "error") {
+                $('#error-container').append(notice);
+            } else {
+                $('#notice-container').append(notice);
+            }
 
         }
     });

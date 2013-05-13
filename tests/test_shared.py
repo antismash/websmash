@@ -4,14 +4,19 @@ import os
 import tempfile
 import shutil
 import websmash
+import websmash.default_settings
 
 class ModelTestCase(TestCase):
 
     def create_app(self):
         self.app = websmash.app
         self.dl = websmash.dl
+        websmash.mail.init_app(self.app)
+        self.app.config.from_object(websmash.default_settings)
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+        self.app.config['MAIL_SUPPRESS_SEND'] = True
+        self.app.testing = True
         websmash.mail.suppress = True
         return self.app
 
