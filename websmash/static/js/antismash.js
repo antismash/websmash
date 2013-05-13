@@ -209,13 +209,16 @@ function repeatedly_update_status(url) {
     });
 }
 
-function display_notices(url) {
+function display_notices(url, more_url) {
     $.getJSON(url, function(json) {
         if (json.notices.length < 1) {
             return;
         }
         for (var n in json.notices) {
             var notice_data = json.notices[n];
+            var add_more_link = false;
+            var cutoff = 100;
+
             var notice = $('<div>');
             notice.addClass('alert alert-block');
             notice.addClass('alert-' + notice_data.category);
@@ -224,9 +227,23 @@ function display_notices(url) {
             teaser.text(notice_data.teaser);
             notice.append(teaser);
             var contents = $('<div>');
+            if ( more_url !== undefined && notice_data.category != "error") {
+                if (notice_data.text.length > cutoff) {
+                    notice_data.text = notice_data.text.substr(0, cutoff);
+                    add_more_link = true;
+                }
+            }
             contents.text(notice_data.text);
             contents.html(contents.html().replace(/\n/g,'<br>'));
             notice.append(contents);
+
+            if ( add_more_link ) {
+                var more = $('<a>');
+                more.attr('href', more_url + "#" + notice_data.id);
+                more.text('...more...');
+                notice.append(more);
+            }
+
             if (notice_data.category == "error") {
                 $('#error-container').append(notice);
             } else {

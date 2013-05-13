@@ -298,6 +298,13 @@ def current_notices():
     ret = [i.json for i in notices]
     return jsonify(notices=ret)
 
+@app.route('/show_notices')
+def show_notices():
+    "Show current notices"
+    now = datetime.utcnow()
+    notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
+    return render_template('notices.html', notices=notices, skip_notices=True)
+
 @app.route('/usage')
 def usage():
     return render_template('usage.html')

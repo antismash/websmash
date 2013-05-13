@@ -82,7 +82,9 @@ $(document).ready(function () {
     // Internet Explorer likes to cache ajax requests. Go figure...
     $.ajaxSetup({ cache: false });
 
-    display_notices("{{ url_for('current_notices') }}");
+    {% if skip_notices is undefined %}
+    display_notices("{{ url_for('current_notices') }}", "{{ url_for('show_notices') }}");
+    {% endif %}
 
     repeatedly_update_status("{{ url_for('server_status') }}");
 {% block ready_function %}{% endblock %}

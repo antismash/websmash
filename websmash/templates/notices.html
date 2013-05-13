@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% block body %}
+{% for notice in notices %}
+  <div id="{{ notice.id }}" class="alert alert-block alert-{{notice.category}}">
+    <h4>{{ notice.teaser }}</h4>
+    {{ notice.text|replace("\n", "<br>")|safe|e }}
+  </div>
+{% endfor %}
+{% endblock %}
