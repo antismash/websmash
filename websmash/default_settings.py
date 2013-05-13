@@ -13,7 +13,7 @@ NCBI_PROT_URL += '&retmode=text'
 
 # Flask-Mail settings
 MAIL_SERVER = "smtpserv.uni-tuebingen.de"
-MAIL_DFAULT_SENDER = "kai.blin@biotech.uni-tuebingen.de"
+DEFAULT_MAIL_SENDER = "kai.blin@biotech.uni-tuebingen.de"
 DEFAULT_RECIPIENTS = ["kai.blin@biotech.uni-tuebingen.de"]
 
 # Flask-SQLAlchemy settings
