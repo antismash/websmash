@@ -56,6 +56,8 @@ def new():
             kwargs['from'] = request.form.get('from', '').strip()
             kwargs['to'] = request.form.get('to', '').strip()
             legacy = request.form.get('legacy', u'off')
+            if legacy == u'on':
+                raise Exception('Sorry, but running antiSMASH 1 is no longer supported')
             eukaryotic = request.form.get('eukaryotic', u'off')
             inclusive = request.form.get('inclusive', u'off')
             smcogs = request.form.get('smcogs', u'off')
@@ -82,8 +84,11 @@ def new():
                 raise Exception(error_message)
             kwargs['geneclustertypes'] = ",".join(clusters)
 
+            # given that we only support antismash 2 at the moment, hardcode
+            # that jobtype.
+            kwargs['jobtype'] = 'antismash2'
+
             # Use boolean values instead of "on/off" strings
-            kwargs['jobtype'] = (legacy != u'on') and 'antismash2' or 'antismash'
             kwargs['eukaryotic'] = (eukaryotic == u'on')
             kwargs['inclusive'] = (inclusive == u'on')
             kwargs['smcogs'] = (smcogs == u'on')
