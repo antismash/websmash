@@ -21,5 +21,6 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///../jobs.db'
 
 # Flask-Downloader settings
 DEFAULT_DOWNLOAD_DIR = RESULTS_PATH
+BAD_CONTENT = ('Error reading from remote server', 'Bad gateway', 'Cannot process ID list', 'server is temporarily unable to service your request')
 #########################################
 
