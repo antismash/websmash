@@ -119,6 +119,8 @@ def new():
             if upload is not None:
                 filename = secure_filename(upload.filename)
                 upload.save(path.join(dirname, filename))
+                if not path.exists(path.join(dirname, filename)):
+                    raise Exception("Could not save file!")
                 job.filename = filename
             else:
                 raise Exception("Downloading or uploading input file failed!")
