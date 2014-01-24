@@ -19,7 +19,7 @@ sec_met_types = [
     "polyketides (type I)",
     "polyketides (type II)",
     "polyketides (type III)",
-    "polyketides (type IV)",
+    "heterocyst glycolipid-like polyketides",
     "nonribosomal peptides",
     "terpenes",
     "lantibiotics",
