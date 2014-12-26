@@ -47,11 +47,35 @@
     </div>
     <div class="row-fluid footer">
       <div class="span6 org-logos">
-        <img src="{{ url_for('static', filename='images/tueblogo.gif') }}">
-        <img src="{{ url_for('static', filename='images/ruglogo.gif') }}">
-        <img src="{{ url_for('static', filename='images/ucsflogo.gif') }}">
-        <img src="{{ url_for('static', filename='images/uomlogo.jpg') }}">
-        <img src="{{ url_for('static', filename='images/dziflogo.png') }}">
+      <table id="logo-table">
+      		<tr>
+      			<td>
+        			<img src="{{ url_for('static', filename='images/tueblogo.gif') }}">
+        		</td>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/ruglogo.gif') }}">
+        		</td>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/ucsflogo.gif') }}">
+        		</td>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/mpilogo.png') }}">
+        		</td>
+        	</tr>
+        	<tr>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/uomlogo.jpg') }}">
+        		</td>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/dziflogo.png') }}">
+        		</td>
+        		<td>
+        			<img src="{{ url_for('static', filename='images/cfb-logo.png') }}">
+        		</td>
+        		<td>
+        		</td>
+        	</tr>
+        </table>
       </div>
       <div class="span6 copyright well well-small">
         antiSMASH 2.0 — a versatile platform for genome mining of secondary
