@@ -1,10 +1,10 @@
-from flask import redirect, url_for, request, session, g, abort, \
-                  render_template, flash, jsonify, json, Response
+from flask import redirect, url_for, request, \
+                  render_template, jsonify, json, Response
 from flask.ext.mail import Message
 import os
 import time
 from os import path
-from sqlalchemy import or_, desc, func
+from sqlalchemy import desc, func
 from sqlalchemy.sql.expression import extract
 from datetime import datetime
 from werkzeug import secure_filename
