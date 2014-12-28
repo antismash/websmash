@@ -2,38 +2,17 @@ import uuid
 from datetime import datetime, timedelta
 from websmash import db
 
-class Job(db.Model):
-    __tablename__ = 'jobs'
-    uid = db.Column(db.String(128), primary_key=True)
-    jobtype = db.Column(db.String(20))
-    email = db.Column(db.String(500))
-    filename = db.Column(db.String(500))
-    added = db.Column(db.DateTime)
-    last_changed = db.Column(db.DateTime)
-    geneclustertypes = db.Column(db.String(128))
-    taxon = db.Column(db.String(1))
-    gtransl = db.Column(db.Integer)
-    minglength = db.Column(db.Integer)
-    genomeconf = db.Column(db.String(20))
-    all_orfs = db.Column(db.Boolean)
-    from_pos = db.Column(db.Integer)
-    to_pos = db.Column(db.Integer)
-    molecule = db.Column(db.String(4))
-    inclusive = db.Column(db.Boolean)
-    smcogs = db.Column(db.Boolean)
-    clusterblast = db.Column(db.Boolean)
-    subclusterblast = db.Column(db.Boolean)
-    fullblast = db.Column(db.Boolean)
-    fullhmm = db.Column(db.Boolean)
-    download = db.Column(db.Boolean)
-    status = db.Column(db.String(500))
-
+class Job(object):
     def __init__(self, **kwargs):
-        self.uid = unicode(uuid.uuid4())
+        self.uid = kwargs.get('uid', unicode(uuid.uuid4()))
         self.jobtype = kwargs.get('jobtype', 'antismash')
         self.email = kwargs.get('email', '')
         self.filename = kwargs.get('filename', '')
-        self.added = kwargs.get('added', datetime.utcnow())
+        added = kwargs.get('added', datetime.utcnow())
+        if isinstance(added, (str, unicode)):
+            self.added = datetime.strptime(added, "%Y-%m-%d %H:%M:%S.%f")
+        else:
+            self.added = added
         self.last_changed = self.added
         self.geneclustertypes = kwargs.get('geneclustertypes', '1')
         self.taxon = 'e' if kwargs.get('eukaryotic', False) else 'p'
@@ -61,15 +40,7 @@ class Job(db.Model):
         return self.status
 
     def get_dict(self):
-        ret = {}
-        ret['uid'] = self.uid
-        ret['jobtype'] = self.jobtype
-        ret['filename'] = self.filename
-        ret['added'] = self.added.strftime('%Y-%m-%d %H:%M:%S')
-        ret['last_changed'] = self.last_changed.strftime('%Y-%m-%d %H:%M:%S')
-        ret['status'] = self.get_status()
-        ret['short_status'] = self.get_short_status()
-        return ret
+        return self.__dict__
 
     def __repr__(self):
         return '<Job %r (%s)>' % (self.uid, self.status)

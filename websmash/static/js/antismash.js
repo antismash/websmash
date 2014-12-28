@@ -259,7 +259,7 @@ function display_notices(url, more_url) {
 function display_job_status(url, img_dir) {
     $.getJSON(url, function(json) {
         $('body').data('job_status', json.short_status);
-        $("#last-changed").text(json.last_changed);
+        $("#last-changed").text(json.last_changed.replace(/\..*/g, ''));
         var stat = json.status;
         stat = stat.replace(/\n/g, '<br>');
         $("#status").html(stat);

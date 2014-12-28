@@ -19,6 +19,9 @@ DEFAULT_RECIPIENTS = ["kai.blin@biotech.uni-tuebingen.de"]
 # Flask-SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = 'sqlite:///../jobs.db'
 
+# Flask-Redis settings
+REDIS_URL = "redis://localhost:6379/0"
+
 # Flask-Downloader settings
 DEFAULT_DOWNLOAD_DIR = RESULTS_PATH
 BAD_CONTENT = ('Error reading from remote server', 'Bad gateway', 'Cannot process ID list', 'server is temporarily unable to service your request', 'ID list is empty')

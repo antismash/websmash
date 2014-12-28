@@ -1,14 +1,15 @@
-from flask import redirect, url_for, request, \
+from flask import redirect, url_for, request, abort, \
                   render_template, jsonify, json, Response
 from flask.ext.mail import Message
 import os
 import time
+import uuid
 from os import path
 from sqlalchemy import desc, func
 from sqlalchemy.sql.expression import extract
 from datetime import datetime
 from werkzeug import secure_filename
-from websmash import app, db, mail, dl
+from websmash import app, db, mail, dl, redis_store
 from websmash.utils import generate_confirmation_mail
 from websmash.models import Job, Notice, Stat
 
@@ -125,8 +126,8 @@ def new():
             else:
                 raise Exception("Downloading or uploading input file failed!")
 
-            db.session.add(job)
-            db.session.commit()
+            redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
+            redis_store.lpush('jobs:queued', job.uid)
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
@@ -201,8 +202,8 @@ def protein():
                 handle.write(sequence)
             job.filename = 'protein_input.fa'
 
-        db.session.add(job)
-        db.session.commit()
+        redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
+        redis_store.lpush('jobs:queued', job.uid)
         return redirect(url_for('.display', task_id=job.uid))
 
     except Exception, e:
@@ -261,8 +262,12 @@ def contact():
 @app.route('/display/<task_id>')
 def display(task_id):
     results_path = app.config['RESULTS_URL']
-    res = Job.query.filter_by(uid=task_id).first_or_404()
-    return render_template('display.html', job=res, results_path=results_path)
+    res = redis_store.hgetall(u'job:%s' % task_id)
+    if res == {}:
+        abort(404)
+    else:
+        job = Job(**res)
+    return render_template('display.html', job=job, results_path=results_path)
 
 @app.route('/display')
 def display_tab():
@@ -273,23 +278,26 @@ def display_tab():
 
 @app.route('/status/<task_id>')
 def status(task_id):
-    res = Job.query.filter_by(uid=task_id).first_or_404()
-    job = res.get_dict()
-    if res.status == 'done':
-        result_url = "%s/%s" % (app.config['RESULTS_URL'], res.uid)
-        if res.jobtype == 'antismash':
+    res = redis_store.hgetall(u'job:%s' % task_id)
+    if res == {}:
+        abort(404)
+    job = Job(**res)
+    if job.status == 'done':
+        result_url = "%s/%s" % (app.config['RESULTS_URL'], job.uid)
+        if job.jobtype == 'antismash':
             result_url += "/display.xhtml"
         else:
             result_url += "/index.html"
-        job['result_url'] = result_url
+        res['result_url'] = result_url
+    res['short_status'] = job.get_short_status()
 
-    return jsonify(job)
+    return jsonify(res)
 
 
 @app.route('/server_status')
 def server_status():
-    pending = Job.query.filter(Job.status == 'pending').count()
-    running = Job.query.filter(Job.status.like('running%')).count()
+    pending = redis_store.llen('jobs:queued')
+    running = redis_store.llen('jobs:running')
 
     if pending + running > 0:
         status = 'working'

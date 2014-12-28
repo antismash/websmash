@@ -1,6 +1,7 @@
 from flask import Flask
 from flask.ext.mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_redis import Redis
 from flask.ext.downloader import Downloader
 from werkzeug import SharedDataMiddleware
 from os import path
@@ -15,6 +16,7 @@ app.wsgi_app = SharedDataMiddleware(app.wsgi_app,
                                      '/favicon.ico': path.join(app.root_path, 'static', 'images', 'favicon.ico')})
 mail = Mail(app)
 db = SQLAlchemy(app)
+redis_store = Redis(app)
 dl = Downloader(app)
 
 import websmash.models
