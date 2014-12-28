@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime, timedelta
-from websmash import db
 
 class Job(object):
     def __init__(self, **kwargs):
@@ -45,25 +44,17 @@ class Job(object):
     def __repr__(self):
         return '<Job %r (%s)>' % (self.uid, self.status)
 
-class Notice(db.Model):
-    __tablename__ = 'notices'
-    id         = db.Column(db.String(36), primary_key=True)
-    added      = db.Column(db.DateTime)
-    show_from  = db.Column(db.DateTime)
-    show_until = db.Column(db.DateTime)
-    category   = db.Column(db.String(100))
-    teaser     = db.Column(db.String(500))
-    text       = db.Column(db.String(2000))
-
+class Notice(object):
     def __init__(self,
                  teaser,
                  text,
                  added=None,
                  show_from=None,
                  show_until=None,
-                 category=u'notice'
+                 category=u'notice',
+                 id=None
                 ):
-        self.id = unicode(uuid.uuid4())
+        self.id = id if id is not None else unicode(uuid.uuid4())
         self.added = added and added or datetime.utcnow()
         self.show_from = show_from and show_from or datetime.utcnow()
         self.show_until = show_until and show_until or \
@@ -88,13 +79,7 @@ class Notice(db.Model):
 
         return ret
 
-class Stat(db.Model):
-    __tablename__ = 'stats'
-    uid      = db.Column('uid', db.String(128), primary_key=True)
-    jobtype  = db.Column('jobtype', db.String(20))
-    added    = db.Column('added', db.DateTime)
-    finished = db.Column('finished', db.DateTime)
-
+class Stat(object):
     def __init__(self,
                  uid,
                  jobtype="antismash",

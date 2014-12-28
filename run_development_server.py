@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from websmash import app, db
+from websmash import app
 
-db.create_all()
 app.run(debug=True)

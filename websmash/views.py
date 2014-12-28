@@ -1,17 +1,12 @@
 from flask import redirect, url_for, request, abort, \
-                  render_template, jsonify, json, Response
+                  render_template, jsonify
 from flask.ext.mail import Message
 import os
-import time
-import uuid
 from os import path
-from sqlalchemy import desc, func
-from sqlalchemy.sql.expression import extract
-from datetime import datetime
 from werkzeug import secure_filename
-from websmash import app, db, mail, dl, redis_store
+from websmash import app, mail, dl, redis_store
 from websmash.utils import generate_confirmation_mail
-from websmash.models import Job, Notice, Stat
+from websmash.models import Job, Notice
 
 # Supported sec met cluster types. List of descriptions, the clusters
 # are specified by a number in antismash.py
@@ -308,45 +303,13 @@ def server_status():
 @app.route('/current_notices')
 def current_notices():
     "Display current notices"
-    now = datetime.utcnow()
-    notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
-    ret = [i.json for i in notices]
-    return jsonify(notices=ret)
+    rets = redis_store.keys('notice:*')
+    notices = [ redis_store.hgetall(n) for n in rets]
+    return jsonify(notices=notices)
 
 @app.route('/show_notices')
 def show_notices():
     "Show current notices"
-    now = datetime.utcnow()
-    notices = Notice.query.filter(Notice.show_from<=now).filter(Notice.show_until>=now).order_by(Notice.added).all()
+    rets = redis_store.keys('notice:*')
+    notices = [Notice(**redis_store.hgetall(i)) for i in rets]
     return render_template('notices.html', notices=notices, skip_notices=True)
-
-@app.route('/usage')
-def usage():
-    return render_template('usage.html')
-
-@app.route('/weekly_data')
-def weekly_data():
-    stats = db.session.query(Stat.added, func.count(Stat.added)).group_by(extract('year', Stat.added),
-                                extract('month', Stat.added),
-                                extract('day', Stat.added)).order_by(desc(Stat.added)).limit(7).all()
-
-    data = map(lambda x: {'x': int(time.mktime(x[0].date().timetuple())), 'y': x[1] }, stats)
-
-    data.reverse()
-
-    series = [{"name":"Weekly Usage","data": data }]
-    return Response(json.dumps(series), mimetype='application/json')
-
-
-@app.route('/monthly_data')
-def monthly_data():
-    stats = db.session.query(Stat.added, func.count(Stat.added)).group_by(extract('year', Stat.added),
-                                extract('month', Stat.added),
-                                extract('day', Stat.added)).order_by(desc(Stat.added)).limit(30).all()
-
-    data = map(lambda x: {'x': int(time.mktime(x[0].date().timetuple())), 'y': x[1] }, stats)
-
-    data.reverse()
-
-    series = [{"name":"Monthly Usage","data": data}]
-    return Response(json.dumps(series), mimetype='application/json')
