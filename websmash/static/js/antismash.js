@@ -97,7 +97,7 @@ function is_annotated(file) {
     var ext = get_ext(file.toLowerCase());
     var valid_exts = ['gb', 'gbk', 'genbank', 'emb', 'embl'];
     var res = false;
-    for (i in valid_exts) {
+    for (var i in valid_exts) {
         if (ext == valid_exts[i]) {
             res = true;
             break;
@@ -110,7 +110,7 @@ function is_fasta(file) {
     var ext = get_ext(file.toLowerCase());
     var valid_exts = ['fasta', 'fas', 'fa', 'fna'];
     var res = false;
-    for (i in valid_exts) {
+    for (var i in valid_exts) {
         if (ext == valid_exts[i]) {
             res = true;
             break;
@@ -145,27 +145,27 @@ function verify_nucl_form() {
     var from = $('#from').val();
     var to = $('#to').val();
 
-    if( (file == '' || file == null) && (ncbi == '' || ncbi == null)){
+    if( (file === '' || file === null) && (ncbi === '' || ncbi === null)){
         alert('No input file provided. Please enter NCBI number or upload your own file');
         return false;
     }
 
-    if( !(is_annotated(file) || is_fasta(file)) && ncbi == '' ) {
+    if( !(is_annotated(file) || is_fasta(file)) && ncbi === '' ) {
         alert('Please provide EMBL/GenBank or nucleotide FASTA file');
         return false;
     }
 
-    if((! $.isNumeric(from)) && (! from == '' && to == '')){
+    if((! $.isNumeric(from)) && (! (from === '' && to === ''))){
         alert("Please insert an integer number into the 'from' field.");
         return false;
     }
 
-    if((! $.isNumeric(to)) && (! to == '' && to == '')){
+    if((! $.isNumeric(to)) && (! (to === '' && to === ''))){
         alert("Please insert an integer number into the 'to' field.");
         return false;
     }
 
-    if(parseInt(from) > parseInt(to)){
+    if(parseInt(from, 10) > parseInt(to, 10)){
         alert("Value in 'to' field should be higher than value in 'from' field.");
         return false;
     }
@@ -177,7 +177,7 @@ function verify_prot_form() {
     var sequence = $('#sequence').val();
     var ncbi = $('#prot-ncbi').val();
 
-    if( (sequence == '') && (ncbi == '')){
+    if( (sequence === '') && (ncbi === '')){
         alert('No input provided. Please enter NCBI number or paste your own sequence');
         return false;
     }
