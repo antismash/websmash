@@ -75,8 +75,10 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on', cluster_5=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
-        assert j is not None
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         assert j.geneclustertypes == '1'
 
     def test_geneclustertypes_specific(self):
@@ -84,8 +86,10 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_2=u'on', cluster_5=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
-        assert j is not None
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         self.assertEquals(j.geneclustertypes, '2,5')
 
     def test_geneclustertypes_last(self):
@@ -95,8 +99,10 @@ class WebTestCase(WebsmashTestCase):
         data['cluster_%d' % last] = u'on'
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
-        assert j is not None
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         self.assertEquals(j.geneclustertypes, u'%d' % last)
 
     def test_geneclustertypes_none(self):
@@ -111,7 +117,10 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         assert j is not None
         self.assertEquals(j.taxon, 'p')
 
@@ -171,7 +180,10 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on', fullhmmer=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         assert j is not None
         assert j.fullhmm
 
@@ -183,7 +195,10 @@ class WebTestCase(WebsmashTestCase):
         data['to'] = '42'
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        j = Job.query.filter(Job.status=='pending').first()
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
         self.assertEqual(j.from_pos, 23)
         self.assertEqual(j.to_pos, 42)
 
@@ -192,8 +207,7 @@ class WebTestCase(WebsmashTestCase):
         rv = self.client.get('/display/invalid')
         self.assert404(rv)
         j = Job()
-        self.db.session.add(j)
-        self.db.session.commit()
+        self.redis_store.hmset(u"job:%s" % j.uid, j.get_dict())
         rv = self.client.get('/display/%s' % j.uid)
         assert "Status of job" in rv.data
 

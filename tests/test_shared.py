@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import redis
+import mockredis
+redis.Redis = mockredis.MockRedis
 from flask.ext.testing import TestCase
 import os
 import tempfile
@@ -10,18 +13,16 @@ class ModelTestCase(TestCase):
     def create_app(self):
         self.app = websmash.app
         self.dl = websmash.dl
+        self.redis_store = websmash.redis_store
         self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
         websmash.mail.suppress = True
         return self.app
 
     def setUp(self):
-        self.db = websmash.db
-        self.db.create_all()
+        pass
 
     def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
+        self.redis_store.flushdb()
 
 class WebsmashTestCase(ModelTestCase):
 
