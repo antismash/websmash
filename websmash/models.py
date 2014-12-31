@@ -12,7 +12,11 @@ class Job(object):
             self.added = datetime.strptime(added, "%Y-%m-%d %H:%M:%S.%f")
         else:
             self.added = added
-        self.last_changed = self.added
+        last_changed = kwargs.get('last_changed', self.added)
+        if isinstance(last_changed, (str, unicode)):
+            self.last_changed = datetime.strptime(last_changed, "%Y-%m-%d %H:%M:%S.%f")
+        else:
+            self.last_changed = last_changed
         self.geneclustertypes = kwargs.get('geneclustertypes', '1')
         self.taxon = 'e' if kwargs.get('eukaryotic', False) else 'p'
         self.gtransl = kwargs.get('gtransl', 1)
@@ -23,12 +27,17 @@ class Job(object):
         self.to_pos = int(kwargs.get('to', kwargs.get('to_pos', 0)))
         self.molecule = kwargs.get('molecule', 'nucl')
         self.inclusive = kwargs.get('inclusive', False)
+        self.cf_cdsnr = int(kwargs.get('cf_cdsnr', 5))
+        self.cf_npfams = int(kwargs.get('cf_npfams', 5))
+        self.cf_threshold = float(kwargs.get('cf_threshold', 0.6))
         self.smcogs = kwargs.get('smcogs', False)
         self.clusterblast = kwargs.get('clusterblast', False)
+        self.knownclusterblast = kwargs.get('knownclusterblast', False)
         self.subclusterblast = kwargs.get('subclusterblast', False)
-        self.fullblast = kwargs.get('fullblast', False)
         self.fullhmm = kwargs.get('fullhmm', False)
-        self.download = kwargs.get('download', False)
+        self.asf = kwargs.get('asf', False)
+        self.ecpred = kwargs.get('ecpred', False)
+        self.modeling = kwargs.get('modeling', False)
         self.status = kwargs.get('status', 'pending')
 
     def get_short_status(self):

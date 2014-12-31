@@ -8,36 +8,6 @@ from websmash import app, mail, dl, redis_store
 from websmash.utils import generate_confirmation_mail
 from websmash.models import Job, Notice
 
-# Supported sec met cluster types. List of descriptions, the clusters
-# are specified by a number in antismash.py
-sec_met_types = [
-    "all",
-    "polyketides (type I)",
-    "polyketides (type II)",
-    "polyketides (type III)",
-    "heterocyst glycolipid-like polyketides",
-    "nonribosomal peptides",
-    "terpenes",
-    "lantibiotics",
-    "bacteriocins",
-    "beta-lactams",
-    "aminoglycosides / aminocyclitols",
-    "aminocoumarins",
-    "siderophores",
-    "ectoines",
-    "butyrolactones",
-    "indoles",
-    "nucleosides",
-    "phosphoglycolipids",
-    "melanins",
-    "oligosaccharides",
-    "furans",
-    "homoserine lactones",
-    "thiopeptides",
-    "phenazines",
-    "others"
-]
-
 @app.route('/', methods=['GET', 'POST'])
 def new():
     error = None
@@ -55,43 +25,46 @@ def new():
             if legacy == u'on':
                 raise Exception('Sorry, but running antiSMASH 1 is no longer supported')
             eukaryotic = request.form.get('eukaryotic', u'off')
-            inclusive = request.form.get('inclusive', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')
+            knownclusterblast = request.form.get('knownclusterblast', u'off')
             subclusterblast = request.form.get('subclusterblast', u'off')
-            fullblast = request.form.get('fullblast', u'off')
             fullhmmer = request.form.get('fullhmmer', u'off')
             kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
             kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
             kwargs['from'] = request.form.get('from', 0, type=int)
             kwargs['to'] = request.form.get('to', 0, type=int)
-            i = 1
-            clusters = []
-            while(i < len(sec_met_types) + 1):
-                if request.form.get("cluster_%s" % i, u'off') == u'on':
-                    clusters.append(str(i))
-                    if i == 1:
-                        break
-                i += 1
-            if len(clusters) == 0:
-                error_message  = "No gene cluster types specified. "
-                error_message += "Please select the type of secondary "
-                error_message += "metabolites to look for."
-                raise Exception(error_message)
-            kwargs['geneclustertypes'] = ",".join(clusters)
 
-            # given that we only support antismash 2 at the moment, hardcode
+            inclusive = request.form.get('inclusive', u'off')
+            kwargs['inclusive'] = (inclusive == u'on')
+            kwargs['cf_cdsnr'] = request.form.get('cf_cdsnr', 5, type=int)
+            kwargs['cf_npfams'] = request.form.get('cf_npfams', 5, type=int)
+            kwargs['cf_threshold'] = request.form.get('cf_threshold', 0.6, type=float)
+
+            asf = request.form.get('asf', u'off')
+            ecpred = request.form.get('ecpred', u'off')
+            modeling = request.form.get('modeling', u'off')
+
+            # Always predict all sec met types
+            kwargs['geneclustertypes'] = "1"
+
+            # given that we only support antismash 3 at the moment, hardcode
             # that jobtype.
-            kwargs['jobtype'] = 'antismash2'
+            kwargs['jobtype'] = 'antismash3'
 
             # Use boolean values instead of "on/off" strings
             kwargs['eukaryotic'] = (eukaryotic == u'on')
-            kwargs['inclusive'] = (inclusive == u'on')
             kwargs['smcogs'] = (smcogs == u'on')
             kwargs['clusterblast'] = (clusterblast == u'on')
+            kwargs['knownclusterblast'] = (knownclusterblast == u'on')
             kwargs['subclusterblast'] = (subclusterblast == u'on')
-            kwargs['fullblast'] = (fullblast == u'on')
             kwargs['fullhmm'] = (fullhmmer == u'on')
+            kwargs['asf'] = (asf == u'on')
+            kwargs['ecpred'] = (ecpred == u'on')
+            kwargs['modeling'] = (modeling == u'on')
+
+            # Never run full-genome blast analysis
+            kwargs['fullblast'] = False
 
             job = Job(**kwargs)
             dirname = path.join(app.config['RESULTS_PATH'], job.uid)
@@ -128,7 +101,6 @@ def new():
         error = unicode(e)
     return render_template('new.html', error=error,
                            old_email=old_email,
-                           sec_met_types=sec_met_types,
                            results_path=results_path)
 
 @app.route('/protein', methods=['GET', 'POST'])
@@ -139,7 +111,6 @@ def protein():
     old_email = ''
     if request.method == 'GET':
         return render_template('new.html', error=error,
-                               sec_met_types=sec_met_types,
                                old_email=old_email,
                                old_sequence=old_sequence,
                                switch_to='prot',
@@ -152,8 +123,8 @@ def protein():
         old_email = kwargs['email']
         # We always run all sec met types for the protein search
         kwargs['geneclustertypes'] = "1"
-        # And we always run antiSMASH2 jobs for this
-        kwargs['jobtype'] = 'antismash2'
+        # And we always run antiSMASH3 jobs for this
+        kwargs['jobtype'] = 'antismash3'
         # And of course this is protein input
         kwargs['molecule'] = 'prot'
 

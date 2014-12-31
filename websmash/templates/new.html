@@ -44,7 +44,7 @@
         </fieldset>
         <div id="region-control" data-toggle="collapse" data-target=".region">
           <i class="icon-plus" id="region-button"></i>
-          Limit prediction to an input region
+          Limit prediction to an input region (ignored for multi-sequence records)
           <a href="#" data-toggle="tooltip" data-placement="right" title="Set start/end coordinates for analysis"><i class="icon-question-sign"></i></a>
         </div>
         <fieldset class="as-form collapse region">
@@ -57,6 +57,29 @@
               <input type="text" name="to" id="to" placeholder="stop at bp"></label>
           </div>
         </fieldset>
+        <div id="cf-control" data-toggle="collapse" data-target=".clusterfinder">
+          <i class="icon-plus" id="cf-button"></i>
+          Detect putative gene clusters based on PFAM domain probabilities
+        </div>
+        <fieldset class="clusterfinder collapse as-form">
+          <div class="control clusterfinder collapse">
+            <label class="checkbox" for="inclusive">
+              <input type="checkbox" name="inclusive" id="inclusive">
+              Enable ClusterFinder algorithm</label>
+          </div>
+          <div class="control clusterfinder collapse">
+            <label for="cf_cdsnr">Minimum ClusterFinder cluster size in CDS
+              <input type="text" name="cf_cdsnr" id="cf_cdsnr" placeholder="5"></label>
+          </div>
+          <div class="control clusterfinder collapse">
+            <label for="cf_npfams">Minimum ClusterFinder cluster PFAM domains
+              <input type="text" name="cf_npfams" id="cf_npfams" placeholder="5"></label>
+          </div>
+          <div class="control clusterfinder collapse">
+            <label for="cf_threshold">Minimum ClusterFinder cluster threshold
+              <input type="text" name="cf_threshold" id="cf_threshold" placeholder="0.6"></label>
+          </div>
+        </fieldset>
         <fieldset class="as-form">
           <div class="control-group">
             <label class="checkbox" for="eukaryotic">
@@ -64,31 +87,6 @@
               DNA of Eukaryotic origin</label>
           </div>
         </fieldset>
-        <div id="sec-met-control" data-toggle="collapse" data-target=".sec-met">
-          <i class="icon-plus" id="sec-met-button"></i>
-          Restrict which of the {{ sec_met_types|length - 1}} supported secondary metabolite types to detect
-          <a href="#" data-toggle="tooltip" data-placement="right" title="Restrict which secondary metabolites to detect"><i class="icon-question-sign"></i></a>
-        </div>
-        <fieldset class="as-form sec-met collapse">
-          <div class="control-group collapse sec-met">
-{% for met in sec_met_types %}
-{% if loop.first %}
-            <div class="controls span12 collapse sec-met">
-              <label class="checkbox" for="cluster_1"><input type="checkbox" name="cluster_1" id="cluster_1">all {{sec_met_types|length - 1}} cluster types</label>
-            </div>
-{% else %}
-            <div class="controls span3 collapse sec-met">
-              <label class="checkbox" for="cluster_{{loop.index}}"><input type="checkbox" name="cluster_{{loop.index}}" id="cluster_{{loop.index}}">{{ met }}</label>
-            </div>
-{% endif %}
-{% endfor %}
-          </div>
-        </fieldset>
-        <div class="control-group as-form">
-          <label class="checkbox" for="inclusive">
-            <input type="checkbox" name="inclusive" id="inclusive">
-            Detect putative gene clusters based on PFAM domain probabilities</label>
-        </div>
         <div class="control-group as-form dna_related">
           <label class="control-label" for="trans_table">GenBank translation table used for Glimmer:</label>
           <div class="control">
@@ -123,26 +121,61 @@
             </div>
 
         </div>
-        <div class="control-group as-form">
-          <label class="checkbox" for="smcogs">
-            <input type="checkbox" name="smcogs" id="smcogs" checked>
-            smCOG analysis for functional prediction and phylogenetic analysis of genes</label>
+        <div>
+          BLAST comparisons to other gene clusters:
         </div>
-        <div class="control-group as-form">
-          <label class="checkbox" for="clusterblast">
-            <input type="checkbox" name="clusterblast" id="clusterblast" checked>
-            Gene Cluster Blast analysis</label>
+        <fieldset class="control-group as-form">
+          <div class="control span4">
+            <label class="checkbox" for="clusterblast">
+              <input type="checkbox" name="clusterblast" id="clusterblast" checked>
+              Gene Cluster Blast analysis</label>
+          </div>
+          <div class="control span4">
+            <label class="checkbox" for="knownclusterblast">
+              <input type="checkbox" name="knownclusterblast" id="knownclusterblast" checked>
+              Known Gene Cluster Blast analysis</label>
+          </div>
+          <div class="control span4">
+            <label class="checkbox" for="subclusterblast">
+              <input type="checkbox" name="subclusterblast" id="subclusterblast" checked>
+              Subcluster Blast analysis</label>
+          </div>
+        </fieldset>
+        <div>
+          Additional annotations:
         </div>
-        <div class="control-group as-form">
-          <label class="checkbox" for="subclusterblast">
-            <input type="checkbox" name="subclusterblast" id="subclusterblast" checked>
-            Subcluster Blast analysis</label>
+        <fieldset class="control-group as-form">
+          <div class="control span4">
+            <label class="checkbox" for="smcogs">
+              <input type="checkbox" name="smcogs" id="smcogs" checked>
+              smCOG analysis for functional prediction and phylogenetic analysis of genes</label>
+          </div>
+          <div class="control span4">
+            <label class="checkbox" for="fullhmmer">
+              <input type="checkbox" name="fullhmmer" id="fullhmmer" checked>
+              Whole-genome PFAM analysis</label>
+          </div>
+          <div class="control span4">
+            <label class="checkbox" for="asf">
+              <input type="checkbox" name="asf" id="asf" checked>
+              Active site finder</label>
+          </div>
+        </fieldset>
+        <div>
+          Optional analyses with a long runtime
         </div>
-        <div class="control-group">
-          <label class="checkbox" for="fullhmmer">
-            <input type="checkbox" name="fullhmmer" id="fullhmmer" checked>
-            Whole-genome PFAM analysis</label>
-        </div>
+        <fieldset class="control-group as-form">
+          <div class="control span4">
+            <label class="checkbox" for="ecpred">
+              <input type="checkbox" name="ecpred" id="ecpred">
+              EC prediction (long runtime)</label>
+          </div>
+          <div class="control span8">
+            <label class="checkbox" for="modeling">
+              <input type="checkbox" name="modeling" id="modeling">
+              Homology based metabolic modeling pipeline against template model E.co or SCO</label>
+          </div>
+        </fieldset>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
