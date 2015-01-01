@@ -31,6 +31,8 @@ def new():
             knownclusterblast = request.form.get('knownclusterblast', u'off')
             subclusterblast = request.form.get('subclusterblast', u'off')
             fullhmmer = request.form.get('fullhmmer', u'off')
+
+            kwargs['genefinder'] = request.form.get('genefinder', 'prodigal')
             kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
             kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
             kwargs['from'] = request.form.get('from', 0, type=int)

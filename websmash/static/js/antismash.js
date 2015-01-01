@@ -44,7 +44,7 @@ function toggle_legacy() {
 
 function clear_upload() {
     $('#seq').val('');
-    show_glimmer_if_needed();
+    show_genefinding_if_needed();
 }
 
 function clear_ncbi() {
@@ -59,12 +59,24 @@ function clear_prot_ncbi() {
     $('#prot-ncbi').val('');
 }
 
-function show_glimmer_if_needed() {
+function show_genefinding_if_needed() {
     var file = $('#seq').val();
+    fasta = is_fasta(file);
+    if ( fasta ) {
+        show_genefinding();
+    } else {
+        hide_genefinding();
+    }
+    show_glimmer_if_needed(fasta);
+}
+
+
+function show_glimmer_if_needed(fasta) {
     var euc  = $('#eukaryotic').prop('checked');
+    var genefinder = $('input[name=genefinder]:checked').val();
 
     // No need to show glimmer settings for eukaryotic fasta files
-    if( is_fasta(file) && !euc ) {
+    if( fasta && genefinder == 'glimmer' && !euc ) {
         show_glimmer();
     } else {
         hide_glimmer();
@@ -74,17 +86,28 @@ function show_glimmer_if_needed() {
 
 function seq_callback() {
     clear_ncbi();
-    show_glimmer_if_needed();
+    show_genefinding_if_needed();
 }
 
-function show_glimmer() {
+function show_genefinding() {
     $('.dna_related').each(function(){
         $(this).show("fast");
     });
 }
+function show_glimmer() {
+    $('.glimmer').each(function(){
+        $(this).show("fast");
+    });
+}
+
+function hide_genefinding() {
+    $('.dna_related').each(function(){
+        $(this).hide("fast");
+    });
+}
 
 function hide_glimmer() {
-    $('.dna_related').each(function(){
+    $('.glimmer').each(function(){
         $(this).hide("fast");
     });
 }

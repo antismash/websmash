@@ -87,9 +87,24 @@
               DNA of Eukaryotic origin</label>
           </div>
         </fieldset>
-        <div class="control-group as-form dna_related">
-          <label class="control-label" for="trans_table">GenBank translation table used for Glimmer:</label>
+        <fieldset class="control-group as-form dna_related">
+          <div>Gene finding options:</div>
           <div class="control">
+            <label class="radio inline">
+              <input type="radio" name="genefinder" id="prodigal" value="prodigal" checked>
+              Prodigal
+            </label>
+            <label class="radio inline">
+              <input type="radio" name="genefinder" id="prodigal_m" value="prodigal_m">
+              Prodigal Metagenomic
+            </label>
+            <label class="radio inline">
+              <input type="radio" name="genefinder" id="glimmer" value="glimmer">
+              Glimmer
+            </label>
+          </div>
+          <div class="control glimmer">
+            <label class="control-label" for="trans_table">GenBank translation table used for Glimmer:</label>
             <select id="trans_table" name="trans_table">
               <option value="1"> The Standard Code</option>
               <option value="11"> The Bacterial, Archaeal and Plant Plastid Code</option>
@@ -110,7 +125,7 @@
               <option value="21"> Trematode Mitochondrial Code</option>
             </select>
           </div>
-          <div class="control">
+          <div class="control glimmer">
             <input type="text" name="gene_length" id="gene_length" value="50">
             <span class="help-inline">Glimmer minimal gene length</span>
           </div>
@@ -120,7 +135,7 @@
               Run secondary metabolite detection on all possible ORFs</label>
             </div>
 
-        </div>
+        </fieldset>
         <div>
           BLAST comparisons to other gene clusters:
         </div>
@@ -247,8 +262,9 @@
     $('#legacy').change(toggle_legacy);
     toggle_legacy();
 
-    // Show glimmer options if user is trying to upload a fasta file
-    $('#eukaryotic').change(show_glimmer_if_needed);
+    // Show genefinding options if user is trying to upload a fasta file
+    $('#eukaryotic').change(show_genefinding_if_needed);
+    $('input[name=genefinder]').change(show_genefinding_if_needed);
 
     // Make sure that only NCBI accession# or uploadable file is present.
     $('#seq').change(seq_callback);
@@ -257,7 +273,7 @@
     $('#sequence').change(clear_prot_ncbi);
     $('#prot-ncbi').change(clear_sequence);
 
-    show_glimmer_if_needed();
+    show_genefinding_if_needed();
 
     $('.legacy-options').on('shown', function(){
         $('#legacy-button').removeClass('icon-plus')

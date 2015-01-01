@@ -19,6 +19,7 @@ class Job(object):
             self.last_changed = last_changed
         self.geneclustertypes = kwargs.get('geneclustertypes', '1')
         self.taxon = 'e' if kwargs.get('eukaryotic', False) else 'p'
+        self.genefinder = kwargs.get('genefinder', 'prodigal')
         self.gtransl = kwargs.get('gtransl', 1)
         self.minglength = kwargs.get('minglength', 50)
         self.genomeconf = kwargs.get('genomeconf', 'l')

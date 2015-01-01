@@ -156,6 +156,43 @@ class WebTestCase(WebsmashTestCase):
         assert j is not None
         assert j.all_orfs == 'True'
 
+    def test_submit_job_genefinder_prodigal(self):
+        """Test if selecting the prodigal gene finder works"""
+        data = dict(seq=self.tmp_file, genefinder=u'prodigal')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.genefinder, u'prodigal')
+
+    def test_submit_job_genefinder_prodigal_m(self):
+        """Test if selecting the prodigal_m gene finder works"""
+        data = dict(seq=self.tmp_file, genefinder=u'prodigal_m')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.genefinder, u'prodigal_m')
+
+    def test_submit_job_genefinder_glimmer(self):
+        """Test if selecting the glimmeer gene finder works"""
+        data = dict(seq=self.tmp_file, genefinder=u'glimmer')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.genefinder, u'glimmer')
+
+
     def test_submit_job_from_to(self):
         """Test if submitting a job with an uploaded sequence works"""
         data = dict(seq=self.tmp_file, cluster_1=u'on')
