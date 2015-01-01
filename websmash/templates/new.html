@@ -177,18 +177,29 @@
           </div>
         </fieldset>
         <div>
-          Optional analyses with a long runtime
+          <strong>Optional analyses with a long runtime</strong>
         </div>
-        <fieldset class="control-group as-form">
-          <div class="control span4">
+        <fieldset class="control-group">
+          <div class="span6">
+            Homology based metabolic modeling pipeline against template model:
+          </div>
+          <div class="control span6">
+            <label class="radio inline">
+              <input type="radio" name="modeling" id="modeling_none" value="none" checked>
+              none</label>
+            <label class="radio inline">
+              <input type="radio" name="modeling" id="modeling_eco" value="eco">
+              <i>E. coli</i></label>
+            <label class="radio inline">
+              <input type="radio" name="modeling" id="modeling_sco" value="sco">
+              <i>S. coelicolor</i></label>
+          </div>
+        </fieldset>
+        <fieldset class=control-group">
+          <div class="control">
             <label class="checkbox" for="ecpred">
               <input type="checkbox" name="ecpred" id="ecpred">
               EC prediction (long runtime)</label>
-          </div>
-          <div class="control span8">
-            <label class="checkbox" for="modeling">
-              <input type="checkbox" name="modeling" id="modeling">
-              Homology based metabolic modeling pipeline against template model E.co or SCO</label>
           </div>
         </fieldset>
         <div class="form-actions">

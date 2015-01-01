@@ -38,7 +38,7 @@ class Job(object):
         self.fullhmm = kwargs.get('fullhmm', False)
         self.asf = kwargs.get('asf', False)
         self.ecpred = kwargs.get('ecpred', False)
-        self.modeling = kwargs.get('modeling', False)
+        self.modeling = kwargs.get('modeling', 'none')
         self.status = kwargs.get('status', 'pending')
 
     def get_short_status(self):

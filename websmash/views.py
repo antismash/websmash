@@ -46,7 +46,7 @@ def new():
 
             asf = request.form.get('asf', u'off')
             ecpred = request.form.get('ecpred', u'off')
-            modeling = request.form.get('modeling', u'off')
+            kwargs['modeling'] = request.form.get('modeling', u'none')
 
             # Always predict all sec met types
             kwargs['geneclustertypes'] = "1"
@@ -64,7 +64,6 @@ def new():
             kwargs['fullhmm'] = (fullhmmer == u'on')
             kwargs['asf'] = (asf == u'on')
             kwargs['ecpred'] = (ecpred == u'on')
-            kwargs['modeling'] = (modeling == u'on')
             kwargs['all_orfs'] = (all_orfs == u'on')
 
             # Never run full-genome blast analysis

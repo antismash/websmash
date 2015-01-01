@@ -192,6 +192,41 @@ class WebTestCase(WebsmashTestCase):
         assert j is not None
         self.assertEqual(j.genefinder, u'glimmer')
 
+    def test_submit_job_modeling_none(self):
+        """Test if selecting no modeling works"""
+        data = dict(seq=self.tmp_file, modeling=u'none')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.modeling, u'none')
+
+    def test_submit_job_modeling_eco(self):
+        """Test if selecting E.coli modeling works"""
+        data = dict(seq=self.tmp_file, modeling=u'eco')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.modeling, u'eco')
+
+    def test_submit_job_modeling_sco(self):
+        """Test if selecting S.coelicolor modeling works"""
+        data = dict(seq=self.tmp_file, modeling=u'sco')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEqual(j.modeling, u'sco')
 
     def test_submit_job_from_to(self):
         """Test if submitting a job with an uploaded sequence works"""
