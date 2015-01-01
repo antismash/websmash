@@ -4,7 +4,6 @@ import websmash
 import os
 from werkzeug import FileStorage
 from websmash.models import Job
-from websmash.views import sec_met_types
 from tests.test_shared import WebsmashTestCase
 
 class WebTestCase(WebsmashTestCase):
@@ -69,48 +68,6 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-
-    def test_geneclustertypes_all(self):
-        """Test if the 'all' checkbox results in geneclustertypes being 1"""
-        data = dict(seq=self.tmp_file, cluster_1=u'on', cluster_5=u'on')
-        rv = self.client.post('/', data=data, follow_redirects=True)
-        assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
-        assert res != {}
-        j = Job(**res)
-        assert j.geneclustertypes == '1'
-
-    def test_geneclustertypes_specific(self):
-        """Test if geneclustertypes matches checked boxes"""
-        data = dict(seq=self.tmp_file, cluster_2=u'on', cluster_5=u'on')
-        rv = self.client.post('/', data=data, follow_redirects=True)
-        assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
-        assert res != {}
-        j = Job(**res)
-        self.assertEquals(j.geneclustertypes, '2,5')
-
-    def test_geneclustertypes_last(self):
-        """Test if geneclustertypes is correct for last checkbox"""
-        last = len(sec_met_types)
-        data = dict(seq=self.tmp_file)
-        data['cluster_%d' % last] = u'on'
-        rv = self.client.post('/', data=data, follow_redirects=True)
-        assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
-        assert res != {}
-        j = Job(**res)
-        self.assertEquals(j.geneclustertypes, u'%d' % last)
-
-    def test_geneclustertypes_none(self):
-        """Check if specifying no gene clusters will give an error"""
-        rv = self.client.post('/', data={}, follow_redirects=True)
-        expected = "No gene cluster types specified. Please select the type "
-        expected += "of secondary metabolites to look for."
-        assert expected in rv.data
 
     def test_taxon_default(self):
         """Test if taxon default is "prokaryote" for DNA uploads"""
