@@ -25,6 +25,7 @@ def new():
             if legacy == u'on':
                 raise Exception('Sorry, but running antiSMASH 1 is no longer supported')
             eukaryotic = request.form.get('eukaryotic', u'off')
+            all_orfs = request.form.get('all_orfs', u'off')
             smcogs = request.form.get('smcogs', u'off')
             clusterblast = request.form.get('clusterblast', u'off')
             knownclusterblast = request.form.get('knownclusterblast', u'off')
@@ -62,6 +63,7 @@ def new():
             kwargs['asf'] = (asf == u'on')
             kwargs['ecpred'] = (ecpred == u'on')
             kwargs['modeling'] = (modeling == u'on')
+            kwargs['all_orfs'] = (all_orfs == u'on')
 
             # Never run full-genome blast analysis
             kwargs['fullblast'] = False

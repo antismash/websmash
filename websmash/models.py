@@ -22,7 +22,7 @@ class Job(object):
         self.gtransl = kwargs.get('gtransl', 1)
         self.minglength = kwargs.get('minglength', 50)
         self.genomeconf = kwargs.get('genomeconf', 'l')
-        self.all_orfs = kwargs.get('all_orfs', True)
+        self.all_orfs = kwargs.get('all_orfs', False)
         self.from_pos = int(kwargs.get('from', kwargs.get('from_pos', 0)))
         self.to_pos = int(kwargs.get('to', kwargs.get('to_pos', 0)))
         self.molecule = kwargs.get('molecule', 'nucl')

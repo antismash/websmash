@@ -144,6 +144,18 @@ class WebTestCase(WebsmashTestCase):
         assert j is not None
         assert j.fullhmm
 
+    def test_submit_job_all_orfs(self):
+        """Test if switching on all_orfs works"""
+        data = dict(seq=self.tmp_file, all_orfs=u'on')
+        rv = self.client.post('/', data=data, follow_redirects=True)
+        assert "Status of job" in rv.data
+        job_id = self.redis_store.keys('job:*')[0]
+        res = self.redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        assert j.all_orfs == 'True'
+
     def test_submit_job_from_to(self):
         """Test if submitting a job with an uploaded sequence works"""
         data = dict(seq=self.tmp_file, cluster_1=u'on')
