@@ -59,7 +59,7 @@
         </fieldset>
         <div id="cf-control" data-toggle="collapse" data-target=".clusterfinder">
           <i class="icon-plus" id="cf-button"></i>
-          Detect putative gene clusters based on PFAM domain probabilities
+          Detect putative gene clusters using the <a href="http://www.cell.com/cell/abstract/S0092-8674(14)00826-5">ClusterFinder</a> algorithm
         </div>
         <fieldset class="clusterfinder collapse as-form">
           <div class="control clusterfinder collapse">
@@ -67,16 +67,19 @@
               <input type="checkbox" name="inclusive" id="inclusive">
               Enable ClusterFinder algorithm</label>
           </div>
+          <div class"control clusterfinder collapse">
+            For ClusterFinder-predicted clusters:
+          </div>
           <div class="control clusterfinder collapse">
-            <label for="cf_cdsnr">Minimum ClusterFinder cluster size in CDS
+            <label for="cf_cdsnr">Minimum cluster size in CDS
               <input type="text" name="cf_cdsnr" id="cf_cdsnr" placeholder="5"></label>
           </div>
           <div class="control clusterfinder collapse">
-            <label for="cf_npfams">Minimum ClusterFinder cluster PFAM domains
+            <label for="cf_npfams">Minimum number of biosynthesis-related PFAM domains
               <input type="text" name="cf_npfams" id="cf_npfams" placeholder="5"></label>
           </div>
           <div class="control clusterfinder collapse">
-            <label for="cf_threshold">Minimum ClusterFinder cluster threshold
+            <label for="cf_threshold">Minimum ClusterFinder probability
               <input type="text" name="cf_threshold" id="cf_threshold" placeholder="0.6"></label>
           </div>
         </fieldset>
@@ -137,7 +140,7 @@
 
         </fieldset>
         <div>
-          BLAST comparisons to other gene clusters:
+          <strong>BLAST comparisons to other gene clusters:</strong>
         </div>
         <fieldset class="control-group as-form">
           <div class="control span4">
@@ -157,18 +160,13 @@
           </div>
         </fieldset>
         <div>
-          Additional annotations:
+          <strong>Additional annotations:</strong>
         </div>
         <fieldset class="control-group as-form">
           <div class="control span4">
             <label class="checkbox" for="smcogs">
               <input type="checkbox" name="smcogs" id="smcogs" checked>
               smCOG analysis for functional prediction and phylogenetic analysis of genes</label>
-          </div>
-          <div class="control span4">
-            <label class="checkbox" for="fullhmmer">
-              <input type="checkbox" name="fullhmmer" id="fullhmmer" checked>
-              Whole-genome PFAM analysis</label>
           </div>
           <div class="control span4">
             <label class="checkbox" for="asf">
@@ -179,6 +177,13 @@
         <div>
           <strong>Optional analyses with a long runtime</strong>
         </div>
+        <fieldset class="control-group">
+          <div class="control">
+            <label class="checkbox" for="fullhmmer">
+              <input type="checkbox" name="fullhmmer" id="fullhmmer">
+              Whole-genome PFAM analysis</label>
+          </div>
+        </fieldset>
         <fieldset class="control-group">
           <div class="span6">
             Homology based metabolic modeling pipeline against template model:
@@ -199,7 +204,7 @@
           <div class="control">
             <label class="checkbox" for="ecpred">
               <input type="checkbox" name="ecpred" id="ecpred">
-              EC prediction (long runtime)</label>
+              Enzyme Commission (EC) number prediction (very long runtime)</label>
           </div>
         </fieldset>
         <div class="form-actions">
@@ -209,7 +214,7 @@
     </div>
   </div>
   <div class="tab-pane" id="prot">
-    <div>Analyze one or more amino acid sequences:</div>
+    <div>Analyze one or more amino acid sequences to identify secondary metabolite scaffold biosynthesis genes:</div>
     <div>
       <div class="control-group">
         <button class="btn btn-inverse" id="prot-sample-input">Load sample input</button>
