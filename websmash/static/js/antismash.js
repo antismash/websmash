@@ -61,18 +61,19 @@ function clear_prot_ncbi() {
 
 function show_genefinding_if_needed() {
     var file = $('#seq').val();
+    var euc  = $('#eukaryotic').prop('checked');
+
     fasta = is_fasta(file);
-    if ( fasta ) {
+    if ( fasta && !euc) {
         show_genefinding();
     } else {
         hide_genefinding();
     }
-    show_glimmer_if_needed(fasta);
+    show_glimmer_if_needed(fasta, euc);
 }
 
 
-function show_glimmer_if_needed(fasta) {
-    var euc  = $('#eukaryotic').prop('checked');
+function show_glimmer_if_needed(fasta, euc) {
     var genefinder = $('input[name=genefinder]:checked').val();
 
     // No need to show glimmer settings for eukaryotic fasta files
