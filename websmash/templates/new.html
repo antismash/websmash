@@ -59,7 +59,8 @@
         </fieldset>
         <div id="cf-control" data-toggle="collapse" data-target=".clusterfinder">
           <i class="icon-plus" id="cf-button"></i>
-          Detect putative gene clusters using the <a href="http://www.cell.com/cell/abstract/S0092-8674(14)00826-5">ClusterFinder</a> algorithm
+          Detect putative gene clusters using the
+          <a target="_blank" href="http://www.cell.com/cell/abstract/S0092-8674(14)00826-5">ClusterFinder</a> algorithm
         </div>
         <fieldset class="clusterfinder collapse as-form">
           <div class="control clusterfinder collapse">
@@ -99,7 +100,7 @@
             </label>
             <label class="radio inline">
               <input type="radio" name="genefinder" id="prodigal_m" value="prodigal_m">
-              Prodigal Metagenomic
+              Prodigal (draft genomes / metagenomes)
             </label>
             <label class="radio inline">
               <input type="radio" name="genefinder" id="glimmer" value="glimmer">
@@ -174,17 +175,25 @@
               Active site finder</label>
           </div>
         </fieldset>
-        <div>
+        <div id="longrun-control" data-toggle="collapse" data-target=".longrun">
+          <i class="icon-plus" id="region-button"></i>
           <strong>Optional analyses with a long runtime</strong>
         </div>
-        <fieldset class="control-group">
+        <fieldset class="control-group longrun collapse">
           <div class="control">
             <label class="checkbox" for="fullhmmer">
               <input type="checkbox" name="fullhmmer" id="fullhmmer">
               Whole-genome PFAM analysis</label>
           </div>
         </fieldset>
-        <fieldset class="control-group">
+        <fieldset class="control-group longrun collapse">
+          <div class="control">
+            <label class="checkbox" for="ecpred">
+              <input type="checkbox" name="ecpred" id="ecpred">
+              Enzyme Commission (EC) number prediction (very long runtime)</label>
+          </div>
+        </fieldset>
+        <fieldset class="control-group longrun collapse">
           <div class="span6">
             Homology based metabolic modeling pipeline against template model:
           </div>
@@ -199,13 +208,7 @@
               <input type="radio" name="modeling" id="modeling_sco" value="sco">
               <i>S. coelicolor</i></label>
           </div>
-        </fieldset>
-        <fieldset class=control-group">
-          <div class="control">
-            <label class="checkbox" for="ecpred">
-              <input type="checkbox" name="ecpred" id="ecpred">
-              Enzyme Commission (EC) number prediction (very long runtime)</label>
-          </div>
+          <span class="help-block">Requires EC number predictions</span>
         </fieldset>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Submit</button>
