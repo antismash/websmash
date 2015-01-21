@@ -4,12 +4,13 @@ from flask.ext.mail import Message
 import os
 from os import path
 from werkzeug import secure_filename
-from websmash import app, mail, dl, redis_store
+from websmash import app, mail, dl, get_db
 from websmash.utils import generate_confirmation_mail
 from websmash.models import Job, Notice
 
 @app.route('/', methods=['GET', 'POST'])
 def new():
+    redis_store = get_db()
     error = None
     results_path = app.config['RESULTS_URL']
     old_email = ''
@@ -108,6 +109,7 @@ def new():
 
 @app.route('/protein', methods=['GET', 'POST'])
 def protein():
+    redis_store = get_db()
     error = None
     results_path = app.config['RESULTS_URL']
     old_sequence = ''
@@ -230,6 +232,7 @@ def contact():
 
 @app.route('/display/<task_id>')
 def display(task_id):
+    redis_store = get_db()
     results_path = app.config['RESULTS_URL']
     res = redis_store.hgetall(u'job:%s' % task_id)
     if res == {}:
@@ -247,6 +250,7 @@ def display_tab():
 
 @app.route('/status/<task_id>')
 def status(task_id):
+    redis_store = get_db()
     res = redis_store.hgetall(u'job:%s' % task_id)
     if res == {}:
         abort(404)
@@ -265,6 +269,7 @@ def status(task_id):
 
 @app.route('/server_status')
 def server_status():
+    redis_store = get_db()
     pending = redis_store.llen('jobs:queued')
     running = redis_store.llen('jobs:running')
 
@@ -277,6 +282,7 @@ def server_status():
 @app.route('/current_notices')
 def current_notices():
     "Display current notices"
+    redis_store = get_db()
     rets = redis_store.keys('notice:*')
     notices = [ redis_store.hgetall(n) for n in rets]
     return jsonify(notices=notices)
@@ -284,6 +290,7 @@ def current_notices():
 @app.route('/show_notices')
 def show_notices():
     "Show current notices"
+    redis_store = get_db()
     rets = redis_store.keys('notice:*')
     notices = [Notice(**redis_store.hgetall(i)) for i in rets]
     return render_template('notices.html', notices=notices, skip_notices=True)

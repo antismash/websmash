@@ -74,8 +74,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -137,8 +138,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, cluster_1=u'on', fullhmmer=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -149,8 +151,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, all_orfs=u'on')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -161,8 +164,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, genefinder=u'prodigal')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -173,8 +177,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, genefinder=u'prodigal_m')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -185,8 +190,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, genefinder=u'glimmer')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -197,8 +203,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, modeling=u'none')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -209,8 +216,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, modeling=u'eco')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -221,8 +229,9 @@ class WebTestCase(WebsmashTestCase):
         data = dict(seq=self.tmp_file, modeling=u'sco')
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         assert j is not None
@@ -236,8 +245,9 @@ class WebTestCase(WebsmashTestCase):
         data['to'] = '42'
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
-        job_id = self.redis_store.keys('job:*')[0]
-        res = self.redis_store.hgetall(job_id)
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
         assert res != {}
         j = Job(**res)
         self.assertEqual(j.from_pos, 23)
@@ -248,7 +258,8 @@ class WebTestCase(WebsmashTestCase):
         rv = self.client.get('/display/invalid')
         self.assert404(rv)
         j = Job()
-        self.redis_store.hmset(u"job:%s" % j.uid, j.get_dict())
+        redis_store = self._ctx.g._database
+        redis_store.hmset(u"job:%s" % j.uid, j.get_dict())
         rv = self.client.get('/display/%s' % j.uid)
         assert "Status of job" in rv.data
 

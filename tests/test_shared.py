@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import redis
-import mockredis
-redis.Redis = mockredis.MockRedis
 from flask.ext.testing import TestCase
 import os
 import tempfile
 import shutil
+from mockredis import mock_redis_client
 import websmash
 
 class ModelTestCase(TestCase):
@@ -13,16 +11,16 @@ class ModelTestCase(TestCase):
     def create_app(self):
         self.app = websmash.app
         self.dl = websmash.dl
-        self.redis_store = websmash.redis_store
         self.app.config['TESTING'] = True
         websmash.mail.suppress = True
+        self.app.config['FAKE_DB'] = True
         return self.app
 
     def setUp(self):
         pass
 
     def tearDown(self):
-        self.redis_store.flushdb()
+        pass
 
 class WebsmashTestCase(ModelTestCase):
 

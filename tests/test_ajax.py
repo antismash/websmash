@@ -8,12 +8,13 @@ class AjaxTestCase(WebsmashTestCase):
         rv = self.client.get('/server_status')
         self.assertEquals(rv.json, dict(status='idle', queue_length=0, running=0))
         j = Job()
-        self.redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
-        self.redis_store.lpush('jobs:queued', j.uid)
+        redis_store = self._ctx.g._database
+        redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
+        redis_store.lpush('jobs:queued', j.uid)
         rv = self.client.get('/server_status')
         self.assertEquals(rv.json, dict(status='working', queue_length=1, running=0))
         j.status="running: not really"
-        self.redis_store.rpoplpush('jobs:queued', 'jobs:running')
+        redis_store.rpoplpush('jobs:queued', 'jobs:running')
         rv = self.client.get('/server_status')
         self.assertEquals(rv.json, dict(status='working', queue_length=0, running=1))
 
@@ -23,6 +24,7 @@ class AjaxTestCase(WebsmashTestCase):
         rv = self.client.get('/current_notices')
         self.assertEquals(rv.json, dict(notices=[]))
         n = Notice(u'Teaser', u'Text')
-        self.redis_store.hmset(u'notice:%s' % n.id, n.json)
+        redis_store = self._ctx.g._database
+        redis_store.hmset(u'notice:%s' % n.id, n.json)
         rv = self.client.get('/current_notices')
         self.assertEquals(rv.json, dict(notices=[n.json]))
