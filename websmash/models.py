@@ -40,6 +40,7 @@ class Job(object):
         self.ecpred = kwargs.get('ecpred', False)
         self.modeling = kwargs.get('modeling', 'none')
         self.status = kwargs.get('status', 'pending')
+        self.dispatcher = kwargs.get('dispatcher', 'unknown')
 
     def get_short_status(self):
         """Get a short status description useful for icon names"""
