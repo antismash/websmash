@@ -29,8 +29,9 @@ RESULTS_URL = '/upload'
 # Flask-Mail settings
 DEFAULT_RECIPIENTS = ["alice@example.com", "bob@example.com"]
 
-# Flask-SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'your://user:pass@database/uri'
+# Redis settings
+REDIS_URL = 'redis://your.redis.database:port/number'
+# defaults to redis://localhost:6379/0
 
 # Flask-Downloader settings
 # This should be the same as RESULTS_PATH
@@ -55,5 +56,5 @@ Now you can connect to the antiSMASH web app at port 5000. Now set up a reverse 
 License
 -------
 
-Just like antiSMASH 2, the web interface is available under the GNU AGPL version 3.
+Just like antiSMASH, the web interface is available under the GNU AGPL version 3.
 See the `LICENSE.txt` file for details.
