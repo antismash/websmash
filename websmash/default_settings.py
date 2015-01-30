@@ -10,9 +10,6 @@ MAIL_SERVER = "smtpserv.uni-tuebingen.de"
 DEFAULT_MAIL_SENDER = "kai.blin@biotech.uni-tuebingen.de"
 DEFAULT_RECIPIENTS = ["kai.blin@biotech.uni-tuebingen.de"]
 
-# Flask-SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = 'sqlite:///../jobs.db'
-
 # Flask-Redis settings
 REDIS_URL = "redis://localhost:6379/0"
 #########################################
