@@ -8,6 +8,19 @@ from websmash import app, mail, get_db
 from websmash.utils import generate_confirmation_mail
 from websmash.models import Job, Notice
 
+def _submit_job(redis_store, job):
+    """Submit a new job"""
+    redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
+
+    # put the really time-consuming jobs in an extra-queue
+    if job.inclusive or job.fullhmm or job.ecpred or \
+       job.modeling != u"none":
+        queue = "jobs:timeconsuming"
+    else:
+        queue = "jobs:queued"
+
+    redis_store.lpush(queue, job.uid)
+
 @app.route('/', methods=['GET', 'POST'])
 def new():
     redis_store = get_db()
@@ -89,16 +102,7 @@ def new():
                 else:
                     raise Exception("Uploading input file failed!")
 
-            redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
-
-            # put the really time-consuming jobs in an extra-queue
-            if kwargs['inclusive'] or kwargs['fullhmm'] or kwargs['ecpred'] or \
-               kwargs['modeling'] != u"none":
-                queue = "jobs:timeconsuming"
-            else:
-                queue = "jobs:queued"
-
-            redis_store.lpush(queue, job.uid)
+            _submit_job(redis_store, job)
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
@@ -161,10 +165,7 @@ def protein():
                 handle.write(sequence)
             job.filename = 'protein_input.fa'
 
-        redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
-
-        # No need for the extra queue for protein jobs
-        redis_store.lpush('jobs:queued', job.uid)
+        _submit_job(redis_store, job)
         return redirect(url_for('.display', task_id=job.uid))
 
     except Exception, e:
