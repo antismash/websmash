@@ -133,6 +133,11 @@ def protein():
         # And of course this is protein input
         kwargs['molecule'] = 'prot'
 
+        smcogs = request.form.get('smcogs', u'off')
+        asf = request.form.get('asf', u'off')
+        kwargs['smcogs'] = (smcogs == u'on')
+        kwargs['asf'] = (asf == u'on')
+
         job = Job(**kwargs)
         dirname = path.join(app.config['RESULTS_PATH'], job.uid)
         os.mkdir(dirname)
