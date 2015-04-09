@@ -4,7 +4,7 @@ from flask.ext.mail import Message
 import os
 from os import path
 from werkzeug import secure_filename
-from websmash import app, mail, dl, get_db
+from websmash import app, mail, get_db
 from websmash.utils import generate_confirmation_mail
 from websmash.models import Job, Notice
 
@@ -76,27 +76,18 @@ def new():
             upload = None
 
             if kwargs['ncbi'] != '':
-                ncbi =  kwargs['ncbi']
-                if kwargs['email'] != '':
-                    email = kwargs['email']
-                else:
-                    email = app.config['DEFAULT_MAIL_SENDER']
-
-                url = app.config['NCBI_URL'] % (email, ncbi)
-                upload = dl.download(str(url))
-                if upload is not None:
-                    upload.filename = '%s.gbk' % ncbi
+                job.download = kwargs['ncbi']
             else:
                 upload = request.files['seq']
 
-            if upload is not None:
-                filename = secure_filename(upload.filename)
-                upload.save(path.join(dirname, filename))
-                if not path.exists(path.join(dirname, filename)):
-                    raise Exception("Could not save file!")
-                job.filename = filename
-            else:
-                raise Exception("Downloading or uploading input file failed!")
+                if upload is not None:
+                    filename = secure_filename(upload.filename)
+                    upload.save(path.join(dirname, filename))
+                    if not path.exists(path.join(dirname, filename)):
+                        raise Exception("Could not save file!")
+                    job.filename = filename
+                else:
+                    raise Exception("Uploading input file failed!")
 
             redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
             redis_store.lpush('jobs:queued', job.uid)
@@ -143,23 +134,7 @@ def protein():
         os.mkdir(dirname)
 
         if kwargs['prot-ncbi'] != '':
-            ncbi =  kwargs['prot-ncbi']
-            if kwargs['email'] != '':
-                email = kwargs['email']
-            else:
-                email = app.config['DEFAULT_MAIL_SENDER']
-
-            url = app.config['NCBI_PROT_URL'] % (email, ncbi)
-            upload = dl.download(str(url))
-
-            if upload is not None:
-                upload.filename = '%s.fasta' % ncbi
-                filename = secure_filename(upload.filename)
-                upload.save(path.join(dirname, filename))
-                job.filename = filename
-            else:
-                raise Exception("Downloading or uploading input file failed!")
-
+            job.download = kwargs['prot-ncbi']
         else:
             sequence = request.form.get('sequence', '').strip()
             old_sequence = sequence
@@ -185,7 +160,6 @@ def protein():
     except Exception, e:
         error = unicode(e)
     return render_template('new.html', error=error,
-                           sec_met_types=sec_met_types,
                            old_email=old_email,
                            old_sequence=old_sequence,
                            switch_to='prot',

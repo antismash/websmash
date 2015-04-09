@@ -10,7 +10,6 @@ class ModelTestCase(TestCase):
 
     def create_app(self):
         self.app = websmash.app
-        self.dl = websmash.dl
         self.app.config['TESTING'] = True
         websmash.mail.suppress = True
         self.app.config['FAKE_DB'] = True

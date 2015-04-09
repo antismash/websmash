@@ -82,56 +82,18 @@ class WebTestCase(WebsmashTestCase):
         assert j is not None
         self.assertEquals(j.taxon, 'p')
 
-    def test_submit_job_download_url_raises(self):
-        """Test if a job with accession# errors out when download fails"""
-        data = dict(ncbi='TESTING', cluster_1=u'on')
-        tt = TraceTracker()
-        self.dl.download = Mock('dl.download', tracker=tt)
-        rv = self.client.post('/', data=data)
-        assert "Downloading or uploading input file failed!" in rv.data
-
-    def test_submit_job_download_url_correct(self):
-        """Test if a job with accession# uses right download URL"""
-        data = dict(ncbi='TESTING', cluster_1=u'on')
-        tt = TraceTracker()
-        self.dl.download = Mock('dl.download', tracker=tt)
-        rv = self.client.post('/', data=data)
-
-        expected =  'Called dl.download(\n    \''
-        expected += 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-        expected += '?db=nucleotide&email="%s"&tool="antiSMASH"&' % \
-                    self.app.config['DEFAULT_MAIL_SENDER']
-        expected += 'id=TESTING&rettype=gbwithparts&retmode=text\')\n'
-
-        assert_same_trace(tt, expected)
-
-    def test_submit_job_download_url_correct_email(self):
-        """Test if a job with accession# adds user email to download URL"""
-        data = dict(ncbi='TESTING', email="ex@mp.le", cluster_1=u'on')
-        tt = TraceTracker()
-        self.dl.download = Mock('dl.download', tracker=tt)
-        rv = self.client.post('/', data=data)
-
-        expected =  'Called dl.download(\n    \''
-        expected += 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-        expected += '?db=nucleotide&email="ex@mp.le"&tool="antiSMASH"&'
-        expected += 'id=TESTING&rettype=gbwithparts&retmode=text\')\n'
-
-        assert_same_trace(tt, expected)
-
-
     def test_submit_job_download(self):
         """Test if submitting a job with a downloaded sequence works"""
         data = dict(ncbi='TESTING', cluster_1=u'on')
-        tmp_file = open(os.path.join(self.tmpdir, 'test.fa'), 'w')
-        tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
-        tmp_file.close()
-        tmp_file = open(os.path.join(self.tmpdir, 'test.fa'))
-        tt = TraceTracker()
-        self.dl.download = Mock('dl.download', tracker=tt)
-        self.dl.download.mock_returns = FileStorage(stream=tmp_file)
         rv = self.client.post('/', data=data, follow_redirects=True)
         assert "Status of job" in rv.data
+        redis_store = self._ctx.g._database
+        job_id = redis_store.keys('job:*')[0]
+        res = redis_store.hgetall(job_id)
+        assert res != {}
+        j = Job(**res)
+        assert j is not None
+        self.assertEquals(j.download, 'TESTING')
 
     def test_submit_job_fullhmm(self):
         """Test if switching on the full genome hmmer works"""

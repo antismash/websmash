@@ -41,6 +41,7 @@ class Job(object):
         self.modeling = kwargs.get('modeling', 'none')
         self.status = kwargs.get('status', 'pending')
         self.dispatcher = kwargs.get('dispatcher', 'unknown')
+        self.download = kwargs.get('download', '')
 
     def get_short_status(self):
         """Get a short status description useful for icon names"""

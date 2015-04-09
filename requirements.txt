@@ -1,5 +1,4 @@
 Flask==0.10.1
-Flask-Downloader==0.2
 Flask-Mail==0.7.5
 Jinja2==2.7.3
 MarkupSafe==0.23

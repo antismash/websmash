@@ -1,6 +1,5 @@
 from flask import Flask, g
 from flask.ext.mail import Mail
-from flask.ext.downloader import Downloader
 from werkzeug import SharedDataMiddleware
 from os import path
 from redis import Redis
@@ -25,8 +24,6 @@ def get_db():
         else:
             redis_store = g._database = Redis.from_url(app.config['REDIS_URL'])
     return redis_store
-
-dl = Downloader(app)
 
 import websmash.models
 import websmash.views
