@@ -107,6 +107,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         assert j.fullhmm
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 1)
+        self.assertEquals(redis_store.llen('jobs:queued'), 0)
 
     def test_submit_job_all_orfs(self):
         """Test if switching on all_orfs works"""
@@ -120,6 +122,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         assert j.all_orfs == 'True'
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 0)
+        self.assertEquals(redis_store.llen('jobs:queued'), 1)
 
     def test_submit_job_genefinder_prodigal(self):
         """Test if selecting the prodigal gene finder works"""
@@ -133,6 +137,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.genefinder, u'prodigal')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 0)
+        self.assertEquals(redis_store.llen('jobs:queued'), 1)
 
     def test_submit_job_genefinder_prodigal_m(self):
         """Test if selecting the prodigal_m gene finder works"""
@@ -146,6 +152,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.genefinder, u'prodigal_m')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 0)
+        self.assertEquals(redis_store.llen('jobs:queued'), 1)
 
     def test_submit_job_genefinder_glimmer(self):
         """Test if selecting the glimmeer gene finder works"""
@@ -159,6 +167,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.genefinder, u'glimmer')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 0)
+        self.assertEquals(redis_store.llen('jobs:queued'), 1)
 
     def test_submit_job_modeling_none(self):
         """Test if selecting no modeling works"""
@@ -172,6 +182,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.modeling, u'none')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 0)
+        self.assertEquals(redis_store.llen('jobs:queued'), 1)
 
     def test_submit_job_modeling_eco(self):
         """Test if selecting E.coli modeling works"""
@@ -185,6 +197,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.modeling, u'eco')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 1)
+        self.assertEquals(redis_store.llen('jobs:queued'), 0)
 
     def test_submit_job_modeling_sco(self):
         """Test if selecting S.coelicolor modeling works"""
@@ -198,6 +212,8 @@ class WebTestCase(WebsmashTestCase):
         j = Job(**res)
         assert j is not None
         self.assertEqual(j.modeling, u'sco')
+        self.assertEquals(redis_store.llen('jobs:timeconsuming'), 1)
+        self.assertEquals(redis_store.llen('jobs:queued'), 0)
 
     def test_submit_job_from_to(self):
         """Test if submitting a job with an uploaded sequence works"""

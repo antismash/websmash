@@ -90,7 +90,15 @@ def new():
                     raise Exception("Uploading input file failed!")
 
             redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
-            redis_store.lpush('jobs:queued', job.uid)
+
+            # put the really time-consuming jobs in an extra-queue
+            if kwargs['inclusive'] or kwargs['fullhmm'] or kwargs['ecpred'] or \
+               kwargs['modeling'] != u"none":
+                queue = "jobs:timeconsuming"
+            else:
+                queue = "jobs:queued"
+
+            redis_store.lpush(queue, job.uid)
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
@@ -154,6 +162,8 @@ def protein():
             job.filename = 'protein_input.fa'
 
         redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
+
+        # No need for the extra queue for protein jobs
         redis_store.lpush('jobs:queued', job.uid)
         return redirect(url_for('.display', task_id=job.uid))
 
@@ -249,7 +259,7 @@ def status(task_id):
 @app.route('/server_status')
 def server_status():
     redis_store = get_db()
-    pending = redis_store.llen('jobs:queued')
+    pending = redis_store.llen('jobs:queued') + redis_store.llen("jobs:timeconsuming")
     running = redis_store.llen('jobs:running')
 
     if pending + running > 0:
