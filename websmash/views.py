@@ -259,14 +259,16 @@ def status(task_id):
 @app.route('/server_status')
 def server_status():
     redis_store = get_db()
-    pending = redis_store.llen('jobs:queued') + redis_store.llen("jobs:timeconsuming")
+    pending = redis_store.llen('jobs:queued')
+    long_running = redis_store.llen("jobs:timeconsuming")
     running = redis_store.llen('jobs:running')
 
-    if pending + running > 0:
+    if pending + long_running + running > 0:
         status = 'working'
     else:
         status = 'idle'
-    return jsonify(status=status, queue_length=pending, running=running)
+    return jsonify(status=status, queue_length=pending, running=running,
+                   long_running=long_running)
 
 @app.route('/current_notices')
 def current_notices():

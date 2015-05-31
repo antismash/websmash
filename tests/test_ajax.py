@@ -6,17 +6,20 @@ class AjaxTestCase(WebsmashTestCase):
     def test_server_status(self):
         """Test if server status returns the correct values"""
         rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='idle', queue_length=0, running=0))
+        self.assertEquals(rv.json, dict(status='idle', queue_length=0, running=0, long_running=0))
         j = Job()
         redis_store = self._ctx.g._database
         redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
         redis_store.lpush('jobs:queued', j.uid)
         rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='working', queue_length=1, running=0))
-        j.status="running: not really"
-        redis_store.rpoplpush('jobs:queued', 'jobs:running')
+        self.assertEquals(rv.json, dict(status='working', queue_length=1, running=0, long_running=0))
+        redis_store.rpoplpush('jobs:queued', 'jobs:timeconsuming')
         rv = self.client.get('/server_status')
-        self.assertEquals(rv.json, dict(status='working', queue_length=0, running=1))
+        self.assertEquals(rv.json, dict(status='working', queue_length=0, running=0, long_running=1))
+        j.status="running: not really"
+        redis_store.rpoplpush('jobs:timeconsuming', 'jobs:running')
+        rv = self.client.get('/server_status')
+        self.assertEquals(rv.json, dict(status='working', queue_length=0, running=1, long_running=0))
 
 
     def test_current_notices(self):
