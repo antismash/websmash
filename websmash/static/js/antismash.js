@@ -223,7 +223,21 @@ function update_status(url) {
         $("#server-status").html(json.status);
         $("#queue-length").html(json.queue_length);
         $("#running-jobs").html(json.running);
+        if(json.ts_queued_m == null){
+            $("#queue-details").hide();
+        } else {
+            $("#queue-time").attr("datetime", json.ts_queued_m);
+            $("#queue-time").text($.timeago(json.ts_queued_m));
+            $("#queue-details").show();
+        }
         $("#long-runtime").html(json.long_running);
+        if(json.ts_timeconsuming_m == null){
+            $("#long-queue-details").hide();
+        } else {
+            $("#long-queue-time").attr("datetime", json.ts_timeconsuming_m);
+            $("#long-queue-time").text($.timeago(json.ts_timeconsuming_m));
+            $("#long-queue-details").show();
+        }
     });
 }
 

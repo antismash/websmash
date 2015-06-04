@@ -36,7 +36,13 @@
           Server status: <span id="server-status">unknown</span><br>
           Running jobs: <span id="running-jobs">unknown</span><br>
           Queue length: <span id="queue-length">unknown</span><br>
-          Long runtime queue: <span id="long-runtime">unknown</span><i class="icon-road"></i>
+          <small id="queue-details">
+            Oldest job in queue submitted <time id="queue-time" class="timeago" datetime=""></time><br>
+          </small>
+          Long runtime queue: <span id="long-runtime">unknown</span><i class="icon-road"></i><br>
+          <small id="long-queue-details">
+            Oldest job in queue submitted <time id="long-queue-time" class="timeago" datetime=""></time>
+          </small>
         </div>
       </div>
       <div class="span8">
@@ -63,6 +69,7 @@
     </div>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"> </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.timer.js') }}"> </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.timeago.js') }}"> </script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/antismash.js') }}"></script>
 {% block extra_scripts %}{% endblock %}
