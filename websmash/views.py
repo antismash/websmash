@@ -264,6 +264,9 @@ def server_status():
     long_running = redis_store.llen("jobs:timeconsuming")
     running = redis_store.llen('jobs:running')
 
+    # carry over 89132 jobs from the old database
+    total_jobs = 89132 + redis_store.llen('jobs:completed')
+
     if pending + long_running + running > 0:
         status = 'working'
     else:
@@ -273,7 +276,7 @@ def server_status():
     ts_timeconsuming, ts_timeconsuming_m = _get_job_timestamps(_get_oldest_job("jobs:timeconsuming"))
 
     return jsonify(status=status, queue_length=pending, running=running,
-                   long_running=long_running,
+                   long_running=long_running, total_jobs=total_jobs,
                    ts_queued=ts_queued, ts_queued_m=ts_queued_m,
                    ts_timeconsuming=ts_timeconsuming, ts_timeconsuming_m=ts_timeconsuming_m)
 

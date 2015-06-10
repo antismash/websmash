@@ -223,6 +223,7 @@ function update_status(url) {
         $("#server-status").html(json.status);
         $("#queue-length").html(json.queue_length);
         $("#running-jobs").html(json.running);
+        $("#total-jobs").html(json.total_jobs);
         if(json.ts_queued_m == null){
             $("#queue-details").hide();
         } else {
