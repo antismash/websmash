@@ -265,7 +265,8 @@ def server_status():
     running = redis_store.llen('jobs:running')
 
     # carry over 89132 jobs from the old database
-    total_jobs = 89132 + redis_store.llen('jobs:completed')
+    total_jobs = 89132 + redis_store.llen('jobs:completed') + \
+                 redis_store.llen('jobs:failed')
 
     if pending + long_running + running > 0:
         status = 'working'
