@@ -12,5 +12,7 @@ DEFAULT_RECIPIENTS = ["kai.blin@biotech.uni-tuebingen.de"]
 
 # Flask-Redis settings
 REDIS_URL = "redis://localhost:6379/0"
+
+OLD_JOB_COUNT = 0
 #########################################
 

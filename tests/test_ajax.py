@@ -2,7 +2,12 @@
 from websmash.models import Job, Notice
 from tests.test_shared import WebsmashTestCase
 
+
 class AjaxTestCase(WebsmashTestCase):
+    def setUp(self):
+        super(AjaxTestCase, self).setUp()
+        self.app.config['OLD_JOB_COUNT'] = 89132
+
     def test_server_status(self):
         """Test if server status returns the correct values"""
         expected_status = dict(
