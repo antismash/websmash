@@ -60,7 +60,7 @@ class AjaxTestCase(WebsmashTestCase):
         self.assertEquals(rv.json, expected_status)
 
         # fake a running job
-        j.status="running: not really"
+        j.status = "running: not really"
         redis_store.rpoplpush('jobs:timeconsuming', 'jobs:running')
         rv = self.client.get('/server_status')
         expected_status = dict(
