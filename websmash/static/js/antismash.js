@@ -200,6 +200,11 @@ function verify_nucl_form() {
         return false;
     }
 
+    if (ncbi.indexOf('@') > -1) {
+        alert('Invalid character @ in NCBI ID field');
+        return false;
+    }
+
     if( !(is_annotated(file) || is_fasta(file)) && ncbi === '' ) {
         alert('Please provide EMBL/GenBank or nucleotide FASTA file');
         return false;
