@@ -28,6 +28,10 @@
               <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
               <span class="help-inline">Email address (optional)</span>
             </div>
+            <div class="controls" id='email-confirm-container'>
+              <input type="email" name="email-confirm" id="email-confirm" value="{{old_email}}" placeholder="please confirm your email">
+              <span class="help-inline">Please repeat your email address</span>
+            </div>
           </div>
           <div class="control-group">
             <div class="controls">
@@ -231,8 +235,12 @@
       <form action="{{ url_for('protein') }}" id="prot-form" method="POST">
         <div class="control-group">
           <div class="controls">
-            <input type="email" name="email" id="email" value="{{old_email}}" placeholder="your.email@example.com">
+            <input type="email" name="email" id="email-prot" value="{{old_email}}" placeholder="your.email@example.com">
             <span class="help-inline">Email address (optional)</span>
+          </div>
+          <div class="controls" id="email-prot-confirm-container">
+            <input type="email" name="email-confirm" id="email-prot-confirm" value="{{old_email}}" placeholder="please confirm your email">
+            <span class="help-inline">Please repeat your email address</span>
           </div>
           <div class="controls">
             <input type="text" name="prot-ncbi" id="prot-ncbi" placeholder="NCBI ACC #">
@@ -300,6 +308,11 @@
     // disable new options for legacy antismash1 jobs
     $('#legacy').change(toggle_legacy);
     toggle_legacy();
+
+    $('#email').change(toggle_email_confirm);
+    toggle_email_confirm();
+    $('#email-prot').change(toggle_email_prot_confirm);
+    toggle_email_prot_confirm();
 
     // Show genefinding options if user is trying to upload a fasta file
     $('#eukaryotic').change(show_genefinding_if_needed);

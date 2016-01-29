@@ -50,6 +50,22 @@ function toggle_cassis_tip() {
     }
 }
 
+function toggle_email_confirm() {
+    if ($('#email').val() != '') {
+        $('#email-confirm-container').show("fast");
+    } else {
+        $('#email-confirm-container').hide("fast");
+    }
+}
+
+function toggle_email_prot_confirm() {
+    if ($('#email-prot').val() != '') {
+        $('#email-prot-confirm-container').show("fast");
+    } else {
+        $('#email-prot-confirm-container').hide("fast");
+    }
+}
+
 function clear_upload() {
     $('#seq').val('');
     show_genefinding_if_needed();
@@ -176,6 +192,8 @@ function verify_nucl_form() {
     var ncbi = $('#ncbi').val();
     var from = $('#from').val();
     var to = $('#to').val();
+    var email = $('#email').val();
+    var email_confirm = $('#email-confirm').val();
 
     if( (file === '' || file === null) && (ncbi === '' || ncbi === null)){
         alert('No input file provided. Please enter NCBI number or upload your own file');
@@ -202,12 +220,19 @@ function verify_nucl_form() {
         return false;
     }
 
+    if (email != email_confirm) {
+        alert("Email address mismatch. Please check the spelling.");
+        return false;
+    }
+
     return true;
 }
 
 function verify_prot_form() {
     var sequence = $('#sequence').val();
     var ncbi = $('#prot-ncbi').val();
+    var email = $('#email-prot').val();
+    var email_confirm = $('#email-prot-confirm').val();
 
     if( (sequence === '') && (ncbi === '')){
         alert('No input provided. Please enter NCBI number or paste your own sequence');
@@ -223,6 +248,12 @@ function verify_prot_form() {
         alert('whitespace found in NCBI ID list, please use a comma (,) to separate IDs');
         return false;
     }
+
+    if (email != email_confirm) {
+        alert("Email address mismatch. Please check the spelling.");
+        return false;
+    }
+
     return true;
 }
 
