@@ -89,7 +89,10 @@
           <div class="control-group">
             <label class="checkbox" for="eukaryotic">
               <input type="checkbox" name="eukaryotic" id="eukaryotic">
-              DNA of Eukaryotic origin</label>
+              DNA of Eukaryotic origin
+              <span id="cassis-link"><br>If you are looking for NRPS/PKS clusters in Eukaryotes,
+                you might want to have a look at <a href="https://sbi.hki-jena.de/cassis">CASSIS</a>,
+                which nicely complements the antiSMASH predictions with a promotor-based search strategy.</span></label>
           </div>
         </fieldset>
         <fieldset class="control-group as-form dna_related">
@@ -308,6 +311,10 @@
 
     $('#sequence').change(clear_prot_ncbi);
     $('#prot-ncbi').change(clear_sequence);
+
+    // Show CASSIS link for Eukaryotic inputs
+    $('#eukaryotic').change(toggle_cassis_tip);
+    toggle_cassis_tip();
 
     show_genefinding_if_needed();
 

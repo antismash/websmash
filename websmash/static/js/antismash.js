@@ -42,6 +42,14 @@ function toggle_legacy() {
     }
 }
 
+function toggle_cassis_tip() {
+    if ($('#eukaryotic').prop("checked")) {
+        $('#cassis-link').show();
+    } else {
+        $('#cassis-link').hide();
+    }
+}
+
 function clear_upload() {
     $('#seq').val('');
     show_genefinding_if_needed();
