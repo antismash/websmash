@@ -3,7 +3,8 @@ build:
   commands:
     - apk --no-cache add python py-pip
     - pip install -r requirements.txt
-    - pip install nose minimock flask-testing mockredispy
+    - pip install nose minimock flask-testing
+    - pip install mockredispy
 
 notify:
   slack:
