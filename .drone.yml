@@ -5,6 +5,7 @@ build:
     - pip install -r requirements.txt
     - pip install nose minimock flask-testing
     - pip install mockredispy
+    - nosetests -v
 
 notify:
   slack:
