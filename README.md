@@ -1,7 +1,7 @@
 antiSMASH web interface
 =======================
 
-[![Build Status](https://drone.io/bitbucket.org/antismash/websmash/status.png)](https://drone.io/bitbucket.org/antismash/websmash/latest)
+[![Build Status](http://bitbucket.drone.secondarymetabolites.org/api/badges/antismash/websmash/status.svg)](http://bitbucket.drone.secondarymetabolites.org/antismash/websmash)
 
 This is the web interface powering http://antismash.secondarymetabolites.org/
 

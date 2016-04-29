@@ -1,0 +1,18 @@
+build:
+  image: alpine
+  commands:
+    - apk --no-cache add python py-pip
+    - pip install -r requirements.txt
+    - pip install nose minimock flask-testing mockredispy
+
+notify:
+  slack:
+    webhook_url: $$ANTISMASH_SLACK_HOOK
+    channel: general
+    username: drone
+
+  email:
+    from: ci@secondarymetabolites.org
+    host: mail.secondarymetabolites.org
+    username: antismash
+    password: $$ANTISMASH_EMAIL_PASSWORD
