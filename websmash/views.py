@@ -239,6 +239,7 @@ def display_tab():
                            results_path=app.config['RESULTS_URL'])
 
 @app.route('/status/<task_id>')
+@app.route('/api/v1.0/status/<task_id>')
 def status(task_id):
     redis_store = get_db()
     res = redis_store.hgetall(u'job:%s' % task_id)
