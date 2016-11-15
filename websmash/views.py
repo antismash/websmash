@@ -259,6 +259,7 @@ def status(task_id):
 
 
 @app.route('/server_status')
+@app.route('/api/v1.0/server_status')
 def server_status():
     redis_store = get_db()
     pending = redis_store.llen('jobs:queued')
