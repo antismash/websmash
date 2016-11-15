@@ -21,88 +21,96 @@ def _submit_job(redis_store, job):
 
     redis_store.lpush(queue, job.uid)
 
+
+def _dispatch_job():
+    '''Internal helper to dispatch a new job'''
+    redis_store = get_db()
+
+    kwargs = {}
+    kwargs['ncbi'] = request.form.get('ncbi', '').strip()
+    kwargs['email'] = request.form.get('email', '').strip()
+    old_email = kwargs['email']
+    kwargs['from'] = request.form.get('from', '').strip()
+    kwargs['to'] = request.form.get('to', '').strip()
+    legacy = request.form.get('legacy', u'off')
+    if legacy == u'on':
+        raise Exception('Sorry, but running antiSMASH 1 is no longer supported')
+    eukaryotic = request.form.get('eukaryotic', u'off')
+    all_orfs = request.form.get('all_orfs', u'off')
+    smcogs = request.form.get('smcogs', u'off')
+    clusterblast = request.form.get('clusterblast', u'off')
+    knownclusterblast = request.form.get('knownclusterblast', u'off')
+    subclusterblast = request.form.get('subclusterblast', u'off')
+    fullhmmer = request.form.get('fullhmmer', u'off')
+
+    kwargs['genefinder'] = request.form.get('genefinder', 'prodigal')
+    kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
+    kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
+    kwargs['from'] = request.form.get('from', 0, type=int)
+    kwargs['to'] = request.form.get('to', 0, type=int)
+
+    inclusive = request.form.get('inclusive', u'off')
+    kwargs['inclusive'] = (inclusive == u'on')
+    kwargs['cf_cdsnr'] = request.form.get('cf_cdsnr', 5, type=int)
+    kwargs['cf_npfams'] = request.form.get('cf_npfams', 5, type=int)
+    kwargs['cf_threshold'] = request.form.get('cf_threshold', 0.6, type=float)
+
+    asf = request.form.get('asf', u'off')
+    ecpred = request.form.get('ecpred', u'off')
+    kwargs['modeling'] = request.form.get('modeling', u'none')
+
+    # Always predict all sec met types
+    kwargs['geneclustertypes'] = "1"
+
+    # given that we only support antismash 3 at the moment, hardcode
+    # that jobtype.
+    kwargs['jobtype'] = 'antismash3'
+
+    # Use boolean values instead of "on/off" strings
+    kwargs['eukaryotic'] = (eukaryotic == u'on')
+    kwargs['smcogs'] = (smcogs == u'on')
+    kwargs['clusterblast'] = (clusterblast == u'on')
+    kwargs['knownclusterblast'] = (knownclusterblast == u'on')
+    kwargs['subclusterblast'] = (subclusterblast == u'on')
+    kwargs['fullhmm'] = (fullhmmer == u'on')
+    kwargs['asf'] = (asf == u'on')
+    kwargs['ecpred'] = (ecpred == u'on')
+    kwargs['all_orfs'] = (all_orfs == u'on')
+
+    # Never run full-genome blast analysis
+    kwargs['fullblast'] = False
+
+    job = Job(**kwargs)
+    dirname = path.join(app.config['RESULTS_PATH'], job.uid)
+    os.mkdir(dirname)
+    upload = None
+
+    if kwargs['ncbi'] != '':
+        job.download = kwargs['ncbi']
+    else:
+        upload = request.files['seq']
+
+        if upload is not None:
+            filename = secure_filename(upload.filename)
+            upload.save(path.join(dirname, filename))
+            if not path.exists(path.join(dirname, filename)):
+                raise Exception("Could not save file!")
+            job.filename = filename
+        else:
+            raise Exception("Uploading input file failed!")
+
+    _submit_job(redis_store, job)
+    return job
+
+
 @app.route('/', methods=['GET', 'POST'])
 def new():
-    redis_store = get_db()
     error = None
     results_path = app.config['RESULTS_URL']
     old_email = ''
     try:
         if request.method == 'POST':
-            kwargs = {}
-            kwargs['ncbi'] = request.form.get('ncbi', '').strip()
-            kwargs['email'] = request.form.get('email', '').strip()
-            old_email = kwargs['email']
-            kwargs['from'] = request.form.get('from', '').strip()
-            kwargs['to'] = request.form.get('to', '').strip()
-            legacy = request.form.get('legacy', u'off')
-            if legacy == u'on':
-                raise Exception('Sorry, but running antiSMASH 1 is no longer supported')
-            eukaryotic = request.form.get('eukaryotic', u'off')
-            all_orfs = request.form.get('all_orfs', u'off')
-            smcogs = request.form.get('smcogs', u'off')
-            clusterblast = request.form.get('clusterblast', u'off')
-            knownclusterblast = request.form.get('knownclusterblast', u'off')
-            subclusterblast = request.form.get('subclusterblast', u'off')
-            fullhmmer = request.form.get('fullhmmer', u'off')
-
-            kwargs['genefinder'] = request.form.get('genefinder', 'prodigal')
-            kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
-            kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
-            kwargs['from'] = request.form.get('from', 0, type=int)
-            kwargs['to'] = request.form.get('to', 0, type=int)
-
-            inclusive = request.form.get('inclusive', u'off')
-            kwargs['inclusive'] = (inclusive == u'on')
-            kwargs['cf_cdsnr'] = request.form.get('cf_cdsnr', 5, type=int)
-            kwargs['cf_npfams'] = request.form.get('cf_npfams', 5, type=int)
-            kwargs['cf_threshold'] = request.form.get('cf_threshold', 0.6, type=float)
-
-            asf = request.form.get('asf', u'off')
-            ecpred = request.form.get('ecpred', u'off')
-            kwargs['modeling'] = request.form.get('modeling', u'none')
-
-            # Always predict all sec met types
-            kwargs['geneclustertypes'] = "1"
-
-            # given that we only support antismash 3 at the moment, hardcode
-            # that jobtype.
-            kwargs['jobtype'] = 'antismash3'
-
-            # Use boolean values instead of "on/off" strings
-            kwargs['eukaryotic'] = (eukaryotic == u'on')
-            kwargs['smcogs'] = (smcogs == u'on')
-            kwargs['clusterblast'] = (clusterblast == u'on')
-            kwargs['knownclusterblast'] = (knownclusterblast == u'on')
-            kwargs['subclusterblast'] = (subclusterblast == u'on')
-            kwargs['fullhmm'] = (fullhmmer == u'on')
-            kwargs['asf'] = (asf == u'on')
-            kwargs['ecpred'] = (ecpred == u'on')
-            kwargs['all_orfs'] = (all_orfs == u'on')
-
-            # Never run full-genome blast analysis
-            kwargs['fullblast'] = False
-
-            job = Job(**kwargs)
-            dirname = path.join(app.config['RESULTS_PATH'], job.uid)
-            os.mkdir(dirname)
-            upload = None
-
-            if kwargs['ncbi'] != '':
-                job.download = kwargs['ncbi']
-            else:
-                upload = request.files['seq']
-
-                if upload is not None:
-                    filename = secure_filename(upload.filename)
-                    upload.save(path.join(dirname, filename))
-                    if not path.exists(path.join(dirname, filename)):
-                        raise Exception("Could not save file!")
-                    job.filename = filename
-                else:
-                    raise Exception("Uploading input file failed!")
-
-            _submit_job(redis_store, job)
+            job = _dispatch_job()
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
@@ -175,6 +183,14 @@ def protein():
                            old_sequence=old_sequence,
                            switch_to='prot',
                            results_path=results_path)
+
+
+@app.route('/api/v1.0/submit', methods=['POST'])
+def api_submit():
+    '''Submit a new antiSMASH job via an API call'''
+    job = _dispatch_job()
+    return jsonify(dict(id=job.uid))
+
 
 @app.route('/about')
 @app.route('/about.html')
