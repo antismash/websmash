@@ -1,9 +1,9 @@
-antiSMASH web interface
+antiSMASH REST-LIKE API
 =======================
 
-[![Build Status](http://bitbucket.drone.secondarymetabolites.org/api/badges/antismash/websmash/status.svg)](http://bitbucket.drone.secondarymetabolites.org/antismash/websmash)
+[![Build Status](http://github.drone.secondarymetabolites.org/api/badges/antismash/websmash/status.svg)](http://github.drone.secondarymetabolites.org/antismash/websmash)
 
-This is the web interface powering http://antismash.secondarymetabolites.org/
+This is the REST-like API powering http://antismash.secondarymetabolites.org/
 
 Installation
 ------------
@@ -12,8 +12,8 @@ Installation
 pip install -r requirements.txt
 ```
 
-Running the Web Interface
--------------------------
+Running the API
+---------------
 
 First, create a settings.cfg file:
 
@@ -32,13 +32,7 @@ DEFAULT_RECIPIENTS = ["alice@example.com", "bob@example.com"]
 # Redis settings
 REDIS_URL = 'redis://your.redis.database:port/number'
 # defaults to redis://localhost:6379/0
-
-# Flask-Downloader settings
-# This should be the same as RESULTS_PATH
-DEFAULT_DOWNLOAD_DIR = '/data/antismash/upload'
-
-# Content NCBI likes to return when reading from NCBI fails.
-BAD_CONTENT = ('Error reading from remote server', 'Bad gateway', 'Cannot process ID list', 'server is temporarily unable to service your request', 'Service unavailable', 'Server Error')
+# You can also point at a Redis Sentinel instance using 'sentinel://sentinel.address:port/number'
 #########################################
 ```
 
@@ -51,7 +45,7 @@ export WEBSMASH_CONFIG=/var/www/settings.cfg
 uwsgi --pythonpath /var/www --http :5000 --module websmash:app --uid 33 --gid 33 --touch-reload /tmp/reload_websmash --daemonize /var/log/uwsgi.log
 ```
 
-Now you can connect to the antiSMASH web app at port 5000. Now set up a reverse proxy to serve the web app from port 80.
+Now you can connect to the antiSMASH web api at port 5000. Now set up a reverse proxy to serve the web api from port 80.
 
 License
 -------
