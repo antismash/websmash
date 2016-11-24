@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 """Tests for utility functions"""
-from minimock import Mock, TraceTracker, assert_same_trace
-from nose.tools import *
-
+from minimock import TraceTracker, assert_same_trace
 from websmash.utils import generate_confirmation_mail
+
 
 def test_generate_confirmation_mail():
     """Test generation of a confirmation email"""
