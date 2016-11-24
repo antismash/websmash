@@ -1,6 +1,7 @@
 *.pyc
 *.swp
+.cache/*
 .coverage
-cover/*
+htmlcov/*
 results/*
 jobs.db

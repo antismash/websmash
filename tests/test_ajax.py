@@ -21,7 +21,7 @@ class AjaxTestCase(WebsmashTestCase):
             ts_timeconsuming=None,
             ts_timeconsuming_m=None
         )
-        rv = self.client.get('/server_status')
+        rv = self.client.get('/api/v1.0/stats')
         self.assertEquals(rv.json, expected_status)
 
         # fake a normal job
@@ -29,7 +29,7 @@ class AjaxTestCase(WebsmashTestCase):
         redis_store = self._ctx.g._database
         redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
         redis_store.lpush('jobs:queued', j.uid)
-        rv = self.client.get('/server_status')
+        rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
             queue_length=1,
@@ -45,7 +45,7 @@ class AjaxTestCase(WebsmashTestCase):
 
         # fake a timeconsuming job
         redis_store.rpoplpush('jobs:queued', 'jobs:timeconsuming')
-        rv = self.client.get('/server_status')
+        rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
             queue_length=0,
@@ -62,7 +62,7 @@ class AjaxTestCase(WebsmashTestCase):
         # fake a running job
         j.status = "running: not really"
         redis_store.rpoplpush('jobs:timeconsuming', 'jobs:running')
-        rv = self.client.get('/server_status')
+        rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
             queue_length=0,
@@ -79,10 +79,10 @@ class AjaxTestCase(WebsmashTestCase):
 
     def test_current_notices(self):
         "Test if current notices are displayed"
-        rv = self.client.get('/current_notices')
+        rv = self.client.get('/api/v1.0/news')
         self.assertEquals(rv.json, dict(notices=[]))
         n = Notice(u'Teaser', u'Text')
         redis_store = self._ctx.g._database
         redis_store.hmset(u'notice:%s' % n.id, n.json)
-        rv = self.client.get('/current_notices')
+        rv = self.client.get('/api/v1.0/news')
         self.assertEquals(rv.json, dict(notices=[n.json]))

@@ -1,6 +1,5 @@
 from flask import Flask, g
 from flask.ext.mail import Mail
-from werkzeug import SharedDataMiddleware
 from os import path
 from urlparse import urlparse
 from redis import Redis
@@ -10,10 +9,6 @@ app = Flask(__name__)
 import websmash.default_settings
 app.config.from_object(websmash.default_settings)
 app.config.from_envvar('WEBSMASH_CONFIG', silent=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app,
-                                    {app.config['RESULTS_URL']: app.config['RESULTS_PATH'],
-                                     '/robots.txt': path.join(path.join(app.root_path, 'static'), 'robots.txt'),
-                                     '/favicon.ico': path.join(app.root_path, 'static', 'images', 'favicon.ico')})
 mail = Mail(app)
 
 
@@ -40,4 +35,4 @@ def get_db():
     return redis_store
 
 import websmash.models
-import websmash.views
+import websmash.api
