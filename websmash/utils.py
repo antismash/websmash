@@ -33,7 +33,7 @@ def _get_checkbox(req, name):
     return str_value == u'on'
 
 
-def _dispatch_job():
+def dispatch_job():
     """Internal helper to dispatch a new job"""
     redis_store = get_db()
     taxon = app.config['TAXON']

@@ -3,6 +3,7 @@
 from flask import jsonify
 from websmash import app, get_db
 from websmash.models import Job
+from websmash.utils import dispatch_job
 
 
 @app.route('/api/v1.0/version')
@@ -13,6 +14,13 @@ def get_version():
         'antismash_generation': '4',
     }
     return jsonify(version_dict)
+
+
+@app.route('/api/v1.0/submit', methods=['POST'])
+def api_submit():
+    """Submit a new antiSMASH job via an API call"""
+    job = dispatch_job()
+    return jsonify(dict(id=job.uid))
 
 
 @app.route('/api/v1.0/stats')

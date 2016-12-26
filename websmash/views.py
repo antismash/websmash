@@ -3,9 +3,8 @@ from flask import redirect, url_for, request, abort, \
 from flask.ext.mail import Message
 import os
 from os import path
-from werkzeug import secure_filename
 from websmash import app, mail, get_db
-from websmash.utils import generate_confirmation_mail, _dispatch_job
+from websmash.utils import generate_confirmation_mail, dispatch_job, _submit_job
 from websmash.models import Job, Notice
 
 
@@ -16,7 +15,7 @@ def new():
     old_email = ''
     try:
         if request.method == 'POST':
-            job = _dispatch_job()
+            job = dispatch_job()
             return redirect(url_for('.display', task_id=job.uid))
     except Exception, e:
         error = unicode(e)
@@ -90,12 +89,6 @@ def protein():
                            switch_to='prot',
                            results_path=results_path)
 
-
-@app.route('/api/v1.0/submit', methods=['POST'])
-def api_submit():
-    '''Submit a new antiSMASH job via an API call'''
-    job = _dispatch_job()
-    return jsonify(dict(id=job.uid))
 
 
 @app.route('/about')

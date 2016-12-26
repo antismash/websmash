@@ -40,10 +40,10 @@ def test__submit_job(app):
     """Test job submission works as expected"""
     fake_db = get_db()
     assert app.config['FAKE_DB']
-    assert 0 == fake_db.llen('jobs:queued')
+    old_len = fake_db.llen('jobs:queued')
 
     job = Job()
 
     utils._submit_job(fake_db, job)
 
-    assert 1 == fake_db.llen('jobs:queued')
+    assert old_len + 1 == fake_db.llen('jobs:queued')
