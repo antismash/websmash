@@ -102,17 +102,3 @@ class Notice(object):
                 ret[key] = ret[key].strftime('%Y-%m-%d %H:%M:%S')
 
         return ret
-
-class Stat(object):
-    def __init__(self,
-                 uid,
-                 jobtype="antismash",
-                 added=None,
-                 finished=None,
-                ):
-        self.uid = uid
-        self.added = added if added else datetime.utcnow()
-        self.finished = finished if finished else datetime.utcnow()
-
-    def __repr__(self):
-        return '<Stat (%s): %s - %s>' % (self.uid, self.added, self.finished)
