@@ -6,6 +6,7 @@ from websmash import app as flask_app
 def app(request):
     '''Flask application for test'''
     flask_app.config['TESTING'] = True
+    flask_app.config['FAKE_DB'] = True
     ctx = flask_app.app_context()
     ctx.push()
 

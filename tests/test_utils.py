@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 """Tests for utility functions"""
 from minimock import TraceTracker, assert_same_trace
-from websmash.utils import generate_confirmation_mail
+from websmash import get_db, utils
+from websmash.models import Job
 
 
 def test_generate_confirmation_mail():
     """Test generation of a confirmation email"""
     # abuse the TraceTracker to make use of doctest features
     tt = TraceTracker()
-    mail = generate_confirmation_mail(message="Test!")
+    mail = utils.generate_confirmation_mail(message="Test!")
 
     tt.out.write(mail)
 
@@ -19,3 +20,30 @@ Test!
 """
 
     assert_same_trace(tt, expected)
+
+
+def test__get_checkbox():
+    """Test getting a boolean value from a form checkbox"""
+    class FakeRequest(object):
+        def __init__(self):
+            self.form = dict()
+
+    fake_req = FakeRequest()
+    fake_req.form['enabled'] = u'on'
+    fake_req.form['disabled'] = u'off'
+
+    assert utils._get_checkbox(fake_req, 'enabled')
+    assert not utils._get_checkbox(fake_req, 'disabled')
+
+
+def test__submit_job(app):
+    """Test job submission works as expected"""
+    fake_db = get_db()
+    assert app.config['FAKE_DB']
+    assert 0 == fake_db.llen('jobs:queued')
+
+    job = Job()
+
+    utils._submit_job(fake_db, job)
+
+    assert 1 == fake_db.llen('jobs:queued')
