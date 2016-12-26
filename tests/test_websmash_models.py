@@ -1,5 +1,3 @@
-from flask.ext.testing import TestCase
-import websmash
 from websmash.models import Job, Notice
 from tests.test_shared import ModelTestCase
 
@@ -40,9 +38,10 @@ class JobTestCase(ModelTestCase):
         assert job.email == "ex@mp.le"
 
     def test_job_jobtype_default(self):
-        """Test that Job.jobtype is 'antismash' if not specified"""
+        """Test that Job.jobtype is 'antismash4' if not specified"""
         job = Job()
-        assert job.jobtype == "antismash"
+        assert job.jobtype == "antismash4"
+
 
 class NoticeTestCase(ModelTestCase):
     def test_notice_instantiate(self):

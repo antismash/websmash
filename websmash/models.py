@@ -1,10 +1,16 @@
 import uuid
 from datetime import datetime, timedelta
 
+def _generate_jobid(taxon):
+    """Generate a job uid based on the taxon"""
+    return "{}-{}".format(taxon, uuid.uuid4())
+
+
 class Job(object):
     def __init__(self, **kwargs):
-        self.uid = kwargs.get('uid', unicode(uuid.uuid4()))
-        self.jobtype = kwargs.get('jobtype', 'antismash')
+        self.taxon = kwargs.get('taxon', 'bacteria')
+        self.uid = kwargs.get('uid', _generate_jobid(self.taxon))
+        self.jobtype = kwargs.get('jobtype', 'antismash4')
         self.email = kwargs.get('email', '')
         self.filename = kwargs.get('filename', '')
         added = kwargs.get('added', datetime.utcnow())
@@ -18,7 +24,6 @@ class Job(object):
         else:
             self.last_changed = last_changed
         self.geneclustertypes = kwargs.get('geneclustertypes', '1')
-        self.taxon = 'e' if kwargs.get('eukaryotic', False) else 'p'
         self.genefinder = kwargs.get('genefinder', 'prodigal')
         self.gtransl = kwargs.get('gtransl', 1)
         self.minglength = kwargs.get('minglength', 50)
@@ -35,10 +40,8 @@ class Job(object):
         self.clusterblast = kwargs.get('clusterblast', False)
         self.knownclusterblast = kwargs.get('knownclusterblast', False)
         self.subclusterblast = kwargs.get('subclusterblast', False)
-        self.fullhmm = kwargs.get('fullhmm', False)
+        self.fullhmmer = kwargs.get('fullhmmer', False)
         self.asf = kwargs.get('asf', False)
-        self.ecpred = kwargs.get('ecpred', False)
-        self.modeling = kwargs.get('modeling', 'none')
         self.status = kwargs.get('status', 'pending')
         self.dispatcher = kwargs.get('dispatcher', 'unknown')
         self.download = kwargs.get('download', '')
