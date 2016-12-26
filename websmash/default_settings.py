@@ -8,9 +8,9 @@ RESULTS_URL = '/upload'
 TAXON = "bacteria"
 
 # Flask-Mail settings
-MAIL_SERVER = "smtpserv.uni-tuebingen.de"
-DEFAULT_MAIL_SENDER = "kai.blin@biotech.uni-tuebingen.de"
-DEFAULT_RECIPIENTS = ["kai.blin@biotech.uni-tuebingen.de"]
+MAIL_SERVER = "mail.example.com"
+DEFAULT_MAIL_SENDER = "antismash@example.com"
+DEFAULT_RECIPIENTS = ["antismash@example.com"]
 
 # Flask-Redis settings
 REDIS_URL = "redis://localhost:6379/0"
