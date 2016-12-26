@@ -19,25 +19,22 @@ def get_version():
 def get_stats():
     redis_store = get_db()
     pending = redis_store.llen('jobs:queued')
-    long_running = redis_store.llen("jobs:timeconsuming")
     running = redis_store.llen('jobs:running')
 
     # carry over jobs count from the old database from the config
     total_jobs = app.config['OLD_JOB_COUNT'] + redis_store.llen('jobs:completed') + \
         redis_store.llen('jobs:failed')
 
-    if pending + long_running + running > 0:
+    if pending + running > 0:
         status = 'working'
     else:
         status = 'idle'
 
     ts_queued, ts_queued_m = _get_job_timestamps(_get_oldest_job("jobs:queued"))
-    ts_timeconsuming, ts_timeconsuming_m = _get_job_timestamps(_get_oldest_job("jobs:timeconsuming"))
 
     return jsonify(status=status, queue_length=pending, running=running,
-                   long_running=long_running, total_jobs=total_jobs,
-                   ts_queued=ts_queued, ts_queued_m=ts_queued_m,
-                   ts_timeconsuming=ts_timeconsuming, ts_timeconsuming_m=ts_timeconsuming_m)
+                   total_jobs=total_jobs,
+                   ts_queued=ts_queued, ts_queued_m=ts_queued_m)
 
 
 def _get_oldest_job(queue):
