@@ -1,4 +1,4 @@
-'''REST-like API for submitting and querying antiSMASH-style jobs'''
+"""REST-like API for submitting and querying antiSMASH-style jobs"""
 
 from flask import jsonify
 from websmash import app, get_db
@@ -7,7 +7,7 @@ from websmash.models import Job
 
 @app.route('/api/v1.0/version')
 def get_version():
-    '''Return version information'''
+    """Return version information"""
     version_dict = {
         'api': '1.0.0',
         'antismash_generation': '4',
@@ -52,7 +52,7 @@ def _get_oldest_job(queue):
 
 
 def _get_job_timestamps(job):
-    """Get both a readable and a machine-readble timestamp for a job"""
+    """Get both a readable and a machine-readable timestamp for a job"""
     if job is None:
         return None, None
     return job.added.strftime("%Y-%m-%d %H:%M"), job.added.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -60,7 +60,7 @@ def _get_job_timestamps(job):
 
 @app.route('/api/v1.0/news')
 def get_news():
-    "Display current notices"
+    """Display current notices"""
     redis_store = get_db()
     rets = redis_store.keys('notice:*')
     notices = [redis_store.hgetall(n) for n in rets]
