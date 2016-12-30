@@ -1,6 +1,6 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
-from flask import jsonify
+from flask import jsonify, abort
 from websmash import app, get_db
 from websmash.models import Job
 from websmash.utils import dispatch_job
