@@ -30,7 +30,7 @@ def _submit_job(redis_store, job):
 def _get_checkbox(req, name):
     """Get True/False value for the checkbox of a given name"""
     str_value = req.form.get(name, u'off')
-    return str_value == u'on'
+    return str_value == u'on' or str_value == 'true'
 
 
 def dispatch_job():

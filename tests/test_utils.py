@@ -31,9 +31,13 @@ def test__get_checkbox():
     fake_req = FakeRequest()
     fake_req.form['enabled'] = u'on'
     fake_req.form['disabled'] = u'off'
+    fake_req.form['also_enabled'] = u'true'
+    fake_req.form['also_disabled'] = u'false'
 
     assert utils._get_checkbox(fake_req, 'enabled')
     assert not utils._get_checkbox(fake_req, 'disabled')
+    assert utils._get_checkbox(fake_req, 'also_enabled')
+    assert not utils._get_checkbox(fake_req, 'also_disabled')
 
 
 def test__submit_job(app):
