@@ -70,3 +70,19 @@ def get_news():
     rets = redis_store.keys('notice:*')
     notices = [redis_store.hgetall(n) for n in rets]
     return jsonify(notices=notices)
+
+
+@app.route('/api/v1.0/status/<task_id>')
+def status(task_id):
+    redis_store = get_db()
+    res = redis_store.hgetall(u'job:%s' % task_id)
+    if res == {}:
+        # TODO: Write a json error handler for 404 errors
+        abort(404)
+    job = Job(**res)
+    if job.status == 'done':
+        result_url = "%s/%s/index.html" % (app.config['RESULTS_URL'], job.uid)
+        res['result_url'] = result_url
+    res['short_status'] = job.get_short_status()
+
+    return jsonify(res)

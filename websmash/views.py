@@ -153,25 +153,6 @@ def display_tab():
                            switch_to='job',
                            results_path=app.config['RESULTS_URL'])
 
-@app.route('/status/<task_id>')
-@app.route('/api/v1.0/status/<task_id>')
-def status(task_id):
-    redis_store = get_db()
-    res = redis_store.hgetall(u'job:%s' % task_id)
-    if res == {}:
-        abort(404)
-    job = Job(**res)
-    if job.status == 'done':
-        result_url = "%s/%s" % (app.config['RESULTS_URL'], job.uid)
-        if job.jobtype == 'antismash':
-            result_url += "/display.xhtml"
-        else:
-            result_url += "/index.html"
-        res['result_url'] = result_url
-    res['short_status'] = job.get_short_status()
-
-    return jsonify(res)
-
 
 @app.route('/current_notices')
 def current_notices():
