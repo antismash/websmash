@@ -52,6 +52,7 @@ class Job(object):
         self.fullhmmer = get_bool(kwargs, 'fullhmmer', False)
         self.asf = get_bool(kwargs, 'asf', False)
         self.tta = get_bool(kwargs, 'tta', False)
+        self.transatpks_da = get_bool(kwargs, 'transatpks_da', False)
         self.status = kwargs.get('status', 'pending')
         self.dispatcher = kwargs.get('dispatcher', 'unknown')
         self.download = kwargs.get('download', '')

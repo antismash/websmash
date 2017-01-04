@@ -66,6 +66,7 @@ def dispatch_job():
 
     kwargs['asf'] = _get_checkbox(request, 'asf')
     kwargs['tta'] = _get_checkbox(request, 'tta')
+    kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
 
     # given that we only support antismash 3 at the moment, hardcode
     # that jobtype.
