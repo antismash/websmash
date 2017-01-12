@@ -84,5 +84,7 @@ def status(task_id):
         result_url = "%s/%s/index.html" % (app.config['RESULTS_URL'], job.uid)
         res['result_url'] = result_url
     res['short_status'] = job.get_short_status()
+    res['added_ts'] = job.added.strftime("%Y-%m-%dT%H:%M:%SZ")
+    res['last_changed_ts'] = job.last_changed.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     return jsonify(res)
