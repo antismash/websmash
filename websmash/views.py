@@ -154,14 +154,6 @@ def display_tab():
                            results_path=app.config['RESULTS_URL'])
 
 
-@app.route('/current_notices')
-def current_notices():
-    "Display current notices"
-    redis_store = get_db()
-    rets = redis_store.keys('notice:*')
-    notices = [ redis_store.hgetall(n) for n in rets]
-    return jsonify(notices=notices)
-
 @app.route('/show_notices')
 def show_notices():
     "Show current notices"
