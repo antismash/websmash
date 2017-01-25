@@ -69,8 +69,7 @@ def dispatch_job():
     kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
     kwargs['cassis'] = _get_checkbox(request, 'cassis')
 
-    # given that we only support antismash 3 at the moment, hardcode
-    # that jobtype.
+    # we don't support multiple job types for now.
     kwargs['jobtype'] = 'antismash4'
 
     job = Job(**kwargs)
