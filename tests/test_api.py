@@ -37,3 +37,24 @@ def test_api_submit_download(client):
     job_key = 'job:{}'.format(response.json['id'])
     redis = get_db()
     assert redis.exists(job_key)
+
+
+def test_api_status_pending(client):
+    """Test reading the status of a job"""
+    data = dict(ncbi='FAKE')
+    response = client.post(url_for('api_submit'), data=data)
+    job_id = response.json['id']
+
+    response = client.get(url_for('status', task_id=job_id))
+    assert 200 == response.status_code
+    assert response.json['short_status'] == 'pending'
+
+    job_key = 'job:{}'.format(job_id)
+    redis = get_db()
+    redis.hset(job_key, 'status', 'done')
+    response = client.get(url_for('status', task_id=job_id))
+    assert 200 == response.status_code
+    assert 'result_url' in response.json
+
+    response = client.get(url_for('status', task_id='nonexistent'))
+    assert 404 == response.status_code
