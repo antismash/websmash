@@ -12,6 +12,7 @@ def get_version():
     version_dict = {
         'api': '1.0.0',
         'antismash_generation': '4',
+        'taxon': app.config['TAXON'],
     }
     return jsonify(version_dict)
 

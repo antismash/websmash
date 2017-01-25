@@ -3,13 +3,15 @@ from flask import url_for
 from websmash import get_db
 
 
-def test_version(client):
+def test_version(client, app):
     response = client.get(url_for('get_version'))
     assert response.status_code == 200
     assert 'api' in response.json
     assert 'antismash_generation' in response.json
+    assert 'taxon' in response.json
     assert response.json['api'] == '1.0.0'
     assert response.json['antismash_generation'] == '4'
+    assert response.json['taxon'] == app.config['TAXON']
 
 
 def test_api_submit_upload(client, fake_sequence):
