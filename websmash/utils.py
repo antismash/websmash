@@ -50,6 +50,10 @@ def dispatch_job():
     kwargs['knownclusterblast'] = _get_checkbox(request, 'knownclusterblast')
     kwargs['subclusterblast'] = _get_checkbox(request, 'subclusterblast')
 
+    # We unfortunately are not 100% consistent in the API
+    # so first try the deprecated 'full_hmmer', then possibly
+    # overwrite with the new 'fullhmmer'
+    kwargs['fullhmmer'] = _get_checkbox(request, 'full_hmmer')
     kwargs['fullhmmer'] = _get_checkbox(request, 'fullhmmer')
 
     kwargs['genefinder'] = request.form.get('genefinder', 'prodigal')
