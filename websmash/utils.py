@@ -94,5 +94,14 @@ def dispatch_job():
         else:
             raise Exception("Uploading input file failed!")
 
+        if 'gff3' in request.files:
+            gff_upload = request.files['gff3']
+            if gff_upload is not None:
+                gff_filename = secure_filename(gff_upload.filename)
+                gff_upload.save(path.join(dirname, gff_filename))
+                if not path.exists(path.join(dirname, gff_filename)):
+                    raise Exception("Could not save GFF file!")
+                job.gff3 = gff_filename
+
     _submit_job(redis_store, job)
     return job
