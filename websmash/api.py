@@ -1,7 +1,9 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
-from flask import jsonify, abort
-from websmash import app, get_db
+from flask import jsonify, abort, request
+from flask_mail import Message
+
+from websmash import app, get_db, mail
 from websmash.models import Job
 from websmash.utils import dispatch_job
 
@@ -89,3 +91,29 @@ def status(task_id):
     res['last_changed_ts'] = job.last_changed.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     return jsonify(res)
+
+
+@app.route('/api/v1.0/email/send', methods=['POST'])
+def send_email():
+    if 'email' not in request.json:
+        abort(400)
+    email = request.json['email']
+
+    if 'message' not in request.json:
+        abort(400)
+    message = request.json['message']
+
+    with mail.connect() as conn:
+        feedback_message = Message(subject="antiSMASH feedback",
+                                   recipients=app.config['DEFAULT_RECIPIENTS'],
+                                   body=message, sender=email)
+
+        conn.send(feedback_message)
+
+        confirmation_msg = Message(subject='antiSMASH feedback received',
+                                   recipients=[email],
+                                   body="We have received your feedback to antiSMASH "
+                                        "and will reply to you as soon as possible.")
+        conn.send(confirmation_msg)
+
+    return '', 204

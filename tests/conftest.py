@@ -1,14 +1,33 @@
 import pytest
+from flask_mail import Mail
+
+import websmash
 from websmash import app as flask_app
+
+from _pytest.monkeypatch import MonkeyPatch
+
+
+@pytest.fixture(scope="session")
+def monkeysession(request):
+    mp = MonkeyPatch()
+    request.addfinalizer(mp.undo)
+    return mp
 
 
 @pytest.fixture(scope='session')
-def app(request, tmpdir_factory):
+def app(request, tmpdir_factory, monkeysession):
     '''Flask application for test'''
     results_dir = tmpdir_factory.mktemp('results')
     flask_app.config['TESTING'] = True
     flask_app.config['FAKE_DB'] = True
     flask_app.config['RESULTS_PATH'] = str(results_dir)
+    flask_app.config['MAIL_SUPPRESS_SEND'] = True
+    flask_app.config['MAIL_DEFAULT_SENDER'] = "test@antismash.secondarymetabolites.org"
+    flask_app.config['MAIL_HOST'] = 'localhost'
+    mail = Mail()
+    mail.init_app(flask_app)
+    flask_app.mail = mail
+    monkeysession.setattr(websmash, 'mail', mail)
     ctx = flask_app.app_context()
     ctx.push()
 

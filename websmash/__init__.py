@@ -1,5 +1,6 @@
 from flask import Flask, g
-from flask.ext.mail import Mail
+from flask_mail import Mail
+
 from urlparse import urlparse
 from redis import Redis
 from redis.sentinel import Sentinel

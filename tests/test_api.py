@@ -1,3 +1,4 @@
+import json
 from flask import url_for
 
 from websmash import get_db
@@ -58,3 +59,14 @@ def test_api_status_pending(client):
 
     response = client.get(url_for('status', task_id='nonexistent'))
     assert 404 == response.status_code
+
+
+def test_api_email_send(client, app):
+    """Test sending a feedback email"""
+    with app.mail.record_messages() as outbox:
+        response = client.post(url_for('send_email'),
+                               data=json.dumps(dict(email="test@example.com", message="Test message")),
+                               content_type='application/json')
+        assert 204 == response.status_code
+        assert len(outbox) == 2
+
