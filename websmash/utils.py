@@ -73,8 +73,10 @@ def dispatch_job():
     kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
     kwargs['cassis'] = _get_checkbox(request, 'cassis')
 
-    # we don't support multiple job types for now.
+    # if 'legacy' checkbox is set, start an antismash3 job instead
     kwargs['jobtype'] = 'antismash4'
+    if _get_checkbox(request, 'legacy'):
+        kwargs['jobtype'] = 'antismash3'
 
     job = Job(**kwargs)
     dirname = path.join(app.config['RESULTS_PATH'], job.uid)
