@@ -84,6 +84,8 @@ def dispatch_job():
     os.mkdir(dirname)
 
     if kwargs['ncbi'] != '':
+        if ' ' in kwargs['ncbi']:
+            raise BadRequest("Spaces are not allowed in an NCBI ID.")
         job.download = kwargs['ncbi']
     else:
         upload = request.files['seq']
