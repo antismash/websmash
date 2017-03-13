@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 
 from websmash import app, get_db
 from websmash.models import Job
+from websmash.error_handlers import BadRequest
 
 
 def generate_confirmation_mail(message):
@@ -91,10 +92,10 @@ def dispatch_job():
             filename = secure_filename(upload.filename)
             upload.save(path.join(dirname, filename))
             if not path.exists(path.join(dirname, filename)):
-                raise Exception("Could not save file!")
+                raise BadRequest("Could not save file!")
             job.filename = filename
         else:
-            raise Exception("Uploading input file failed!")
+            raise BadRequest("Uploading input file failed!")
 
         if 'gff3' in request.files:
             gff_upload = request.files['gff3']
@@ -102,7 +103,7 @@ def dispatch_job():
                 gff_filename = secure_filename(gff_upload.filename)
                 gff_upload.save(path.join(dirname, gff_filename))
                 if not path.exists(path.join(dirname, gff_filename)):
-                    raise Exception("Could not save GFF file!")
+                    raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
 
     _submit_job(redis_store, job)
