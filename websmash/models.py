@@ -42,6 +42,7 @@ class Job(object):
         self.to_pos = int(kwargs.get('to', kwargs.get('to_pos', 0)))
         self.molecule = kwargs.get('molecule', 'nucl')
         self.inclusive = get_bool(kwargs, 'inclusive', False)
+        self.borderpredict = get_bool(kwargs, 'borderpredict', False)
         self.cf_cdsnr = int(kwargs.get('cf_cdsnr', 5))
         self.cf_npfams = int(kwargs.get('cf_npfams', 5))
         self.cf_threshold = float(kwargs.get('cf_threshold', 0.6))

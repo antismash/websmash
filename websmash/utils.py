@@ -69,6 +69,8 @@ def dispatch_job():
     kwargs['cf_npfams'] = request.form.get('cf_npfams', 5, type=int)
     kwargs['cf_threshold'] = request.form.get('cf_threshold', 0.6, type=float)
 
+    kwargs['borderpredict'] = _get_checkbox(request, 'borderpredict')
+
     kwargs['asf'] = _get_checkbox(request, 'asf')
     kwargs['tta'] = _get_checkbox(request, 'tta')
     kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
