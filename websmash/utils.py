@@ -5,7 +5,7 @@ import os
 from flask import request
 from os import path
 
-from werkzeug.utils import secure_filename
+import werkzeug.utils
 
 from websmash import app, get_db
 from websmash.models import Job
@@ -112,3 +112,10 @@ def dispatch_job():
 
     _submit_job(redis_store, job)
     return job
+
+
+def secure_filename(name):
+    """Even more secure filenames"""
+    secure_name = werkzeug.utils.secure_filename(name)
+    secure_name = secure_name.lstrip('-')
+    return secure_name

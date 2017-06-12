@@ -51,3 +51,13 @@ def test__submit_job(app):
     utils._submit_job(fake_db, job)
 
     assert old_len + 1 == fake_db.llen('jobs:queued')
+
+
+def test_secure_filename():
+    """Test generated filename is secure (enough)"""
+    expected = "etc_passwd"
+    bad_name = "../../../etc/passwd"
+    assert utils.secure_filename(bad_name) == expected
+
+    bad_name = "-etc_passwd"
+    assert utils.secure_filename(bad_name) == expected
