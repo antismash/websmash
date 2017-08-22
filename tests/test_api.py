@@ -1,18 +1,21 @@
 import json
+import os
 from flask import url_for
 
 from websmash import get_db
 
 
-def test_version(client, app):
+def test_version(client, app, git_version):
     response = client.get(url_for('get_version'))
     assert response.status_code == 200
     assert 'api' in response.json
     assert 'antismash_generation' in response.json
     assert 'taxon' in response.json
+    assert 'git' in response.json
     assert response.json['api'] == '1.0.0'
     assert response.json['antismash_generation'] == '4'
     assert response.json['taxon'] == app.config['TAXON']
+    assert response.json['git'] == git_version
 
 
 def test_api_submit_upload(client, fake_sequence):
@@ -26,6 +29,28 @@ def test_api_submit_upload(client, fake_sequence):
     job_key = 'job:{}'.format(response.json['id'])
     redis = get_db()
     assert redis.exists(job_key)
+
+
+def test_api_submit_upload_leading_dash(client, tmpdir_factory):
+    """Test submitting a job with an uploaded file with a leading dash"""
+    fake_sequence = tmpdir_factory.mktemp('to_upload').join('-test.fa')
+    fake_sequence.write('>test\nATGACCGAGAGTACATAG\n')
+    full_path = str(fake_sequence)
+    dirname = os.path.dirname(full_path)
+    filename = os.path.basename(full_path)
+    oldwd = os.getcwd()
+    os.chdir(dirname)
+    fake_fh = open(filename, 'r')
+    os.chdir(oldwd)
+    data = dict(seq=fake_fh)
+    response = client.post(url_for('api_submit'), data=data)
+    assert 200 == response.status_code
+    assert 'id' in response.json
+
+    job_key = 'job:{}'.format(response.json['id'])
+    redis = get_db()
+    assert redis.exists(job_key)
+    assert redis.hget(job_key, 'filename') == 'test.fa'
 
 
 def test_api_submit_download(client):

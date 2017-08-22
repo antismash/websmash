@@ -1,3 +1,4 @@
+import subprocess
 import pytest
 from flask_mail import Mail
 
@@ -44,3 +45,13 @@ def fake_sequence(tmpdir_factory):
     seq_file = tmpdir_factory.mktemp('to_upload').join('test.fa')
     seq_file.write('>test\nATGACCGAGAGTACATAG\n')
     return seq_file
+
+
+@pytest.fixture(scope="session")
+def git_version():
+    """Get the git version"""
+    args = ['git', 'rev-parse', '--short', 'HEAD']
+    prog = subprocess.Popen(args, stdout=subprocess.PIPE)
+    output = prog.stdout.readline()
+    git_ver = output.decode('utf-8').strip()
+    return git_ver
