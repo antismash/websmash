@@ -20,6 +20,7 @@ class Job(object):
         self.taxon = kwargs.get('taxon', 'bacteria')
         self.uid = kwargs.get('uid', _generate_jobid(self.taxon))
         self.jobtype = kwargs.get('jobtype', 'antismash4')
+        self.minimal = get_bool(kwargs, 'minimal', False)
         self.email = kwargs.get('email', '')
         self.filename = kwargs.get('filename', '')
         added = kwargs.get('added', datetime.utcnow())

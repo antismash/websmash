@@ -25,7 +25,10 @@ Your message was:
 def _submit_job(redis_store, job):
     """Submit a new job"""
     redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
-    redis_store.lpush('jobs:queued', job.uid)
+    if job.minimal:
+        redis_store.lpush('jobs:minimal', job.uid)
+    else:
+        redis_store.lpush('jobs:queued', job.uid)
 
 
 def _get_checkbox(req, name):
@@ -42,6 +45,8 @@ def dispatch_job():
     kwargs = dict(taxon=taxon)
     kwargs['ncbi'] = request.form.get('ncbi', '').strip()
     kwargs['email'] = request.form.get('email', '').strip()
+
+    kwargs['minimal'] = _get_checkbox(request, 'minimal')
 
     kwargs['all_orfs'] = _get_checkbox(request, 'all_orfs')
 
@@ -76,9 +81,9 @@ def dispatch_job():
     kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
     kwargs['cassis'] = _get_checkbox(request, 'cassis')
 
-    # if 'legacy' checkbox is set, start an antismash3 job instead
+    # if 'legacy' checkbox is set but not in minimal mode, start an antismash3 job instead
     kwargs['jobtype'] = 'antismash4'
-    if _get_checkbox(request, 'legacy'):
+    if _get_checkbox(request, 'legacy') and not kwargs['minimal']:
         kwargs['jobtype'] = 'antismash3'
 
     job = Job(**kwargs)

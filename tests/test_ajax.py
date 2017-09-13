@@ -14,26 +14,49 @@ class AjaxTestCase(WebsmashTestCase):
             status='idle',
             queue_length=0,
             running=0,
+            fast=0,
             total_jobs=89132,
             ts_queued=None,
-            ts_queued_m=None
+            ts_queued_m=None,
+            ts_fast=None,
+            ts_fast_m=None,
         )
         rv = self.client.get('/api/v1.0/stats')
         self.assertEquals(rv.json, expected_status)
 
-        # fake a normal job
+        # fake a fast job
         j = Job()
         redis_store = self._ctx.g._database
         redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
+        redis_store.lpush('jobs:minimal', j.uid)
+        rv = self.client.get('/api/v1.0/stats')
+        expected_status = dict(
+            status='working',
+            queue_length=0,
+            running=0,
+            fast=1,
+            total_jobs=89132,
+            ts_fast=j.added.strftime("%Y-%m-%d %H:%M"),
+            ts_fast_m=j.added.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            ts_queued=None,
+            ts_queued_m=None,
+        )
+        self.assertEquals(rv.json, expected_status)
+
+        # fake a normal job
+        redis_store.lpop('jobs:minimal')
         redis_store.lpush('jobs:queued', j.uid)
         rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
             queue_length=1,
             running=0,
+            fast=0,
             total_jobs=89132,
             ts_queued=j.added.strftime("%Y-%m-%d %H:%M"),
-            ts_queued_m=j.added.strftime("%Y-%m-%dT%H:%M:%SZ")
+            ts_queued_m=j.added.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            ts_fast=None,
+            ts_fast_m=None,
         )
         self.assertEquals(rv.json, expected_status)
 
@@ -45,9 +68,12 @@ class AjaxTestCase(WebsmashTestCase):
             status='working',
             queue_length=0,
             running=1,
+            fast=0,
             total_jobs=89132,
             ts_queued=None,
-            ts_queued_m=None
+            ts_queued_m=None,
+            ts_fast=None,
+            ts_fast_m=None,
         )
         self.assertEquals(rv.json, expected_status)
 

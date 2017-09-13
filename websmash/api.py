@@ -34,20 +34,23 @@ def api_submit():
 def get_stats():
     redis_store = get_db()
     pending = redis_store.llen('jobs:queued')
+    fast = redis_store.llen('jobs:minimal')
     running = redis_store.llen('jobs:running')
 
     # carry over jobs count from the old database from the config
     total_jobs = app.config['OLD_JOB_COUNT'] + redis_store.llen('jobs:completed') + \
         redis_store.llen('jobs:failed')
 
-    if pending + running > 0:
+    if pending + running + fast > 0:
         status = 'working'
     else:
         status = 'idle'
 
     ts_queued, ts_queued_m = _get_job_timestamps(_get_oldest_job("jobs:queued"))
+    ts_fast, ts_fast_m = _get_job_timestamps(_get_oldest_job("jobs:minimal"))
 
     return jsonify(status=status, queue_length=pending, running=running,
+                   fast=fast, ts_fast=ts_fast, ts_fast_m=ts_fast_m,
                    total_jobs=total_jobs,
                    ts_queued=ts_queued, ts_queued_m=ts_queued_m)
 
