@@ -19,6 +19,7 @@ class Job(object):
     def __init__(self, **kwargs):
         self.taxon = kwargs.get('taxon', 'bacteria')
         self.uid = kwargs.get('uid', _generate_jobid(self.taxon))
+        self.ip_addr = kwargs.get('ip_addr', '')
         self.jobtype = kwargs.get('jobtype', 'antismash4')
         self.minimal = get_bool(kwargs, 'minimal', False)
         self.email = kwargs.get('email', '')

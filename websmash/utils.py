@@ -43,6 +43,12 @@ def dispatch_job():
     taxon = app.config['TAXON']
 
     kwargs = dict(taxon=taxon)
+
+    if 'X-Forwarded-For' in request.headers:
+        kwargs['ip_addr'] = request.headers.getlist("X-Forwarded-For")[0].rpartition(' ')[-1]
+    else:
+        kwargs['ip_addr'] = request.remote_addr or 'untrackable'
+
     kwargs['ncbi'] = request.form.get('ncbi', '').strip()
     kwargs['email'] = request.form.get('email', '').strip()
 
