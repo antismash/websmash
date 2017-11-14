@@ -16,5 +16,9 @@ DEFAULT_RECIPIENTS = ["antismash@example.com"]
 REDIS_URL = "redis://localhost:6379/0"
 
 OLD_JOB_COUNT = 0
+
+# Job filter settings
+MAX_JOBS_PER_USER = 5
+
 #########################################
 

@@ -11,6 +11,10 @@ from websmash import app, get_db
 from websmash.models import Job
 from websmash.error_handlers import BadRequest
 
+DEFAULT_QUEUE = 'jobs:queued'
+FAST_QUEUE = 'jobs:minimal'
+WAITLIST_PREFIX = 'jobs:waiting'
+
 
 def generate_confirmation_mail(message):
     """Generate confirmation email message from template"""
@@ -22,13 +26,51 @@ Your message was:
     return confirmation_template % message
 
 
-def _submit_job(redis_store, job):
+def _submit_job(redis_store, job, limit):
     """Submit a new job"""
     redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
     if job.minimal:
-        redis_store.lpush('jobs:minimal', job.uid)
+        redis_store.lpush(FAST_QUEUE, job.uid)
     else:
-        redis_store.lpush('jobs:queued', job.uid)
+        if job.email:
+            if _count_pending_jobs_with_email(redis_store, job) > limit:
+                _waitlist_job(redis_store, job, job.email)
+                return
+        elif _count_pending_jobs_with_ip(redis_store, job) > limit:
+            _waitlist_job(redis_store, job, job.ip_addr)
+            return
+
+        redis_store.lpush(DEFAULT_QUEUE, job.uid)
+
+
+def _count_pending_jobs_with_email(redis_store, job):
+    """Count how many jobs are pending for the email of the current job"""
+    count = 0
+    for job_id in redis_store.lrange(DEFAULT_QUEUE, 0, -1):
+        job_key = "job:{}".format(job_id)
+        if redis_store.hget(job_key, 'email') == job.email:
+            count += 1
+
+    return count
+
+
+def _count_pending_jobs_with_ip(redis_store, job):
+    """Count how many jobs are pending for the IP address of the current job"""
+    count = 0
+    for job_id in redis_store.lrange(DEFAULT_QUEUE, 0, -1):
+        job_key = "job:{}".format(job_id)
+        if redis_store.hget(job_key, 'ip_addr') == job.ip_addr:
+            count += 1
+
+    print "count is", count
+    return count
+
+
+def _waitlist_job(redis_store, job, attribute):
+    """Put the given job on a waitlist"""
+    print "waitlisting", job.uid, "based on", attribute
+    redis_store.hset(u'job:%s' % job.uid, 'status', 'waiting: Too many jobs in queue for this user.')
+    redis_store.lpush('{}:{}'.format(WAITLIST_PREFIX, attribute), job.uid)
 
 
 def _get_checkbox(req, name):
@@ -121,7 +163,7 @@ def dispatch_job():
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
 
-    _submit_job(redis_store, job)
+    _submit_job(redis_store, job, app.config['MAX_JOBS_PER_USER'])
     return job
 
 

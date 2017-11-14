@@ -48,7 +48,7 @@ def test__submit_job(app):
 
     job = Job()
 
-    utils._submit_job(fake_db, job)
+    utils._submit_job(fake_db, job, 5)
 
     assert old_len + 1 == fake_db.llen('jobs:queued')
 
