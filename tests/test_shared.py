@@ -31,7 +31,7 @@ class WebsmashTestCase(ModelTestCase):
         self.tmpdir = tempfile.mkdtemp()
         (fd, self.tmp_name) = tempfile.mkstemp(dir=self.tmpdir, suffix='.fa')
         tmp_file = os.fdopen(fd, 'w+b')
-        tmp_file.write('>test\nATGACCGAGAGTACATAG\n')
+        tmp_file.write(b'>test\nATGACCGAGAGTACATAG\n')
         tmp_file.close()
         self.tmp_file = open(self.tmp_name, 'r')
 

@@ -6,7 +6,7 @@ def get_bool(obj, param, default=False):
     # type: (dict, str, bool) -> bool
     """convert Redis' string serialised boolean values back to true booleans"""
     val = obj.get(param, default)
-    if isinstance(val, basestring):
+    if isinstance(val, str):
         val = (val.lower() == 'true')
     return val
 
@@ -25,12 +25,12 @@ class Job(object):
         self.email = kwargs.get('email', '')
         self.filename = kwargs.get('filename', '')
         added = kwargs.get('added', datetime.utcnow())
-        if isinstance(added, (str, unicode)):
+        if isinstance(added, str):
             self.added = datetime.strptime(added, "%Y-%m-%d %H:%M:%S.%f")
         else:
             self.added = added
         last_changed = kwargs.get('last_changed', self.added)
-        if isinstance(last_changed, (str, unicode)):
+        if isinstance(last_changed, str):
             self.last_changed = datetime.strptime(last_changed, "%Y-%m-%d %H:%M:%S.%f")
         else:
             self.last_changed = last_changed
@@ -84,7 +84,7 @@ class Notice(object):
                  category=u'notice',
                  id=None
                 ):
-        self.id = id if id is not None else unicode(uuid.uuid4())
+        self.id = id if id is not None else str(uuid.uuid4())
         self.added = added and added or datetime.utcnow()
         self.show_from = show_from and show_from or datetime.utcnow()
         self.show_until = show_until and show_until or \

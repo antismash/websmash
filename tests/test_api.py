@@ -20,7 +20,7 @@ def test_version(client, app, git_version):
 
 def test_api_submit_upload(client, fake_sequence):
     """Test submitting a job with an uploaded file"""
-    fake_fh = open(str(fake_sequence), 'r')
+    fake_fh = open(str(fake_sequence), 'rb')
     data = dict(seq=fake_fh)
     response = client.post(url_for('api_submit'), data=data)
     assert 200 == response.status_code
@@ -34,13 +34,13 @@ def test_api_submit_upload(client, fake_sequence):
 def test_api_submit_upload_leading_dash(client, tmpdir_factory):
     """Test submitting a job with an uploaded file with a leading dash"""
     fake_sequence = tmpdir_factory.mktemp('to_upload').join('-test.fa')
-    fake_sequence.write('>test\nATGACCGAGAGTACATAG\n')
+    fake_sequence.write(b'>test\nATGACCGAGAGTACATAG\n')
     full_path = str(fake_sequence)
     dirname = os.path.dirname(full_path)
     filename = os.path.basename(full_path)
     oldwd = os.getcwd()
     os.chdir(dirname)
-    fake_fh = open(filename, 'r')
+    fake_fh = open(filename, 'rb')
     os.chdir(oldwd)
     data = dict(seq=fake_fh)
     response = client.post(url_for('api_submit'), data=data)
