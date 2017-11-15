@@ -14,6 +14,7 @@ from websmash.error_handlers import BadRequest
 DEFAULT_QUEUE = 'jobs:queued'
 FAST_QUEUE = 'jobs:minimal'
 WAITLIST_PREFIX = 'jobs:waiting'
+PRIORITY_QUEUE = 'jobs:priority'
 
 
 def generate_confirmation_mail(message):
@@ -26,10 +27,12 @@ Your message was:
     return confirmation_template % message
 
 
-def _submit_job(redis_store, job, limit):
+def _submit_job(redis_store, job, limit, vips):
     """Submit a new job"""
     redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
-    if job.minimal:
+    if job.email in vips:
+        redis_store.lpush(PRIORITY_QUEUE, job.uid)
+    elif job.minimal:
         redis_store.lpush(FAST_QUEUE, job.uid)
     else:
         if job.email:
@@ -163,7 +166,7 @@ def dispatch_job():
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
 
-    _submit_job(redis_store, job, app.config['MAX_JOBS_PER_USER'])
+    _submit_job(redis_store, job, app.config['MAX_JOBS_PER_USER'], app.config['VIP_USERS'])
     return job
 
 

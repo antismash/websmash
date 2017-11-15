@@ -20,5 +20,8 @@ OLD_JOB_COUNT = 0
 # Job filter settings
 MAX_JOBS_PER_USER = 5
 
+# Users with access to the priority queue
+VIP_USERS = {}
+
 #########################################
 
