@@ -6,10 +6,12 @@ from flask import request
 from os import path
 
 import werkzeug.utils
+from antismash_models import SyncJob as Job
 
 from websmash import app, get_db
-from websmash.models import Job
 from websmash.error_handlers import BadRequest
+from websmash.models import _generate_jobid
+
 
 DEFAULT_QUEUE = 'jobs:queued'
 FAST_QUEUE = 'jobs:minimal'
@@ -27,13 +29,19 @@ Your message was:
     return confirmation_template % message
 
 
+def _add_to_queue(redis_store, queue, job):
+    """Add job to a specified job queue"""
+    job.commit()
+    redis_store.lpush(queue, job.job_id)
+
+
 def _submit_job(redis_store, job, limit, vips):
     """Submit a new job"""
-    redis_store.hmset(u'job:%s' % job.uid, job.get_dict())
+    job.state = 'queued'
     if job.email in vips:
-        redis_store.lpush(PRIORITY_QUEUE, job.uid)
+        _add_to_queue(redis_store, PRIORITY_QUEUE, job)
     elif job.minimal:
-        redis_store.lpush(FAST_QUEUE, job.uid)
+        _add_to_queue(redis_store, FAST_QUEUE, job)
     else:
         if job.email:
             if _count_pending_jobs_with_email(redis_store, job) > limit:
@@ -43,7 +51,7 @@ def _submit_job(redis_store, job, limit, vips):
             _waitlist_job(redis_store, job, job.ip_addr)
             return
 
-        redis_store.lpush(DEFAULT_QUEUE, job.uid)
+        _add_to_queue(redis_store, DEFAULT_QUEUE, job)
 
 
 def _count_pending_jobs_with_email(redis_store, job):
@@ -70,8 +78,10 @@ def _count_pending_jobs_with_ip(redis_store, job):
 
 def _waitlist_job(redis_store, job, attribute):
     """Put the given job on a waitlist"""
-    redis_store.hset(u'job:%s' % job.uid, 'status', 'waiting: Too many jobs in queue for this user.')
-    redis_store.lpush('{}:{}'.format(WAITLIST_PREFIX, attribute), job.uid)
+    job.state = 'waiting'
+    job.status = 'waiting: Too many jobs in queue for this user.'
+    waitlist = '{}:{}'.format(WAITLIST_PREFIX, attribute)
+    _add_to_queue(redis_store, waitlist, job)
 
 
 def _get_checkbox(req, name):
@@ -84,65 +94,65 @@ def dispatch_job():
     """Internal helper to dispatch a new job"""
     redis_store = get_db()
     taxon = app.config['TAXON']
+    job_id = _generate_jobid(taxon)
 
-    kwargs = dict(taxon=taxon)
+    job = Job(redis_store, job_id)
 
     if 'X-Forwarded-For' in request.headers:
-        kwargs['ip_addr'] = request.headers.getlist("X-Forwarded-For")[0].rpartition(' ')[-1]
+        job.ip_addr = request.headers.getlist("X-Forwarded-For")[0].rpartition(' ')[-1]
     else:
-        kwargs['ip_addr'] = request.remote_addr or 'untrackable'
+        job.ip_addr = request.remote_addr or 'untrackable'
 
-    kwargs['ncbi'] = request.form.get('ncbi', '').strip()
-    kwargs['email'] = request.form.get('email', '').strip()
+    ncbi = request.form.get('ncbi', '').strip()
 
-    kwargs['minimal'] = _get_checkbox(request, 'minimal')
+    val = request.form.get('email', '').strip()
+    if val:
+        job.email = val
 
-    kwargs['all_orfs'] = _get_checkbox(request, 'all_orfs')
+    job.minimal = _get_checkbox(request, 'minimal')
 
-    kwargs['smcogs'] = _get_checkbox(request, 'smcogs')
+    job.all_orfs = _get_checkbox(request, 'all_orfs')
 
-    kwargs['clusterblast'] = _get_checkbox(request, 'clusterblast')
-    kwargs['knownclusterblast'] = _get_checkbox(request, 'knownclusterblast')
-    kwargs['subclusterblast'] = _get_checkbox(request, 'subclusterblast')
+    job.smcogs = _get_checkbox(request, 'smcogs')
 
-    # We unfortunately are not 100% consistent in the API
-    # so first try the deprecated 'full_hmmer', then possibly
-    # overwrite with the new 'fullhmmer'
-    kwargs['fullhmmer'] = _get_checkbox(request, 'full_hmmer')
-    kwargs['fullhmmer'] = _get_checkbox(request, 'fullhmmer')
+    job.clusterblast = _get_checkbox(request, 'clusterblast')
+    job.knownclusterblast = _get_checkbox(request, 'knownclusterblast')
+    job.subclusterblast = _get_checkbox(request, 'subclusterblast')
 
-    kwargs['genefinder'] = request.form.get('genefinder', 'prodigal')
-    kwargs['trans_table'] = request.form.get('trans_table', 1, type=int)
-    kwargs['gene_length'] = request.form.get('gene_length', 50, type=int)
 
-    kwargs['from_pos'] = request.form.get('from', 0, type=int)
-    kwargs['to_pos'] = request.form.get('to', 0, type=int)
+    job.full_hmmer = _get_checkbox(request, 'fullhmmer')
 
-    kwargs['inclusive'] = _get_checkbox(request, 'inclusive')
-    kwargs['cf_cdsnr'] = request.form.get('cf_cdsnr', 5, type=int)
-    kwargs['cf_npfams'] = request.form.get('cf_npfams', 5, type=int)
-    kwargs['cf_threshold'] = request.form.get('cf_threshold', 0.6, type=float)
+    val = request.form.get('genefinder', '')
+    if val:
+        job.genefinder = val
 
-    kwargs['borderpredict'] = _get_checkbox(request, 'borderpredict')
+    val = request.form.get('from', 0, type=int)
+    if val:
+        job.from_pos = val
 
-    kwargs['asf'] = _get_checkbox(request, 'asf')
-    kwargs['tta'] = _get_checkbox(request, 'tta')
-    kwargs['transatpks_da'] = _get_checkbox(request, 'transatpks_da')
-    kwargs['cassis'] = _get_checkbox(request, 'cassis')
+    val = request.form.get('to', 0, type=int)
+    if val:
+        job.to_pos = val
 
-    # if 'legacy' checkbox is set but not in minimal mode, start an antismash3 job instead
-    kwargs['jobtype'] = 'antismash4'
-    if _get_checkbox(request, 'legacy') and not kwargs['minimal']:
-        kwargs['jobtype'] = 'antismash3'
+    job.inclusive = _get_checkbox(request, 'inclusive')
+    job.cf_cdsnr = request.form.get('cf_cdsnr', 5, type=int)
+    job.cf_npfams = request.form.get('cf_npfams', 5, type=int)
+    job.cf_threshold = request.form.get('cf_threshold', 0.6, type=float)
 
-    job = Job(**kwargs)
-    dirname = path.join(app.config['RESULTS_PATH'], job.uid)
+    job.borderpredict = _get_checkbox(request, 'borderpredict')
+
+    job.asf = _get_checkbox(request, 'asf')
+    job.tta = _get_checkbox(request, 'tta')
+    job.transatpks_da = _get_checkbox(request, 'transatpks_da')
+    job.cassis = _get_checkbox(request, 'cassis')
+
+    dirname = path.join(app.config['RESULTS_PATH'], job.job_id)
     os.mkdir(dirname)
 
-    if kwargs['ncbi'] != '':
-        if ' ' in kwargs['ncbi']:
+    if ncbi != '':
+        if ' ' in ncbi:
             raise BadRequest("Spaces are not allowed in an NCBI ID.")
-        job.download = kwargs['ncbi']
+        job.download = ncbi
     else:
         upload = request.files['seq']
 

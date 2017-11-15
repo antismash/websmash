@@ -1,11 +1,11 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
 import subprocess
+from antismash_models import SyncJob as Job
 from flask import jsonify, abort, request
 from flask_mail import Message
 
 from websmash import app, get_db, mail
-from websmash.models import Job
 from websmash.utils import dispatch_job
 
 _git_version = None
@@ -27,7 +27,7 @@ def get_version():
 def api_submit():
     """Submit a new antiSMASH job via an API call"""
     job = dispatch_job()
-    return jsonify(dict(id=job.uid))
+    return jsonify(dict(id=job.job_id))
 
 
 @app.route('/api/v1.0/stats')
@@ -76,11 +76,13 @@ def _get_oldest_job(queue):
     """Get the oldest job in a queue"""
     redis_store = get_db()
     try:
-        res = redis_store.hgetall("job:%s" % redis_store.lrange(queue, -1, -1)[0])
+        job_id = redis_store.lrange(queue, -1, -1)[0]
     except IndexError:
         return None
 
-    return Job(**res)
+    job = Job(redis_store, job_id)
+    job.fetch()
+    return job
 
 
 def _get_job_timestamps(job):
@@ -102,15 +104,18 @@ def get_news():
 @app.route('/api/v1.0/status/<task_id>')
 def status(task_id):
     redis_store = get_db()
-    res = redis_store.hgetall(u'job:%s' % task_id)
-    if res == {}:
+    job = Job(redis_store, task_id)
+    try:
+        job.fetch()
+    except ValueError:
         # TODO: Write a json error handler for 404 errors
         abort(404)
-    job = Job(**res)
-    if job.status == 'done':
-        result_url = "%s/%s/index.html" % (app.config['RESULTS_URL'], job.uid)
+
+    res = job.to_dict()
+
+    if job.state == 'done':
+        result_url = "%s/%s/index.html" % (app.config['RESULTS_URL'], job.job_id)
         res['result_url'] = result_url
-    res['short_status'] = job.get_short_status()
     res['added_ts'] = job.added.strftime("%Y-%m-%dT%H:%M:%SZ")
     res['last_changed_ts'] = job.last_changed.strftime("%Y-%m-%dT%H:%M:%SZ")
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Tests for utility functions"""
 from minimock import TraceTracker, assert_same_trace
+from antismash_models import SyncJob as Job
 from websmash import get_db, utils
-from websmash.models import Job
 
 
 def test_generate_confirmation_mail():
@@ -46,7 +46,7 @@ def test__submit_job(app):
     assert app.config['FAKE_DB']
     old_len = fake_db.llen('jobs:queued')
 
-    job = Job()
+    job = Job(fake_db, 'taxon-fake')
 
     utils._submit_job(fake_db, job, 5, {})
 

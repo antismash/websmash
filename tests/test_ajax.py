@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from websmash.models import Job, Notice
+from antismash_models import SyncJob as Job
+from websmash.models import Notice
 from tests.test_shared import WebsmashTestCase
 
 
@@ -25,10 +26,11 @@ class AjaxTestCase(WebsmashTestCase):
         self.assertEquals(rv.json, expected_status)
 
         # fake a fast job
-        j = Job()
         redis_store = self._ctx.g._database
-        redis_store.hmset(u'job:%s' % j.uid, j.get_dict())
-        redis_store.lpush('jobs:minimal', j.uid)
+        fake_id = 'taxon-fake'
+        j = Job(redis_store, fake_id)
+        j.commit()
+        redis_store.lpush('jobs:minimal', j.job_id)
         rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
@@ -45,7 +47,7 @@ class AjaxTestCase(WebsmashTestCase):
 
         # fake a normal job
         redis_store.lpop('jobs:minimal')
-        redis_store.lpush('jobs:queued', j.uid)
+        redis_store.lpush('jobs:queued', j.job_id)
         rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(
             status='working',
@@ -61,7 +63,9 @@ class AjaxTestCase(WebsmashTestCase):
         self.assertEquals(rv.json, expected_status)
 
         # fake a running job
+        j.state = "running"
         j.status = "running: not really"
+        j.commit()
         redis_store.rpoplpush('jobs:queued', 'jobs:running')
         rv = self.client.get('/api/v1.0/stats')
         expected_status = dict(

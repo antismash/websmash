@@ -1,5 +1,6 @@
 import json
 import os
+from antismash_models import SyncJob as Job
 from flask import url_for
 
 from websmash import get_db
@@ -73,11 +74,13 @@ def test_api_status_pending(client):
 
     response = client.get(url_for('status', task_id=job_id))
     assert 200 == response.status_code
-    assert response.json['short_status'] == 'pending'
+    assert response.json['state'] == 'queued'
 
-    job_key = 'job:{}'.format(job_id)
     redis = get_db()
-    redis.hset(job_key, 'status', 'done')
+    job = Job(redis, job_id)
+    job.fetch()
+    job.state = 'done'
+    job.commit()
     response = client.get(url_for('status', task_id=job_id))
     assert 200 == response.status_code
     assert 'result_url' in response.json
