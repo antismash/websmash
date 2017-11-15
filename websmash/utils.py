@@ -65,13 +65,11 @@ def _count_pending_jobs_with_ip(redis_store, job):
         if redis_store.hget(job_key, 'ip_addr') == job.ip_addr:
             count += 1
 
-    print "count is", count
     return count
 
 
 def _waitlist_job(redis_store, job, attribute):
     """Put the given job on a waitlist"""
-    print "waitlisting", job.uid, "based on", attribute
     redis_store.hset(u'job:%s' % job.uid, 'status', 'waiting: Too many jobs in queue for this user.')
     redis_store.lpush('{}:{}'.format(WAITLIST_PREFIX, attribute), job.uid)
 
