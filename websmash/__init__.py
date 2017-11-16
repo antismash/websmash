@@ -20,7 +20,8 @@ def get_db():
             redis_store = g._database = mock_redis_client(encoding='utf-8', decode_responses=True)
         else:
             if app.config['REDIS_URL'].startswith('redis://'):
-                redis_store = g._database = Redis.from_url(app.config['REDIS_URL'])
+                redis_store = g._database = Redis.from_url(app.config['REDIS_URL'], encoding='utf-8',
+                                                           decode_responses=True)
             elif app.config['REDIS_URL'].startswith('sentinel://'):
                 parsed_url = urlparse(app.config['REDIS_URL'])
                 service = parsed_url.path.lstrip('/')
