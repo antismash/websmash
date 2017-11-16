@@ -2,16 +2,18 @@ pipeline:
   build:
     image: alpine
     commands:
-      - apk --no-cache add python py-pip ca-certificates git
-      - pip install -r requirements.txt
-      - pip install -r tests/requirements.txt
-      - pip install mockredispy
+      - apk --no-cache add python3 ca-certificates git gcc musl-dev python3-dev
+      - pip3 install -r requirements.txt
+      - pip3 install -r tests/requirements.txt
       - py.test -v
 
   slack:
     image: plugins/slack
     channel: bots
     secrets: [ slack_webhook ]
+    when:
+      status: [ success, failure  ]
+      event: push
 
   email:
     image: drillster/drone-email
@@ -19,3 +21,6 @@ pipeline:
     host: mail.secondarymetabolites.org
     username: antismash
     secrets: [ email_password ]
+    when:
+      status: [ success, failure  ]
+      event: push
