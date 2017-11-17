@@ -118,6 +118,9 @@ def status(task_id):
         res['result_url'] = result_url
     res['added_ts'] = job.added.strftime("%Y-%m-%dT%H:%M:%SZ")
     res['last_changed_ts'] = job.last_changed.strftime("%Y-%m-%dT%H:%M:%SZ")
+    # TODO: This fixes old web UIs while stupid browser caching is going on. Can be removed soon, I hope.
+    # I hate browser caches.
+    res['short_status'] = job.state
 
     return jsonify(res)
 
