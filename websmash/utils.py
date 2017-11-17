@@ -122,9 +122,7 @@ def dispatch_job():
 
     job.full_hmmer = _get_checkbox(request, 'fullhmmer')
 
-    val = request.form.get('genefinder', '')
-    if val:
-        job.genefinder = val
+    job.genefinder = request.form.get('genefinder', 'prodigal')
 
     val = request.form.get('from', 0, type=int)
     if val:
