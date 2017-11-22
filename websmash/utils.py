@@ -119,6 +119,7 @@ def dispatch_job():
     job.knownclusterblast = _get_checkbox(request, 'knownclusterblast')
     job.subclusterblast = _get_checkbox(request, 'subclusterblast')
 
+    job.jobtype = 'antismash4'
 
     job.full_hmmer = _get_checkbox(request, 'fullhmmer')
 
