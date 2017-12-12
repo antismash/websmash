@@ -35,6 +35,5 @@ def get_db():
                 redis_store = sentinel.master_for(service, redis_class=Redis, socket_timeout=0.1)
     return redis_store
 
-import websmash.models
 import websmash.api
 import websmash.error_handlers

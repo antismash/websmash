@@ -4,13 +4,13 @@ import os
 
 from flask import request
 from os import path
+import uuid
 
 import werkzeug.utils
 from antismash_models import SyncJob as Job
 
 from websmash import app, get_db
 from websmash.error_handlers import BadRequest
-from websmash.models import _generate_jobid
 
 
 DEFAULT_QUEUE = 'jobs:queued'
@@ -27,6 +27,11 @@ Your message was:
 %s
 """
     return confirmation_template % message
+
+
+def _generate_jobid(taxon):
+    """Generate a job uid based on the taxon"""
+    return "{}-{}".format(taxon, uuid.uuid4())
 
 
 def _add_to_queue(redis_store, queue, job):
