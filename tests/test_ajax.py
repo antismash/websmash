@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from antismash_models import SyncJob as Job
-from websmash.models import Notice
+from antismash_models import SyncJob as Job, SyncNotice as Notice
 from tests.test_shared import WebsmashTestCase
 
 
@@ -81,13 +80,14 @@ class AjaxTestCase(WebsmashTestCase):
         )
         self.assertEquals(rv.json, expected_status)
 
-
     def test_current_notices(self):
         "Test if current notices are displayed"
         rv = self.client.get('/api/v1.0/news')
         self.assertEquals(rv.json, dict(notices=[]))
-        n = Notice(u'Teaser', u'Text')
         redis_store = self._ctx.g._database
-        redis_store.hmset(u'notice:%s' % n.id, n.json)
+        n = Notice(redis_store, 'fake')
+        n.teaser = 'Teaser'
+        n.text = 'Text'
+        n.commit()
         rv = self.client.get('/api/v1.0/news')
-        self.assertEquals(rv.json, dict(notices=[n.json]))
+        self.assertEquals(rv.json, dict(notices=[n.to_dict()]))

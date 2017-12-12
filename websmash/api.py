@@ -1,7 +1,8 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
+from datetime import datetime
 import subprocess
-from antismash_models import SyncJob as Job
+from antismash_models import SyncJob as Job, SyncNotice as Notice
 from flask import jsonify, abort, request
 from flask_mail import Message
 
@@ -96,8 +97,20 @@ def _get_job_timestamps(job):
 def get_news():
     """Display current notices"""
     redis_store = get_db()
-    rets = redis_store.keys('notice:*')
-    notices = [redis_store.hgetall(n) for n in rets]
+    notices = []
+    for notice_id in redis_store.keys('notice:*'):
+        notice = Notice(redis_store, notice_id[7:])
+        try:
+            notice.fetch()
+        except ValueError as e:
+            continue
+
+        if notice.show_from > datetime.utcnow():
+            # show_from is in the future, don't show this yet
+            continue
+
+        notices.append(notice.to_dict())
+
     return jsonify(notices=notices)
 
 
