@@ -15,65 +15,6 @@ def _generate_jobid(taxon):
     return "{}-{}".format(taxon, uuid.uuid4())
 
 
-class Job(object):
-    def __init__(self, **kwargs):
-        self.taxon = kwargs.get('taxon', 'bacteria')
-        self.uid = kwargs.get('uid', _generate_jobid(self.taxon))
-        self.ip_addr = kwargs.get('ip_addr', '')
-        self.jobtype = kwargs.get('jobtype', 'antismash4')
-        self.minimal = get_bool(kwargs, 'minimal', False)
-        self.email = kwargs.get('email', '')
-        self.filename = kwargs.get('filename', '')
-        added = kwargs.get('added', datetime.utcnow())
-        if isinstance(added, str):
-            self.added = datetime.strptime(added, "%Y-%m-%d %H:%M:%S.%f")
-        else:
-            self.added = added
-        last_changed = kwargs.get('last_changed', self.added)
-        if isinstance(last_changed, str):
-            self.last_changed = datetime.strptime(last_changed, "%Y-%m-%d %H:%M:%S.%f")
-        else:
-            self.last_changed = last_changed
-        self.geneclustertypes = kwargs.get('geneclustertypes', '1')
-        self.genefinder = kwargs.get('genefinder', 'prodigal')
-        self.gtransl = kwargs.get('gtransl', 1)
-        self.minglength = kwargs.get('minglength', 50)
-        self.genomeconf = kwargs.get('genomeconf', 'l')
-        self.all_orfs = get_bool(kwargs, 'all_orfs', False)
-        self.from_pos = int(kwargs.get('from', kwargs.get('from_pos', 0)))
-        self.to_pos = int(kwargs.get('to', kwargs.get('to_pos', 0)))
-        self.molecule = kwargs.get('molecule', 'nucl')
-        self.inclusive = get_bool(kwargs, 'inclusive', False)
-        self.borderpredict = get_bool(kwargs, 'borderpredict', False)
-        self.cf_cdsnr = int(kwargs.get('cf_cdsnr', 5))
-        self.cf_npfams = int(kwargs.get('cf_npfams', 5))
-        self.cf_threshold = float(kwargs.get('cf_threshold', 0.6))
-        self.smcogs = get_bool(kwargs, 'smcogs', False)
-        self.clusterblast = get_bool(kwargs, 'clusterblast', False)
-        self.knownclusterblast = get_bool(kwargs, 'knownclusterblast', False)
-        self.subclusterblast = get_bool(kwargs, 'subclusterblast', False)
-        self.fullhmmer = get_bool(kwargs, 'fullhmmer', False)
-        self.asf = get_bool(kwargs, 'asf', False)
-        self.tta = get_bool(kwargs, 'tta', False)
-        self.transatpks_da = get_bool(kwargs, 'transatpks_da', False)
-        self.cassis = get_bool(kwargs, 'cassis', False)
-        self.status = kwargs.get('status', 'pending')
-        self.dispatcher = kwargs.get('dispatcher', 'unknown')
-        self.download = kwargs.get('download', '')
-
-    def get_short_status(self):
-        """Get a short status description useful for icon names"""
-        return self.status.split(':')[0]
-
-    def get_status(self):
-        return self.status
-
-    def get_dict(self):
-        return self.__dict__
-
-    def __repr__(self):
-        return '<Job %r (%s)>' % (self.uid, self.status)
-
 class Notice(object):
     def __init__(self,
                  teaser,
