@@ -90,7 +90,7 @@ def _get_job_timestamps(job):
     """Get both a readable and a machine-readable timestamp for a job"""
     if job is None:
         return None, None
-    return job.added.strftime("%Y-%m-%d %H:%M"), job.added.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return job.last_changed.strftime("%Y-%m-%d %H:%M"), job.last_changed.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 @app.route('/api/v1.0/news')
