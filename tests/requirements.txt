@@ -5,3 +5,4 @@ pytest-cov
 MiniMock==1.2.8
 Flask-Testing==0.4.2
 mockredispy-kblin
+pytest-mock
