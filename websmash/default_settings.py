@@ -23,5 +23,11 @@ MAX_JOBS_PER_USER = 5
 # Users with access to the priority queue
 VIP_USERS = {}
 
+# Percentage of jobs also sent into the development version queue
+DARK_LAUNCH_PERCENTAGE = 10
+# Jobs transferred to the development version queue get hardcoded to use this
+# email address so we can (a) track them (b) they don't confuse the submitter
+DARK_LAUNCH_EMAIL = "antismash@example.com"
+
 #########################################
 

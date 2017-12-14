@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """Utility functions for websmash"""
 import os
+import shutil
 
 from flask import request
 from os import path
+import random
 import uuid
 
 import werkzeug.utils
@@ -17,6 +19,7 @@ DEFAULT_QUEUE = 'jobs:queued'
 FAST_QUEUE = 'jobs:minimal'
 WAITLIST_PREFIX = 'jobs:waiting'
 PRIORITY_QUEUE = 'jobs:priority'
+DEVELOPMENT_QUEUE = 'jobs:development'
 
 
 def generate_confirmation_mail(message):
@@ -57,6 +60,41 @@ def _submit_job(redis_store, job, limit, vips):
             return
 
         _add_to_queue(redis_store, DEFAULT_QUEUE, job)
+
+
+def _dark_launch_job(redis_store, job, config):
+    """Submit a copy of the job to the development queue so we can test new versions on real data"""
+
+    percentage = config['DARK_LAUNCH_PERCENTAGE']
+    rand = random.randrange(0, 100)
+    if rand >= percentage:
+        return
+
+    new_job_id = _generate_jobid(config['TAXON'])
+    new_job = Job.fromExisting(new_job_id, job)
+    new_job.email = config['DARK_LAUNCH_EMAIL']
+
+    _copy_files(config['RESULTS_PATH'], job, new_job)
+
+    _add_to_queue(redis_store, DEVELOPMENT_QUEUE, new_job)
+
+
+def _copy_files(basedir, old_job, new_job):
+    """When duplicating a job, copy over available input files"""
+
+    old_dirname = path.join(basedir, old_job.job_id)
+    new_dirname = path.join(basedir, new_job.job_id)
+
+    if old_job.filename:
+        old_filename = path.join(old_dirname, old_job.filename)
+        new_filename = path.join(new_dirname, new_job.filename)
+        os.makedirs(new_dirname, exist_ok=True)
+        shutil.copyfile(old_filename, new_filename)
+
+    if old_job.gff3:
+        old_filename = path.join(old_dirname, old_job.gff3)
+        new_filename = path.join(new_dirname, new_job.gff3)
+        shutil.copyfile(old_filename, new_filename)
 
 
 def _count_pending_jobs_with_email(redis_store, job):
@@ -179,6 +217,7 @@ def dispatch_job():
                 job.gff3 = gff_filename
 
     _submit_job(redis_store, job, app.config['MAX_JOBS_PER_USER'], app.config['VIP_USERS'])
+    _dark_launch_job(redis_store, job, app.config)
     return job
 
 
