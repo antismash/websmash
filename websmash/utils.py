@@ -89,6 +89,7 @@ def _copy_files(basedir, old_job, new_job):
         old_filename = path.join(old_dirname, old_job.filename)
         new_filename = path.join(new_dirname, new_job.filename)
         os.makedirs(new_dirname, exist_ok=True)
+        os.chmod(new_dirname, 0o775)
         shutil.copyfile(old_filename, new_filename)
 
     if old_job.gff3:
