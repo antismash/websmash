@@ -93,7 +93,6 @@ def test__copy_files(app, mocker):
     new_job = Job.fromExisting('bacteria-new', old_job)
 
     fake_makedirs = mocker.patch('os.makedirs')
-    fake_chmod = mocker.patch('os.chmod')
     fake_copyfile = mocker.patch('shutil.copyfile')
 
     utils._copy_files('fake_base', old_job, new_job)
@@ -101,7 +100,6 @@ def test__copy_files(app, mocker):
     new_job_basedir = os.path.join('fake_base', new_job.job_id)
 
     fake_makedirs.assert_called_once_with(new_job_basedir, exist_ok=True)
-    fake_chmod.assert_called_once_with(new_job_basedir, 0o775)
     old_filename = os.path.join('fake_base', old_job.job_id, old_job.filename)
     old_gff3 = os.path.join('fake_base', old_job.job_id, old_job.gff3)
     new_filename = os.path.join('fake_base', new_job.job_id, new_job.filename)
