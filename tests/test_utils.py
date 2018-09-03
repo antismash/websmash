@@ -83,6 +83,10 @@ def test__dark_launch_job(app, mocker):
     assert fake_db.llen('jobs:development') == old_len + 1
     fake_randrange.assert_called_once_with(0, 100)
 
+    dark_job_id = fake_db.lrange('jobs:development', -1, -1)[0]
+    dark_job = Job(fake_db, dark_job_id).fetch()
+    assert dark_job.original_id == job.job_id
+
 
 def test__copy_files(app, mocker):
     fake_db = get_db()
