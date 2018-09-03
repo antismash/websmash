@@ -40,7 +40,7 @@ def get_stats():
 
     # carry over jobs count from the old database from the config
     total_jobs = app.config['OLD_JOB_COUNT'] + redis_store.llen('jobs:completed') + \
-        redis_store.llen('jobs:failed')
+        redis_store.llen('jobs:failed') + redis_store.llen('jobs:removed')
 
     if pending + running + fast > 0:
         status = 'working'
