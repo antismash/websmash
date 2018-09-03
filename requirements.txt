@@ -1,4 +1,4 @@
-Flask
+Flask==0.12.2
 Flask-Mail
 redis
 antismash_models >= 0.1.3
