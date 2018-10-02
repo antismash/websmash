@@ -74,6 +74,7 @@ def test__dark_launch_job(app, mocker):
     old_len = fake_db.llen('jobs:development')
 
     job = Job(fake_db, 'taxon-fake')
+    job.commit()
     utils._dark_launch_job(fake_db, job, app.config)
     assert fake_db.llen('jobs:development') == old_len
     fake_randrange.assert_called_once_with(0, 100)
