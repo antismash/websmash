@@ -17,7 +17,7 @@ def get_version():
     """Return version information"""
     version_dict = {
         'api': '1.0.0',
-        'antismash_generation': '4',
+        'antismash_generation': '5',
         'taxon': app.config['TAXON'],
         'git': _get_git_version(),
     }
