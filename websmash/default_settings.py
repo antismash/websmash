@@ -23,6 +23,16 @@ MAX_JOBS_PER_USER = 5
 # Users with access to the priority queue
 VIP_USERS = {}
 
+# Queue configuration
+DEFAULT_QUEUE = "jobs:queued"
+FAST_QUEUE = 'jobs:minimal'
+PRIORITY_QUEUE = 'jobs:priority'
+DEVELOPMENT_QUEUE = 'jobs:development'
+LEGACY_QUEUE = 'jobs:legacy'
+WAITLIST_PREFIX = 'jobs:waiting'
+
+LEGACY_JOBTYPE = 'antismash4'
+
 # Percentage of jobs also sent into the development version queue
 DARK_LAUNCH_PERCENTAGE = 10
 # Jobs transferred to the development version queue get hardcoded to use this
