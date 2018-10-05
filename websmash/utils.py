@@ -194,8 +194,8 @@ def dispatch_job():
     job.transatpks_da = _get_checkbox(request, 'transatpks_da')
     job.cassis = _get_checkbox(request, 'cassis')
 
-    dirname = path.join(app.config['RESULTS_PATH'], job.job_id)
-    os.mkdir(dirname)
+    dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
+    os.makedirs(dirname)
 
     if ncbi != '':
         if ' ' in ncbi:
