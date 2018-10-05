@@ -54,6 +54,7 @@ def get_stats():
 
     return jsonify(status=status, queue_length=pending, running=running,
                    fast=fast, ts_fast=ts_fast, ts_fast_m=ts_fast_m,
+                   legacy=legacy, ts_legacy=ts_legacy, ts_legacy_m=ts_legacy_m,
                    total_jobs=total_jobs,
                    ts_queued=ts_queued, ts_queued_m=ts_queued_m)
 

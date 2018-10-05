@@ -20,6 +20,9 @@ class AjaxTestCase(WebsmashTestCase):
             ts_queued_m=None,
             ts_fast=None,
             ts_fast_m=None,
+            legacy=0,
+            ts_legacy=None,
+            ts_legacy_m=None,
         )
         rv = self.client.get('/api/v1.0/stats')
         self.assertEquals(rv.json, expected_status)
@@ -41,6 +44,9 @@ class AjaxTestCase(WebsmashTestCase):
             ts_fast_m=j.added.strftime("%Y-%m-%dT%H:%M:%SZ"),
             ts_queued=None,
             ts_queued_m=None,
+            legacy=0,
+            ts_legacy=None,
+            ts_legacy_m=None,
         )
         self.assertEquals(rv.json, expected_status)
 
@@ -58,6 +64,9 @@ class AjaxTestCase(WebsmashTestCase):
             ts_queued_m=j.added.strftime("%Y-%m-%dT%H:%M:%SZ"),
             ts_fast=None,
             ts_fast_m=None,
+            legacy=0,
+            ts_legacy=None,
+            ts_legacy_m=None,
         )
         self.assertEquals(rv.json, expected_status)
 
@@ -77,6 +86,9 @@ class AjaxTestCase(WebsmashTestCase):
             ts_queued_m=None,
             ts_fast=None,
             ts_fast_m=None,
+            legacy=0,
+            ts_legacy=None,
+            ts_legacy_m=None,
         )
         self.assertEquals(rv.json, expected_status)
 
