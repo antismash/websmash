@@ -25,6 +25,7 @@ def app(request, tmpdir_factory, monkeysession):
     flask_app.config['MAIL_SUPPRESS_SEND'] = True
     flask_app.config['MAIL_DEFAULT_SENDER'] = "test@antismash.secondarymetabolites.org"
     flask_app.config['MAIL_HOST'] = 'localhost'
+    flask_app.config['DARK_LAUNCH_PERCENTAGE'] = 0
     mail = Mail()
     mail.init_app(flask_app)
     flask_app.mail = mail

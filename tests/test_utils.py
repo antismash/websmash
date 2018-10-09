@@ -70,6 +70,7 @@ def test_secure_filename():
 def test__dark_launch_job(app, mocker):
     fake_db = get_db()
     assert app.config['FAKE_DB']
+    app.config['DARK_LAUNCH_PERCENTAGE'] = 10
     fake_randrange = mocker.patch('random.randrange', return_value=15)
     old_len = fake_db.llen('jobs:development')
 
