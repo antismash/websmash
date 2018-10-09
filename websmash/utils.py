@@ -70,6 +70,7 @@ def _dark_launch_job(redis_store, job, config):
     new_job_id = _generate_jobid(config['TAXON'])
     new_job = Job.fromExisting(new_job_id, job)
     new_job.email = config['DARK_LAUNCH_EMAIL']
+    new_job.jobtype = 'antismash5'
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
