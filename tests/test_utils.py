@@ -103,11 +103,11 @@ def test__copy_files(app, mocker):
 
     utils._copy_files('fake_base', old_job, new_job)
 
-    new_job_basedir = os.path.join('fake_base', new_job.job_id)
+    new_job_basedir = os.path.join('fake_base', new_job.job_id, 'input')
 
     fake_makedirs.assert_called_once_with(new_job_basedir, exist_ok=True)
-    old_filename = os.path.join('fake_base', old_job.job_id, old_job.filename)
-    old_gff3 = os.path.join('fake_base', old_job.job_id, old_job.gff3)
-    new_filename = os.path.join('fake_base', new_job.job_id, new_job.filename)
-    new_gff3 = os.path.join('fake_base', new_job.job_id, new_job.gff3)
+    old_filename = os.path.join('fake_base', old_job.job_id, 'input', old_job.filename)
+    old_gff3 = os.path.join('fake_base', old_job.job_id, 'input', old_job.gff3)
+    new_filename = os.path.join('fake_base', new_job.job_id, 'input', new_job.filename)
+    new_gff3 = os.path.join('fake_base', new_job.job_id, 'input', new_job.gff3)
     fake_copyfile.assert_has_calls([call(old_filename, new_filename), call(old_gff3, new_gff3)])

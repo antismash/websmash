@@ -80,8 +80,8 @@ def _dark_launch_job(redis_store, job, config):
 def _copy_files(basedir, old_job, new_job):
     """When duplicating a job, copy over available input files"""
 
-    old_dirname = path.join(basedir, old_job.job_id)
-    new_dirname = path.join(basedir, new_job.job_id)
+    old_dirname = path.join(basedir, old_job.job_id, 'input')
+    new_dirname = path.join(basedir, new_job.job_id, 'input')
 
     os.makedirs(new_dirname, exist_ok=True)
 
