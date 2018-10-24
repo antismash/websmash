@@ -31,7 +31,7 @@ DEVELOPMENT_QUEUE = 'jobs:development'
 LEGACY_QUEUE = 'jobs:legacy'
 WAITLIST_PREFIX = 'jobs:waiting'
 
-LEGACY_JOBTYPE = 'antismash4'
+LEGACY_JOBTYPE = 'antismash3'
 
 # Percentage of jobs also sent into the development version queue
 DARK_LAUNCH_PERCENTAGE = 10
