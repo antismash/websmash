@@ -36,13 +36,16 @@ def _add_to_queue(redis_store, queue, job):
     redis_store.lpush(queue, job.job_id)
 
 
-def _submit_job(redis_store, job, limit, vips):
+def _submit_job(redis_store, job, config):
     """Submit a new job"""
     job.state = 'queued'
+    limit = config['MAX_JOBS_PER_USER']
+    vips = config['VIP_USERS']
+
     if job.email in vips:
-        _add_to_queue(redis_store, app.config['PRIORITY_QUEUE'], job)
+        queue = config['PRIORITY_QUEUE']
     elif job.minimal:
-        _add_to_queue(redis_store, app.config['FAST_QUEUE'], job)
+        queue = config['FAST_QUEUE']
     else:
         if job.email and _count_pending_jobs_with_email(redis_store, job) > limit:
             _waitlist_job(redis_store, job, job.email)
@@ -52,11 +55,13 @@ def _submit_job(redis_store, job, limit, vips):
             return
 
         if job.jobtype == app.config['LEGACY_JOBTYPE']:
-            queue = app.config['LEGACY_QUEUE']
+            queue = config['LEGACY_QUEUE']
         else:
-            queue = app.config['DEFAULT_QUEUE']
+            queue = config['DEFAULT_QUEUE']
 
-        _add_to_queue(redis_store, queue, job)
+    if job.needs_download:
+        queue = "{}:{}".format(queue, config['DOWNLOAD_QUEUE_SUFFIX'])
+    _add_to_queue(redis_store, queue, job)
 
 
 def _dark_launch_job(redis_store, job, config):
@@ -74,7 +79,10 @@ def _dark_launch_job(redis_store, job, config):
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
-    _add_to_queue(redis_store, config['DEVELOPMENT_QUEUE'], new_job)
+    queue = config['DEVELOPMENT_QUEUE']
+    if new_job.needs_download:
+        queue = "{}:{}".format(queue, config['DOWNLOAD_QUEUE_SUFFIX'])
+    _add_to_queue(redis_store, queue, new_job)
 
 
 def _copy_files(basedir, old_job, new_job):
@@ -202,6 +210,7 @@ def dispatch_job():
         if ' ' in ncbi:
             raise BadRequest("Spaces are not allowed in an NCBI ID.")
         job.download = ncbi
+        job.needs_download = True
     else:
         upload = request.files['seq']
 
@@ -211,6 +220,7 @@ def dispatch_job():
             if not path.exists(path.join(dirname, filename)):
                 raise BadRequest("Could not save file!")
             job.filename = filename
+            job.needs_download = False
         else:
             raise BadRequest("Uploading input file failed!")
 
@@ -223,7 +233,7 @@ def dispatch_job():
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
 
-    _submit_job(redis_store, job, app.config['MAX_JOBS_PER_USER'], app.config['VIP_USERS'])
+    _submit_job(redis_store, job, app.config)
     _dark_launch_job(redis_store, job, app.config)
     return job
 

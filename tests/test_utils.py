@@ -52,7 +52,7 @@ def test__submit_job(app):
 
     job = Job(fake_db, 'taxon-fake')
 
-    utils._submit_job(fake_db, job, 5, {})
+    utils._submit_job(fake_db, job, app.config)
 
     assert old_len + 1 == fake_db.llen('jobs:queued')
 
