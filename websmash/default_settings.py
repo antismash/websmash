@@ -30,7 +30,7 @@ PRIORITY_QUEUE = 'jobs:priority'
 DEVELOPMENT_QUEUE = 'jobs:development'
 LEGACY_QUEUE = 'jobs:legacy'
 WAITLIST_PREFIX = 'jobs:waiting'
-DOWNLOAD_QUEUE_SUFFIX = 'downloads'
+DOWNLOAD_QUEUE = 'jobs:downloads'
 
 LEGACY_JOBTYPE = 'antismash3'
 

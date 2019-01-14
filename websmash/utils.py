@@ -5,6 +5,7 @@ import shutil
 
 from flask import request
 from os import path
+import platform
 import random
 import uuid
 
@@ -30,8 +31,9 @@ def _generate_jobid(taxon):
     return "{}-{}".format(taxon, uuid.uuid4())
 
 
-def _add_to_queue(redis_store, queue, job):
+def _add_to_queue(redis_store, job):
     """Add job to a specified job queue"""
+    queue = job.target_queues.pop()
     job.commit()
     redis_store.lpush(queue, job.job_id)
 
@@ -43,10 +45,15 @@ def _submit_job(redis_store, job, config):
     vips = config['VIP_USERS']
 
     if job.email in vips:
-        queue = config['PRIORITY_QUEUE']
+        job.target_queues.append(config['PRIORITY_QUEUE'])
     elif job.minimal:
-        queue = config['FAST_QUEUE']
+        job.target_queues.append(onfig['FAST_QUEUE'])
     else:
+        if job.jobtype == app.config['LEGACY_JOBTYPE']:
+            job.target_queues.append(config['LEGACY_QUEUE'])
+        else:
+            job.target_queues.append(config['DEFAULT_QUEUE'])
+
         if job.email and _count_pending_jobs_with_email(redis_store, job) > limit:
             _waitlist_job(redis_store, job, job.email)
             return
@@ -54,14 +61,9 @@ def _submit_job(redis_store, job, config):
             _waitlist_job(redis_store, job, job.ip_addr)
             return
 
-        if job.jobtype == app.config['LEGACY_JOBTYPE']:
-            queue = config['LEGACY_QUEUE']
-        else:
-            queue = config['DEFAULT_QUEUE']
-
     if job.needs_download:
-        queue = "{}:{}".format(queue, config['DOWNLOAD_QUEUE_SUFFIX'])
-    _add_to_queue(redis_store, queue, job)
+        job.target_queues.append(config['DOWNLOAD_QUEUE'])
+    _add_to_queue(redis_store, job)
 
 
 def _dark_launch_job(redis_store, job, config):
@@ -79,10 +81,12 @@ def _dark_launch_job(redis_store, job, config):
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
-    queue = config['DEVELOPMENT_QUEUE']
+    new_job.target_queues = [config['DEVELOPMENT_QUEUE']]
+
     if new_job.needs_download:
-        queue = "{}:{}".format(queue, config['DOWNLOAD_QUEUE_SUFFIX'])
-    _add_to_queue(redis_store, queue, new_job)
+        new_job.target_queues.append(config['DOWNLOAD_QUEUE'])
+
+    _add_to_queue(redis_store, new_job)
 
 
 def _copy_files(basedir, old_job, new_job):
@@ -139,7 +143,8 @@ def _waitlist_job(redis_store, job, attribute):
     job.state = 'waiting'
     job.status = 'waiting: Too many jobs in queue for this user.'
     waitlist = '{}:{}'.format(app.config['WAITLIST_PREFIX'], attribute)
-    _add_to_queue(redis_store, waitlist, job)
+    job.target_queues.append(waitlist)
+    _add_to_queue(redis_store, job)
 
 
 def _get_checkbox(req, name):
@@ -232,6 +237,9 @@ def dispatch_job():
                 if not path.exists(path.join(dirname, gff_filename)):
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
+
+    # TODO: replace this with something that's meaningful from a Docker container
+    job.trace.append(platform.node())
 
     _submit_job(redis_store, job, app.config)
     _dark_launch_job(redis_store, job, app.config)
