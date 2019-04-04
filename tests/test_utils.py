@@ -89,6 +89,17 @@ def test__dark_launch_job(app, mocker):
     dark_job = Job(fake_db, dark_job_id).fetch()
     assert dark_job.original_id == job.job_id
 
+    # trim with start > end empties the list
+    fake_db.ltrim('jobs:downloads', 2, 1)
+    job.needs_download = True
+    job.commit()
+    utils._dark_launch_job(fake_db, job, app.config)
+    assert fake_db.llen('jobs:downloads') == 1
+    dark_job_id = fake_db.lrange('jobs:downloads', -1, -1)[0]
+    dark_job = Job(fake_db, dark_job_id).fetch()
+    assert dark_job.original_id == job.job_id
+    assert dark_job.target_queues == ['jobs:development']
+
 
 def test__copy_files(app, mocker):
     fake_db = get_db()
