@@ -57,6 +57,151 @@ def test__submit_job(app):
     assert old_len + 1 == fake_db.llen('jobs:queued')
 
 
+def test__submit_job_vip(app):
+    """Test VIP job submission works as expected"""
+    fake_db = get_db()
+    queue = app.config['PRIORITY_QUEUE']
+    assert app.config['FAKE_DB']
+    old_len = fake_db.llen(queue)
+    app.config['VIP_USERS'].add('alice@example.org')
+
+    # No priority queue for Bob
+    job = Job(fake_db, 'taxon-fake')
+    job.email = 'bob@example.org'
+    job.commit()
+    utils._submit_job(fake_db, job, app.config)
+    assert old_len == fake_db.llen(queue)
+
+    # Priority queue for Alice
+    job = Job(fake_db, 'taxon-fake')
+    job.email = 'alice@example.org'
+    job.commit()
+    utils._submit_job(fake_db, job, app.config)
+    assert old_len + 1 == fake_db.llen(queue)
+
+    # Priority queue when downloading
+    fake_db.ltrim(app.config['DOWNLOAD_QUEUE'], 2, 1)  # clear queue
+    job = Job(fake_db, 'taxon-fake')
+    job.email = 'alice@example.org'
+    job.needs_download = True
+    job.commit()
+    utils._submit_job(fake_db, job, app.config)
+    assert 1 == fake_db.llen(app.config['DOWNLOAD_QUEUE'])
+    job.fetch()
+    assert job.target_queues == [queue]
+
+
+def test__submit_job_minimal(app):
+    """Test fast mode job submission works as expected"""
+    fake_db = get_db()
+    queue = app.config['FAST_QUEUE']
+    assert app.config['FAKE_DB']
+    old_len = fake_db.llen(queue)
+
+    job = Job(fake_db, 'taxon-fake')
+    job.minimal = True
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+
+    assert old_len + 1 == fake_db.llen(queue)
+
+    fake_db.ltrim(app.config['DOWNLOAD_QUEUE'], 2, 1)  # clear queue
+    job = Job(fake_db, 'taxon-fake')
+    job.minimal = True
+    job.needs_download = True
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+    assert 1 == fake_db.llen(app.config['DOWNLOAD_QUEUE'])
+    job.fetch()
+    assert job.target_queues == [queue]
+
+
+def test__submit_job_legacy(app):
+    """Test legacy job submission works as expected"""
+    fake_db = get_db()
+    queue = app.config['LEGACY_QUEUE']
+    legacy_jobtype = app.config['LEGACY_JOBTYPE']
+    assert app.config['FAKE_DB']
+    old_len = fake_db.llen(queue)
+
+    job = Job(fake_db, 'taxon-fake')
+    job.jobtype = legacy_jobtype
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+
+    assert old_len + 1 == fake_db.llen(queue)
+
+    fake_db.ltrim(app.config['DOWNLOAD_QUEUE'], 2, 1)  # clear queue
+    job = Job(fake_db, 'taxon-fake')
+    job.jobtype = legacy_jobtype
+    job.needs_download = True
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+    assert 1 == fake_db.llen(app.config['DOWNLOAD_QUEUE'])
+    job.fetch()
+    assert job.target_queues == [queue]
+
+
+def test__submit_job_email_waitlist(app):
+    """Test job submission waitlisting by email works as expected"""
+    fake_db = get_db()
+    email = "charles@example.com"
+    queue = "{}:{}".format(app.config['WAITLIST_PREFIX'], email)
+    assert app.config['FAKE_DB']
+    app.config['MAX_JOBS_PER_USER'] = -1
+
+    job = Job(fake_db, 'taxon-fake')
+    job.email = email
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+
+    assert 1 == fake_db.llen(queue)
+
+    fake_db.ltrim(app.config['DOWNLOAD_QUEUE'], 2, 1)  # clear queue
+    job = Job(fake_db, 'taxon-fake')
+    job.email = email
+    job.needs_download = True
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+    assert 1 == fake_db.llen(app.config['DOWNLOAD_QUEUE'])
+    job.fetch()
+    assert job.target_queues == [app.config['DEFAULT_QUEUE'], queue]
+
+
+def test__submit_job_ip_waitlist(app):
+    """Test job submission waitlisting by IP works as expected"""
+    fake_db = get_db()
+    ip = "192.168.0.1"
+    queue = "{}:{}".format(app.config['WAITLIST_PREFIX'], ip)
+    assert app.config['FAKE_DB']
+    app.config['MAX_JOBS_PER_USER'] = -1
+
+    job = Job(fake_db, 'taxon-fake')
+    job.ip_addr = ip
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+
+    assert 1 == fake_db.llen(queue)
+
+    fake_db.ltrim(app.config['DOWNLOAD_QUEUE'], 2, 1)  # clear queue
+    job = Job(fake_db, 'taxon-fake')
+    job.ip_addr = ip
+    job.needs_download = True
+    job.commit()
+
+    utils._submit_job(fake_db, job, app.config)
+    assert 1 == fake_db.llen(app.config['DOWNLOAD_QUEUE'])
+    job.fetch()
+    assert job.target_queues == [app.config['DEFAULT_QUEUE'], queue]
+
+
 def test_secure_filename():
     """Test generated filename is secure (enough)"""
     expected = "etc_passwd"

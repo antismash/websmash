@@ -47,7 +47,7 @@ def _submit_job(redis_store, job, config):
     if job.email in vips:
         job.target_queues.append(config['PRIORITY_QUEUE'])
     elif job.minimal:
-        job.target_queues.append(onfig['FAST_QUEUE'])
+        job.target_queues.append(config['FAST_QUEUE'])
     else:
         if job.jobtype == app.config['LEGACY_JOBTYPE']:
             job.target_queues.append(config['LEGACY_QUEUE'])
@@ -55,11 +55,9 @@ def _submit_job(redis_store, job, config):
             job.target_queues.append(config['DEFAULT_QUEUE'])
 
         if job.email and _count_pending_jobs_with_email(redis_store, job) > limit:
-            _waitlist_job(redis_store, job, job.email)
-            return
+            _waitlist_job(job, job.email)
         elif _count_pending_jobs_with_ip(redis_store, job) > limit:
-            _waitlist_job(redis_store, job, job.ip_addr)
-            return
+            _waitlist_job(job, job.ip_addr)
 
     if job.needs_download:
         job.target_queues.append(config['DOWNLOAD_QUEUE'])
@@ -138,13 +136,12 @@ def _count_pending_jobs_with_ip(redis_store, job):
     return count
 
 
-def _waitlist_job(redis_store, job, attribute):
+def _waitlist_job(job, attribute):
     """Put the given job on a waitlist"""
     job.state = 'waiting'
     job.status = 'waiting: Too many jobs in queue for this user.'
     waitlist = '{}:{}'.format(app.config['WAITLIST_PREFIX'], attribute)
     job.target_queues.append(waitlist)
-    _add_to_queue(redis_store, job)
 
 
 def _get_checkbox(req, name):
