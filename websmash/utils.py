@@ -185,6 +185,10 @@ def dispatch_job():
 
     job.genefinder = request.form.get('genefinder', 'prodigal')
 
+    hmmdetection_strictness = request.form.get('hmmdetection_strictness', '')
+    if hmmdetection_strictness:
+        job.hmmdetection_strictness = hmmdetection_strictness
+
     val = request.form.get('from', 0, type=int)
     if val:
         job.from_pos = val
