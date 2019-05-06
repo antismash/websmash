@@ -183,7 +183,9 @@ def dispatch_job():
 
     job.full_hmmer = _get_checkbox(request, 'fullhmmer')
 
-    job.genefinder = request.form.get('genefinder', 'prodigal')
+    genefinder = request.form.get('genefinder', '')
+    if genefinder:
+        job.genefinder = genefinder
 
     hmmdetection_strictness = request.form.get('hmmdetection_strictness', '')
     if hmmdetection_strictness:
