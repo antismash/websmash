@@ -211,6 +211,8 @@ def dispatch_job():
     job.asf = _get_checkbox(request, 'asf')
     job.tta = _get_checkbox(request, 'tta')
     job.cassis = _get_checkbox(request, 'cassis')
+    job.clusterhmmer = _get_checkbox(request, 'clusterhmmer')
+    job.pfam2go = _get_checkbox(request, 'pfam2go')
 
     dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
     os.makedirs(dirname)
