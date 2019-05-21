@@ -211,6 +211,9 @@ def test_secure_filename():
     bad_name = "-etc_passwd"
     assert utils.secure_filename(bad_name) == expected
 
+    bad_name = "LOCUS_05150 SusC/RagA family TonB-linked outer membrane protein.fasta"
+    assert utils.secure_filename(bad_name) == "LOCUS_05150_SusC_RagA_family_TonB-linked_outer_membrane_protein.fasta"
+
 
 def test__dark_launch_job(app, mocker):
     fake_db = get_db()
