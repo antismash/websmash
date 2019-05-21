@@ -25,7 +25,7 @@ class AjaxTestCase(WebsmashTestCase):
             ts_legacy_m=None,
         )
         rv = self.client.get('/api/v1.0/stats')
-        self.assertEquals(rv.json, expected_status)
+        self.assertEqual(rv.json, expected_status)
 
         # fake a fast job
         redis_store = self._ctx.g._database
@@ -48,7 +48,7 @@ class AjaxTestCase(WebsmashTestCase):
             ts_legacy=None,
             ts_legacy_m=None,
         )
-        self.assertEquals(rv.json, expected_status)
+        self.assertEqual(rv.json, expected_status)
 
         # fake a normal job
         redis_store.lpop('jobs:minimal')
@@ -68,7 +68,7 @@ class AjaxTestCase(WebsmashTestCase):
             ts_legacy=None,
             ts_legacy_m=None,
         )
-        self.assertEquals(rv.json, expected_status)
+        self.assertEqual(rv.json, expected_status)
 
         # fake a running job
         j.state = "running"
@@ -90,16 +90,16 @@ class AjaxTestCase(WebsmashTestCase):
             ts_legacy=None,
             ts_legacy_m=None,
         )
-        self.assertEquals(rv.json, expected_status)
+        self.assertEqual(rv.json, expected_status)
 
     def test_current_notices(self):
         "Test if current notices are displayed"
         rv = self.client.get('/api/v1.0/news')
-        self.assertEquals(rv.json, dict(notices=[]))
+        self.assertEqual(rv.json, dict(notices=[]))
         redis_store = self._ctx.g._database
         n = Notice(redis_store, 'fake')
         n.teaser = 'Teaser'
         n.text = 'Text'
         n.commit()
         rv = self.client.get('/api/v1.0/news')
-        self.assertEquals(rv.json, dict(notices=[n.to_dict()]))
+        self.assertEqual(rv.json, dict(notices=[n.to_dict()]))
