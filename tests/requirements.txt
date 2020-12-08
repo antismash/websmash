@@ -3,6 +3,6 @@ pytest-flask
 coverage
 pytest-cov
 MiniMock==1.2.8
-Flask-Testing==0.4.2
+Flask-Testing
 mockredispy-kblin
 pytest-mock
