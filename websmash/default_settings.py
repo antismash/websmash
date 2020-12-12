@@ -34,6 +34,11 @@ DOWNLOAD_QUEUE = 'jobs:downloads'
 
 LEGACY_JOBTYPE = 'antismash3'
 
+
+# Percentage of jobs where we activate features we only want to run occasionally
+# during dark launches
+RARE_TEST_PERCENTAGE = 10
+
 # Percentage of jobs also sent into the development version queue
 DARK_LAUNCH_PERCENTAGE = 10
 # Jobs transferred to the development version queue get hardcoded to use this

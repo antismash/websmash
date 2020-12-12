@@ -67,15 +67,32 @@ def _submit_job(redis_store, job, config):
 def _dark_launch_job(redis_store, job, config):
     """Submit a copy of the job to the development queue so we can test new versions on real data"""
 
-    percentage = config['DARK_LAUNCH_PERCENTAGE']
-    rand = random.randrange(0, 100)
-    if rand >= percentage:
+    if not _want_to_run(config['DARK_LAUNCH_PERCENTAGE']):
         return
 
     new_job_id = _generate_jobid(config['TAXON'])
     new_job = Job.fromExisting(new_job_id, job)
     new_job.email = config['DARK_LAUNCH_EMAIL']
-    new_job.jobtype = 'antismash5'
+    new_job.jobtype = 'antismash6'
+
+    # Activate all the extra analyses so we can test those as well
+    new_job.asf = True
+    new_job.clusterhmmer = True
+    new_job.pfam2go = True
+    new_job.rre = True
+
+    # Activate all the *clusterblast options
+    new_job.clusterblast = True
+    new_job.knownclusterblast = True
+    new_job.subclusterblast = True
+
+    # Don't always run smcog-trees
+    if _want_to_run(config['RARE_TEST_PERCENTAGE']):
+        new_job.smcog_trees = True
+
+    # Only run cassis occasionally, and only on fungal jobs
+    if job.taxon == "fungi" and _want_to_run(config['RARE_TEST_PERCENTAGE']):
+        new_job.cassis = True
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
@@ -85,6 +102,11 @@ def _dark_launch_job(redis_store, job, config):
         new_job.target_queues.append(config['DOWNLOAD_QUEUE'])
 
     _add_to_queue(redis_store, new_job)
+
+
+def _want_to_run(percentage):
+    rand = random.randrange(0, 100)
+    return rand < percentage
 
 
 def _copy_files(basedir, old_job, new_job):
@@ -103,6 +125,11 @@ def _copy_files(basedir, old_job, new_job):
     if old_job.gff3:
         old_filename = path.join(old_dirname, old_job.gff3)
         new_filename = path.join(new_dirname, new_job.gff3)
+        shutil.copyfile(old_filename, new_filename)
+
+    if old_job.sideload:
+        old_filename = path.join(old_dirname, old_job.sideload)
+        new_filename = path.join(new_dirname, new_job.sideload)
         shutil.copyfile(old_filename, new_filename)
 
 
@@ -213,6 +240,7 @@ def dispatch_job():
     job.cassis = _get_checkbox(request, 'cassis')
     job.clusterhmmer = _get_checkbox(request, 'clusterhmmer')
     job.pfam2go = _get_checkbox(request, 'pfam2go')
+    job.rre = _get_checkbox(request, 'rre')
 
     dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
     os.makedirs(dirname)
@@ -243,6 +271,15 @@ def dispatch_job():
                 if not path.exists(path.join(dirname, gff_filename)):
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
+
+    if 'sideload' in request.files:
+        sideload = request.files['sideload']
+        if sideload is not None:
+            sideload_filename = secure_filename(sideload.filename)
+            sideload.save(path.join(dirname, sideload_filename))
+            if not path.exists(path.join(dirname, sideload_filename)):
+                raise BadRequest("Could not save sideload info file!")
+            job.sideload = sideload_filename
 
     job.trace.append("{}-api".format(platform.node()))
 
