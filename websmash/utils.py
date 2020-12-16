@@ -87,7 +87,7 @@ def _dark_launch_job(redis_store, job, config):
     new_job.knownclusterblast = True
     new_job.subclusterblast = True
 
-    new_job.clustercompare = True
+    new_job.cc_mibig = True
 
     # Don't always run smcog-trees
     if _want_to_run(config['RARE_TEST_PERCENTAGE']):
@@ -208,7 +208,7 @@ def dispatch_job():
     job.clusterblast = _get_checkbox(request, 'clusterblast')
     job.knownclusterblast = _get_checkbox(request, 'knownclusterblast')
     job.subclusterblast = _get_checkbox(request, 'subclusterblast')
-    job.clustercompare = _get_checkbox(request, 'clustercompare')
+    job.cc_mibig = _get_checkbox(request, 'cc_mibig')
 
     job.jobtype = request.form.get('jobtype', 'antismash6')
 
