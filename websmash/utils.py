@@ -80,11 +80,14 @@ def _dark_launch_job(redis_store, job, config):
     new_job.clusterhmmer = True
     new_job.pfam2go = True
     new_job.rre = True
+    new_job.tigrfam = True
 
     # Activate all the *clusterblast options
     new_job.clusterblast = True
     new_job.knownclusterblast = True
     new_job.subclusterblast = True
+
+    new_job.clustercompare = True
 
     # Don't always run smcog-trees
     if _want_to_run(config['RARE_TEST_PERCENTAGE']):
@@ -205,10 +208,9 @@ def dispatch_job():
     job.clusterblast = _get_checkbox(request, 'clusterblast')
     job.knownclusterblast = _get_checkbox(request, 'knownclusterblast')
     job.subclusterblast = _get_checkbox(request, 'subclusterblast')
+    job.clustercompare = _get_checkbox(request, 'clustercompare')
 
-    job.jobtype = request.form.get('jobtype', 'antismash4')
-
-    job.full_hmmer = _get_checkbox(request, 'fullhmmer')
+    job.jobtype = request.form.get('jobtype', 'antismash6')
 
     genefinder = request.form.get('genefinder', '')
     if genefinder:
@@ -241,6 +243,7 @@ def dispatch_job():
     job.clusterhmmer = _get_checkbox(request, 'clusterhmmer')
     job.pfam2go = _get_checkbox(request, 'pfam2go')
     job.rre = _get_checkbox(request, 'rre')
+    job.tigrfam = _get_checkbox(request, 'tigrfam')
 
     dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
     os.makedirs(dirname)
