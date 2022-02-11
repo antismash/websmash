@@ -5,8 +5,9 @@ from urllib.parse import urlparse
 from redis import Redis
 from redis.sentinel import Sentinel
 
-app = Flask(__name__)
 import websmash.default_settings
+
+app = Flask(__name__)
 app.config.from_object(websmash.default_settings)
 app.config.from_envvar('WEBSMASH_CONFIG', silent=True)
 mail = Mail(app)
@@ -35,5 +36,7 @@ def get_db():
                 redis_store = sentinel.master_for(service, redis_class=Redis, socket_timeout=0.1)
     return redis_store
 
-import websmash.api
-import websmash.error_handlers
+
+# These imports need to live here to avoid circular dependencies
+import websmash.api  # noqa: E402
+import websmash.error_handlers  # noqa: E402

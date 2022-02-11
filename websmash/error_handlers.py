@@ -2,8 +2,10 @@
 from flask import make_response, jsonify
 from websmash import app
 
+
 class BadRequest(Exception):
     pass
+
 
 @app.errorhandler(400)
 def bad_req(error):
@@ -12,12 +14,12 @@ def bad_req(error):
 
 # Like above, but with extra information to display to the client
 @app.errorhandler(BadRequest)
-def bad_req(error):
+def bad_req_extra_info(error):
     return make_response(jsonify({'error': 'Bad request', 'message': str(error)}), 400)
 
 
 @app.errorhandler(403)
-def not_found(error):
+def forbidden(error):
     return make_response(jsonify({'error': 'Forbidden'}), 403)
 
 
