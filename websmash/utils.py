@@ -49,7 +49,8 @@ def _submit_job(redis_store, job, config):
     elif job.minimal:
         job.target_queues.append(config['FAST_QUEUE'])
     else:
-        if job.jobtype == app.config['LEGACY_JOBTYPE']:
+        if app.config['LEGACY_JOBTYPE'] != app.config['DEFAULT_JOBTYPE'] and \
+           job.jobtype == app.config['LEGACY_JOBTYPE']:
             job.target_queues.append(config['LEGACY_QUEUE'])
         else:
             job.target_queues.append(config['DEFAULT_QUEUE'])
