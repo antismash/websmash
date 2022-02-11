@@ -228,15 +228,6 @@ def dispatch_job():
     if val:
         job.to_pos = val
 
-    # These options are no longer relevant for antismash5 jobs
-    if job.jobtype == 'antismash4':
-        job.inclusive = _get_checkbox(request, 'inclusive')
-        job.cf_cdsnr = request.form.get('cf_cdsnr', 5, type=int)
-        job.cf_npfams = request.form.get('cf_npfams', 5, type=int)
-        job.cf_threshold = request.form.get('cf_threshold', 0.6, type=float)
-        job.borderpredict = _get_checkbox(request, 'borderpredict')
-        job.transatpks_da = _get_checkbox(request, 'transatpks_da')
-
     job.asf = _get_checkbox(request, 'asf')
     job.tta = _get_checkbox(request, 'tta')
     job.cassis = _get_checkbox(request, 'cassis')
