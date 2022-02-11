@@ -105,7 +105,7 @@ def get_news():
         notice = Notice(redis_store, notice_id[7:])
         try:
             notice.fetch()
-        except ValueError as e:
+        except ValueError:
             continue
 
         if notice.show_from > datetime.utcnow():

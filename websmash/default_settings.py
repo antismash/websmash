@@ -1,5 +1,6 @@
 from os import path
-############# Configuration #############
+
+# Configuration
 DEBUG = True
 SECRET_KEY = "development_key"
 RESULTS_PATH = path.join(path.dirname(path.dirname(__file__)), 'results')
@@ -45,5 +46,4 @@ DARK_LAUNCH_PERCENTAGE = 10
 # email address so we can (a) track them (b) they don't confuse the submitter
 DARK_LAUNCH_EMAIL = "antismash@example.com"
 
-#########################################
-
+# End configuration
