@@ -14,7 +14,7 @@ def test_version(client, app, git_version):
     assert 'taxon' in response.json
     assert 'git' in response.json
     assert response.json['api'] == '1.0.0'
-    assert response.json['antismash_generation'] == '5'
+    assert response.json['antismash_generation'] == '6'
     assert response.json['taxon'] == app.config['TAXON']
     assert response.json['git'] == git_version
 

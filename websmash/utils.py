@@ -73,7 +73,7 @@ def _dark_launch_job(redis_store, job, config):
     new_job_id = _generate_jobid(config['TAXON'])
     new_job = Job.fromExisting(new_job_id, job)
     new_job.email = config['DARK_LAUNCH_EMAIL']
-    new_job.jobtype = 'antismash6'
+    new_job.jobtype = config['DARK_LAUNCH_JOBTYPE']
 
     # Activate all the extra analyses so we can test those as well
     new_job.asf = True
@@ -210,7 +210,9 @@ def dispatch_job():
     job.subclusterblast = _get_checkbox(request, 'subclusterblast')
     job.cc_mibig = _get_checkbox(request, 'cc_mibig')
 
-    job.jobtype = request.form.get('jobtype', 'antismash6')
+    job.jobtype = request.form.get('jobtype', app.config['DEFAULT_JOBTYPE'])
+    if job.jobtype not in (app.config['LEGACY_JOBTYPE'], app.config['DEFAULT_JOBTYPE']):
+        raise BadRequest(f"Invalid jobtype {job.jobtype}")
 
     genefinder = request.form.get('genefinder', '')
     if genefinder:
