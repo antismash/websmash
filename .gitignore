@@ -6,3 +6,9 @@ htmlcov/*
 results/*
 jobs.db
 .idea/*
+.vscode/*
+**/.ropeproject/*
+*.cfg
+!setup.cfg
+.pytest_cache/*
+results
