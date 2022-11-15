@@ -2,6 +2,7 @@
 from antismash_models import SyncJob as Job, SyncNotice as Notice
 from tests.test_shared import WebsmashTestCase
 
+from websmash import get_db
 
 class AjaxTestCase(WebsmashTestCase):
     def setUp(self):
@@ -28,7 +29,7 @@ class AjaxTestCase(WebsmashTestCase):
         self.assertEqual(rv.json, expected_status)
 
         # fake a fast job
-        redis_store = self._ctx.g._database
+        redis_store = get_db()
         fake_id = 'taxon-fake'
         j = Job(redis_store, fake_id)
         j.commit()
@@ -96,7 +97,7 @@ class AjaxTestCase(WebsmashTestCase):
         "Test if current notices are displayed"
         rv = self.client.get('/api/v1.0/news')
         self.assertEqual(rv.json, dict(notices=[]))
-        redis_store = self._ctx.g._database
+        redis_store = get_db()
         n = Notice(redis_store, 'fake')
         n.teaser = 'Teaser'
         n.text = 'Text'

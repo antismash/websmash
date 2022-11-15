@@ -4,6 +4,6 @@ coverage
 pytest-cov
 MiniMock==1.2.8
 Flask-Testing
-mockredispy-kblin
+fakeredis
 pytest-mock
 flake8

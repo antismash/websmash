@@ -17,8 +17,8 @@ def get_db():
     redis_store = getattr(g, '_database', None)
     if redis_store is None:
         if 'FAKE_DB' in app.config and app.config['FAKE_DB']:
-            from mockredis import mock_redis_client
-            redis_store = g._database = mock_redis_client(encoding='utf-8', decode_responses=True)
+            import fakeredis
+            redis_store = g._database = fakeredis.FakeRedis(encoding='utf-8', decode_responses=True)
         else:
             if app.config['REDIS_URL'].startswith('redis://'):
                 redis_store = g._database = Redis.from_url(app.config['REDIS_URL'], encoding='utf-8',

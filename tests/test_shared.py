@@ -3,7 +3,6 @@ from flask_testing import TestCase
 import os
 import tempfile
 import shutil
-from mockredis import mock_redis_client
 import websmash
 
 class ModelTestCase(TestCase):
@@ -41,4 +40,3 @@ class WebsmashTestCase(ModelTestCase):
         super(WebsmashTestCase, self).tearDown()
         self.tmp_file.close()
         shutil.rmtree(self.tmpdir)
-
