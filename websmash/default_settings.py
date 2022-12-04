@@ -33,8 +33,8 @@ LEGACY_QUEUE = 'jobs:legacy'
 WAITLIST_PREFIX = 'jobs:waiting'
 DOWNLOAD_QUEUE = 'jobs:downloads'
 
-DEFAULT_JOBTYPE = 'antismash6'
-DARK_LAUNCH_JOBTYPE = 'antismash6'
+DEFAULT_JOBTYPE = 'antismash7'
+DARK_LAUNCH_JOBTYPE = 'antismash7'
 LEGACY_JOBTYPE = 'antismash6'
 
 
