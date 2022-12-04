@@ -82,6 +82,7 @@ def _dark_launch_job(redis_store, job, config):
     new_job.pfam2go = True
     new_job.rre = True
     new_job.tigrfam = True
+    new_job.tfbs = True
 
     # Activate all the *clusterblast options
     new_job.clusterblast = True
@@ -238,6 +239,7 @@ def dispatch_job():
     job.pfam2go = _get_checkbox(request, 'pfam2go')
     job.rre = _get_checkbox(request, 'rre')
     job.tigrfam = _get_checkbox(request, 'tigrfam')
+    job.tfbs = _get_checkbox(request, "tfbs")
 
     dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
     os.makedirs(dirname)
