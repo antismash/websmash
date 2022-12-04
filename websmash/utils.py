@@ -12,7 +12,7 @@ import uuid
 import werkzeug.utils
 from antismash_models import SyncJob as Job
 
-from websmash import app, get_db
+from websmash import app, get_db, DataStore
 from websmash.error_handlers import BadRequest
 
 
@@ -26,7 +26,7 @@ Your message was:
     return confirmation_template % message
 
 
-def _generate_jobid(taxon):
+def _generate_jobid(taxon: str) -> str:
     """Generate a job uid based on the taxon"""
     return "{}-{}".format(taxon, uuid.uuid4())
 
@@ -109,7 +109,8 @@ def _dark_launch_job(redis_store, job, config):
     _add_to_queue(redis_store, new_job)
 
 
-def _want_to_run(percentage):
+def _want_to_run(percentage: int) -> bool:
+    """Check if a random number 0-100 is below percentage"""
     rand = random.randrange(0, 100)
     return rand < percentage
 
@@ -138,7 +139,7 @@ def _copy_files(basedir, old_job, new_job):
         shutil.copyfile(old_filename, new_filename)
 
 
-def _count_pending_jobs_with_email(redis_store, job):
+def _count_pending_jobs_with_email(redis_store: DataStore, job: Job) -> int:
     """Count how many jobs are pending for the email of the current job"""
     count = 0
     for job_id in redis_store.lrange(app.config['DEFAULT_QUEUE'], 0, -1):
@@ -153,7 +154,7 @@ def _count_pending_jobs_with_email(redis_store, job):
     return count
 
 
-def _count_pending_jobs_with_ip(redis_store, job):
+def _count_pending_jobs_with_ip(redis_store: DataStore, job: Job) -> int:
     """Count how many jobs are pending for the IP address of the current job"""
     count = 0
     for job_id in redis_store.lrange(app.config['DEFAULT_QUEUE'], 0, -1):
@@ -287,7 +288,7 @@ def dispatch_job():
     return job
 
 
-def secure_filename(name):
+def secure_filename(name: str) -> str:
     """Even more secure filenames"""
     secure_name = werkzeug.utils.secure_filename(name)
     secure_name = secure_name.lstrip('-')
