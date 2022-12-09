@@ -1,3 +1,4 @@
+import subprocess
 from typing import Union
 from urllib.parse import urlparse
 
@@ -46,6 +47,19 @@ def get_db() -> DataStore:
                 raise ValueError(f"Invalid redis configuration: {app.config['REDIS_URL']}")
     return redis_store
 
+
+def _get_git_version():
+    args = ['git', 'rev-parse', '--short', 'HEAD']
+
+    try:
+        output = subprocess.check_output(args)
+    except subprocess.CalledProcessError:
+        output = b''
+
+    return output.decode('utf-8').strip()
+
+
+git_version = _get_git_version()
 
 # These imports need to live here to avoid circular dependencies
 import websmash.api  # noqa: E402

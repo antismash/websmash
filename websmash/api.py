@@ -1,15 +1,12 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
 from datetime import datetime
-import subprocess
 from antismash_models import SyncJob as Job, SyncNotice as Notice
 from flask import jsonify, abort, request
 from flask_mail import Message
 
-from websmash import app, get_db, mail
+from websmash import app, get_db, mail, git_version
 from websmash.utils import dispatch_job
-
-_git_version = None
 
 
 @app.route('/api/v1.0/version')
@@ -19,7 +16,7 @@ def get_version():
         'api': '1.0.0',
         'antismash_generation': app.config['DEFAULT_JOBTYPE'][-1],
         'taxon': app.config['TAXON'],
-        'git': _get_git_version(),
+        'git': git_version,
     }
     return jsonify(version_dict)
 
@@ -57,23 +54,6 @@ def get_stats():
                    legacy=legacy, ts_legacy=ts_legacy, ts_legacy_m=ts_legacy_m,
                    total_jobs=total_jobs,
                    ts_queued=ts_queued, ts_queued_m=ts_queued_m)
-
-
-def _get_git_version():
-    global _git_version
-
-    if _git_version is not None:
-        return _git_version
-
-    args = ['git', 'rev-parse', '--short', 'HEAD']
-
-    try:
-        output = subprocess.check_output(args)
-    except subprocess.CalledProcessError:
-        output = ''
-
-    _git_version = output.decode('utf-8').strip()
-    return _git_version
 
 
 def _get_oldest_job(queue):
