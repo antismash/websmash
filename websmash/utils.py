@@ -133,9 +133,9 @@ def _copy_files(basedir, old_job, new_job):
         new_filename = path.join(new_dirname, new_job.gff3)
         shutil.copyfile(old_filename, new_filename)
 
-    if old_job.sideload:
-        old_filename = path.join(old_dirname, old_job.sideload)
-        new_filename = path.join(new_dirname, new_job.sideload)
+    for sideload in old_job.sideloads:
+        old_filename = path.join(old_dirname, sideload)
+        new_filename = path.join(new_dirname, sideload)
         shutil.copyfile(old_filename, new_filename)
 
 
@@ -272,14 +272,16 @@ def dispatch_job():
                     raise BadRequest("Could not save GFF file!")
                 job.gff3 = gff_filename
 
-    if 'sideload' in request.files:
-        sideload = request.files['sideload']
+    for key in request.files.keys():
+        if not key.startswith("sideload"):
+            continue
+        sideload = request.files[key]
         if sideload is not None:
             sideload_filename = secure_filename(sideload.filename)
             sideload.save(path.join(dirname, sideload_filename))
             if not path.exists(path.join(dirname, sideload_filename)):
                 raise BadRequest("Could not save sideload info file!")
-            job.sideload = sideload_filename
+            job.sideloads.append(sideload_filename)
 
     job.trace.append("{}-api".format(platform.node()))
 
