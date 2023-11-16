@@ -241,6 +241,7 @@ def dispatch_job():
     job.rre = _get_checkbox(request, 'rre')
     job.tigrfam = _get_checkbox(request, 'tigrfam')
     job.tfbs = _get_checkbox(request, "tfbs")
+    job.ncbi_context = _get_checkbox(request, 'ncbi_context')
 
     dirname = path.join(app.config['RESULTS_PATH'], job.job_id, 'input')
     os.makedirs(dirname)
@@ -250,6 +251,7 @@ def dispatch_job():
             raise BadRequest("Spaces are not allowed in an NCBI ID.")
         job.download = ncbi
         job.needs_download = True
+        job.ncbi_context = True
     else:
         upload = request.files['seq']
 
