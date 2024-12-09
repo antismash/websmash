@@ -95,10 +95,6 @@ def _dark_launch_job(redis_store, job, config):
     if _want_to_run(config['RARE_TEST_PERCENTAGE']):
         new_job.smcog_trees = True
 
-    # Only run cassis occasionally, and only on fungal jobs
-    if job.taxon == "fungi" and _want_to_run(config['RARE_TEST_PERCENTAGE']):
-        new_job.cassis = True
-
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
     new_job.target_queues = [config['DEVELOPMENT_QUEUE']]
