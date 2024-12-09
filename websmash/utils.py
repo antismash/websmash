@@ -255,15 +255,19 @@ def dispatch_job():
     else:
         upload = request.files['seq']
 
-        if upload is not None:
-            filename = secure_filename(upload.filename)
-            upload.save(path.join(dirname, filename))
-            if not path.exists(path.join(dirname, filename)):
-                raise BadRequest("Could not save file!")
-            job.filename = filename
-            job.needs_download = False
-        else:
+        if upload is None or upload.filename is None:
             raise BadRequest("Uploading input file failed!")
+
+        if _is_fasta_file(upload.filename):
+            if job.taxon == "fungi" and 'gff3' not in request.files:
+                raise BadRequest("Fungal FASTA inputs need to provide gff3 gene calls")
+
+        filename = secure_filename(upload.filename)
+        upload.save(path.join(dirname, filename))
+        if not path.exists(path.join(dirname, filename)):
+            raise BadRequest("Could not save file!")
+        job.filename = filename
+        job.needs_download = False
 
         if 'gff3' in request.files:
             gff_upload = request.files['gff3']
@@ -290,6 +294,15 @@ def dispatch_job():
     _submit_job(redis_store, job, app.config)
     _dark_launch_job(redis_store, job, app.config)
     return job
+
+
+def _is_fasta_file(name: str) -> bool:
+    """ check if a file seems to be a FASTA file based on the file ending """
+    _, ext = path.splitext(name)
+    if ext in (".fa", ".fasta", ".fna"):
+        return True
+
+    return False
 
 
 def secure_filename(name: str) -> str:
