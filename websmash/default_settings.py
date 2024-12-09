@@ -33,9 +33,9 @@ LEGACY_QUEUE = 'jobs:legacy'
 WAITLIST_PREFIX = 'jobs:waiting'
 DOWNLOAD_QUEUE = 'jobs:downloads'
 
-DEFAULT_JOBTYPE = 'antismash7'
-DARK_LAUNCH_JOBTYPE = 'antismash7'
-LEGACY_JOBTYPE = 'antismash6'
+DEFAULT_JOBTYPE = 'antismash8'
+DARK_LAUNCH_JOBTYPE = 'antismash8'
+LEGACY_JOBTYPE = 'antismash7'
 
 
 # Percentage of jobs where we activate features we only want to run occasionally
