@@ -210,7 +210,7 @@ def dispatch_job():
     job.cc_mibig = _get_checkbox(request, 'cc_mibig')
 
     job.jobtype = request.form.get('jobtype', app.config['DEFAULT_JOBTYPE'])
-    if job.jobtype not in (app.config['LEGACY_JOBTYPE'], app.config['DEFAULT_JOBTYPE']):
+    if job.jobtype not in (app.config['LEGACY_JOBTYPE'], app.config['DEFAULT_JOBTYPE'], app.config['DARK_LAUNCH_JOBTYPE']):
         raise BadRequest(f"Invalid jobtype {job.jobtype}")
 
     genefinder = request.form.get('genefinder', '')
