@@ -121,7 +121,7 @@ def test__submit_job_minimal(app):
 def test__submit_job_legacy(app):
     """Test legacy job submission works as expected"""
     fake_db = get_db()
-    queue = app.config['LEGACY_QUEUE']
+    queue = app.config['DEFAULT_QUEUE']
     legacy_jobtype = app.config['LEGACY_JOBTYPE']
     assert app.config['FAKE_DB']
     old_len = fake_db.llen(queue)

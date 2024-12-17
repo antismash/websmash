@@ -49,11 +49,7 @@ def _submit_job(redis_store, job, config):
     elif job.minimal:
         job.target_queues.append(config['FAST_QUEUE'])
     else:
-        if app.config['LEGACY_JOBTYPE'] != app.config['DEFAULT_JOBTYPE'] and \
-           job.jobtype == app.config['LEGACY_JOBTYPE']:
-            job.target_queues.append(config['LEGACY_QUEUE'])
-        else:
-            job.target_queues.append(config['DEFAULT_QUEUE'])
+        job.target_queues.append(config['DEFAULT_QUEUE'])
 
         if job.email and _count_pending_jobs_with_email(redis_store, job) > limit:
             _waitlist_job(job, job.email)
@@ -142,10 +138,6 @@ def _count_pending_jobs_with_email(redis_store: DataStore, job: Job) -> int:
         job_key = "job:{}".format(job_id)
         if redis_store.hget(job_key, 'email') == job.email:
             count += 1
-    for job_id in redis_store.lrange(app.config['LEGACY_QUEUE'], 0, -1):
-        job_key = "job:{}".format(job_id)
-        if redis_store.hget(job_key, 'email') == job.email:
-            count += 1
 
     return count
 
@@ -154,10 +146,6 @@ def _count_pending_jobs_with_ip(redis_store: DataStore, job: Job) -> int:
     """Count how many jobs are pending for the IP address of the current job"""
     count = 0
     for job_id in redis_store.lrange(app.config['DEFAULT_QUEUE'], 0, -1):
-        job_key = "job:{}".format(job_id)
-        if redis_store.hget(job_key, 'ip_addr') == job.ip_addr:
-            count += 1
-    for job_id in redis_store.lrange(app.config['LEGACY_QUEUE'], 0, -1):
         job_key = "job:{}".format(job_id)
         if redis_store.hget(job_key, 'ip_addr') == job.ip_addr:
             count += 1
