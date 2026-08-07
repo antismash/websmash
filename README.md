@@ -1,8 +1,6 @@
 antiSMASH REST-LIKE API
 =======================
 
-[![Build Status](http://github.drone.secondarymetabolites.org/api/badges/antismash/websmash/status.svg)](http://github.drone.secondarymetabolites.org/antismash/websmash)
-
 This is the REST-like API powering http://antismash.secondarymetabolites.org/
 
 Installation
