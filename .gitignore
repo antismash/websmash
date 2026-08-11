@@ -12,3 +12,5 @@ jobs.db
 !setup.cfg
 .pytest_cache/*
 results
+.venv/*
+*egg-info/*
