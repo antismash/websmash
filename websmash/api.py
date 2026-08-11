@@ -1,7 +1,6 @@
 """REST-like API for submitting and querying antiSMASH-style jobs"""
 
-from datetime import datetime
-from antismash_models import SyncJob as Job, SyncNotice as Notice
+from antismash_models import SyncJob as Job, SyncNotice as Notice, utils as am_utils
 from flask import jsonify, abort, request
 from flask_mail import Message
 
@@ -85,7 +84,7 @@ def get_news():
         except ValueError:
             continue
 
-        if notice.show_from > datetime.utcnow():
+        if notice.show_from > am_utils.now():
             # show_from is in the future, don't show this yet
             continue
 
