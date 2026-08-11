@@ -51,9 +51,6 @@ def fake_sequence(tmpdir_factory):
 
 @pytest.fixture(scope="session")
 def git_version():
-    """Get the git version"""
+    """Get the git version."""
     args = ['git', 'rev-parse', '--short', 'HEAD']
-    prog = subprocess.Popen(args, stdout=subprocess.PIPE)
-    output = prog.stdout.readline()
-    git_ver = output.decode('utf-8').strip()
-    return git_ver
+    return subprocess.run(args, check=True, capture_output=True, text=True).stdout.strip()
