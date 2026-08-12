@@ -296,6 +296,7 @@ def test__copy_files(app, mocker):
     old_job = Job(fake_db, 'bacteria-old')
     old_job.filename = 'fake.fa'
     old_job.gff3 = 'fake.gff'
+    old_job.sideloads = ["fake.json"]
     new_job = Job.fromExisting('bacteria-new', old_job)
 
     fake_makedirs = mocker.patch('os.makedirs')
@@ -308,6 +309,9 @@ def test__copy_files(app, mocker):
     fake_makedirs.assert_called_once_with(new_job_basedir, exist_ok=True)
     old_filename = os.path.join('fake_base', old_job.job_id, 'input', old_job.filename)
     old_gff3 = os.path.join('fake_base', old_job.job_id, 'input', old_job.gff3)
+    old_sideload = os.path.join("fake_base", old_job.job_id, "input", old_job.sideloads[0])
     new_filename = os.path.join('fake_base', new_job.job_id, 'input', new_job.filename)
     new_gff3 = os.path.join('fake_base', new_job.job_id, 'input', new_job.gff3)
-    fake_copyfile.assert_has_calls([call(old_filename, new_filename), call(old_gff3, new_gff3)])
+    new_sideload = os.path.join("fake_base", new_job.job_id, "input", new_job.sideloads[0])
+
+    fake_copyfile.assert_has_calls([call(old_filename, new_filename), call(old_gff3, new_gff3), call(old_sideload, new_sideload)])
