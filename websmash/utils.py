@@ -62,15 +62,32 @@ def _submit_job(redis_store, job, config):
 
 
 def _dark_launch_job(redis_store, job, config):
-    """Submit a copy of the job to the development queue so we can test new versions on real data"""
+    """Support dark launching jobs to test new versions on real data"""
+    launches = config.get("DARK_LAUNCHES")
 
-    if not _want_to_run(config['DARK_LAUNCH_PERCENTAGE']):
+    # legacy config, read the old fields
+    if launches is None:
+        launches = [{
+            "queue": config["DEVELOPMENT_QUEUE"],
+            "percentage": config["DARK_LAUNCH_PERCENTAGE"],
+            "email": config["DARK_LAUNCH_EMAIL"],
+            "jobtype": config["DARK_LAUNCH_JOBTYPE"],
+            "rare_test_percentage": config["RARE_TEST_PERCENTAGE"],
+        }]
+
+    for launch in launches:
+        _dark_launch_to_queue(redis_store, job, config, launch)
+
+
+def _dark_launch_to_queue(redis_store, job, config, launch):
+    """Submit a copy of the job to a separate queue so we can test new versions on real data"""
+    if not _want_to_run(launch["percentage"]):
         return
 
     new_job_id = _generate_jobid(config['TAXON'])
     new_job = Job.fromExisting(new_job_id, job)
-    new_job.email = config['DARK_LAUNCH_EMAIL']
-    new_job.jobtype = config['DARK_LAUNCH_JOBTYPE']
+    new_job.email = launch["email"]
+    new_job.jobtype = launch["jobtype"]
 
     # Activate all the extra analyses so we can test those as well
     new_job.asf = True
@@ -88,12 +105,12 @@ def _dark_launch_job(redis_store, job, config):
     new_job.cc_mibig = True
 
     # Don't always run smcog-trees
-    if _want_to_run(config['RARE_TEST_PERCENTAGE']):
+    if _want_to_run(launch["rare_test_percentage"]):
         new_job.smcog_trees = True
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
-    new_job.target_queues = [config['DEVELOPMENT_QUEUE']]
+    new_job.target_queues = [launch["queue"]]
 
     if new_job.needs_download:
         new_job.target_queues.append(config['DOWNLOAD_QUEUE'])

@@ -36,6 +36,7 @@ DEFAULT_JOBTYPE = 'antismash8'
 DARK_LAUNCH_JOBTYPE = 'antismash8'
 LEGACY_JOBTYPE = 'antismash7'
 
+DARK_LAUNCHES = None
 
 # Percentage of jobs where we activate features we only want to run occasionally
 # during dark launches

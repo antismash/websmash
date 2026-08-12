@@ -247,6 +247,49 @@ def test__dark_launch_job(app, mocker):
     assert dark_job.target_queues == ['jobs:development']
 
 
+def test__dark_launch_job_multiple(app, mocker):
+    fake_db = get_db()
+    assert app.config["FAKE_DB"]
+    mocker.patch('random.randrange', return_value=5)
+    app.config["DARK_LAUNCHES"] = [
+        {
+            "queue": "jobs:development",
+            "percentage": 10,
+            "email": "antismash@example.com",
+            "jobtype": "antismash8",
+            "rare_test_percentage": 10,
+        },
+        {
+            "queue": "jobs:secret",
+            "percentage": 10,
+            "email": "antismash@example.com",
+            "jobtype": "antismash9",
+            "rare_test_percentage": 0,
+        },
+    ]
+
+    fake_db.ltrim("jobs:development", 2, 1)
+    fake_db.ltrim("jobs:secret", 2, 1)
+
+    job = Job(fake_db, 'taxon-fake')
+    job.commit()
+    utils._dark_launch_job(fake_db, job, app.config)
+
+    assert fake_db.llen("jobs:development") == 1
+    dark_job_id = fake_db.lrange("jobs:development", -1, -1)[0]
+    dark_job = Job(fake_db, dark_job_id).fetch()
+    assert dark_job.original_id == job.job_id
+    # first config dark launches should launch the rare tests with our fake RNG
+    assert dark_job.smcog_trees
+
+    assert fake_db.llen("jobs:secret") == 1
+    dark_job_id = fake_db.lrange("jobs:secret", -1, -1)[0]
+    dark_job = Job(fake_db, dark_job_id).fetch()
+    assert dark_job.original_id == job.job_id
+    # second config dark launches should not launch the rare tests with our fake RNG
+    assert not dark_job.smcog_trees
+
+
 def test__copy_files(app, mocker):
     fake_db = get_db()
     assert app.config['FAKE_DB']
