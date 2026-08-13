@@ -234,6 +234,8 @@ def test__dark_launch_job(app, mocker):
     dark_job_id = fake_db.lrange('jobs:development', -1, -1)[0]
     dark_job = Job(fake_db, dark_job_id).fetch()
     assert dark_job.original_id == job.job_id
+    for option in ["asf", "clusterhmmer", "pfam2go", "rre", "tigrfam", "tfbs", "clusterblast", "knownclusterblast", "subclusterblast", "cc_mibig"]:
+        assert getattr(dark_job, option)
 
     # trim with start > end empties the list
     fake_db.ltrim('jobs:downloads', 2, 1)
@@ -257,6 +259,21 @@ def test__dark_launch_job_multiple(app, mocker):
             "percentage": 10,
             "email": "antismash@example.com",
             "jobtype": "antismash8",
+            "options": {
+                "asf": True,
+                "clusterhmmer": True,
+                "pfam2go": True,
+                "rre": True,
+                "tigrfam": True,
+                "tfbs": True,
+                "clusterblast": True,
+                "knownclusterblast": True,
+                "subclusterblast": True,
+                "cc_mibig": True,
+            },
+            "rare_options": {
+                "smcog_trees": True
+            },
             "rare_test_percentage": 10,
         },
         {
@@ -264,6 +281,9 @@ def test__dark_launch_job_multiple(app, mocker):
             "percentage": 10,
             "email": "antismash@example.com",
             "jobtype": "antismash9",
+            "options": {
+                "minimal": True,
+            },
             "rare_test_percentage": 0,
         },
     ]
@@ -279,6 +299,8 @@ def test__dark_launch_job_multiple(app, mocker):
     dark_job_id = fake_db.lrange("jobs:development", -1, -1)[0]
     dark_job = Job(fake_db, dark_job_id).fetch()
     assert dark_job.original_id == job.job_id
+    for option in ["asf", "clusterhmmer", "pfam2go", "rre", "tigrfam", "tfbs", "clusterblast", "knownclusterblast", "subclusterblast", "cc_mibig"]:
+        assert getattr(dark_job, option)
     # first config dark launches should launch the rare tests with our fake RNG
     assert dark_job.smcog_trees
 
@@ -288,6 +310,7 @@ def test__dark_launch_job_multiple(app, mocker):
     assert dark_job.original_id == job.job_id
     # second config dark launches should not launch the rare tests with our fake RNG
     assert not dark_job.smcog_trees
+    assert dark_job.minimal
 
 
 def test__copy_files(app, mocker):

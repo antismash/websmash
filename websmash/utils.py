@@ -73,6 +73,21 @@ def _dark_launch_job(redis_store, job, config):
             "email": config["DARK_LAUNCH_EMAIL"],
             "jobtype": config["DARK_LAUNCH_JOBTYPE"],
             "rare_test_percentage": config["RARE_TEST_PERCENTAGE"],
+            "options": {
+                "asf": True,
+                "clusterhmmer": True,
+                "pfam2go": True,
+                "rre": True,
+                "tigrfam": True,
+                "tfbs": True,
+                "clusterblast": True,
+                "knownclusterblast": True,
+                "subclusterblast": True,
+                "cc_mibig": True,
+            },
+            "rare_options": {
+                "smcog_trees": True
+            },
         }]
 
     for launch in launches:
@@ -90,23 +105,13 @@ def _dark_launch_to_queue(redis_store, job, config, launch):
     new_job.jobtype = launch["jobtype"]
 
     # Activate all the extra analyses so we can test those as well
-    new_job.asf = True
-    new_job.clusterhmmer = True
-    new_job.pfam2go = True
-    new_job.rre = True
-    new_job.tigrfam = True
-    new_job.tfbs = True
-
-    # Activate all the *clusterblast options
-    new_job.clusterblast = True
-    new_job.knownclusterblast = True
-    new_job.subclusterblast = True
-
-    new_job.cc_mibig = True
+    for option, value in launch.get("options", {}).items():
+        setattr(new_job, option, value)
 
     # Don't always run smcog-trees
     if _want_to_run(launch["rare_test_percentage"]):
-        new_job.smcog_trees = True
+        for option, value in launch.get("rare_options", {}).items():
+            setattr(new_job, option, value)
 
     _copy_files(config['RESULTS_PATH'], job, new_job)
 
